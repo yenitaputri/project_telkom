@@ -36,12 +36,14 @@ class AuthenticatedSessionController extends Controller
      */
     public function destroy(Request $request): RedirectResponse
     {
-        Auth::guard('web')->logout();
-
-        $request->session()->invalidate();
-
-        $request->session()->regenerateToken();
-
-        return redirect('/');
+        Auth::guard('web')->logout(); // Melakukan logout
+    
+        $request->session()->invalidate(); // Membatalkan sesi saat ini
+        $request->session()->regenerateToken(); // Meregenerasi token CSRF
+    
+        // Ubah baris ini untuk mengarahkan ke halaman login
+        return redirect()->route('login');
+        // Atau jika Anda tahu path-nya, bisa juga:
+        // return redirect('/login');
     }
 }

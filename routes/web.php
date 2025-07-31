@@ -41,6 +41,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
-    ->name('logout');
+
+    // Rute Logout sudah ada di sini dan sudah benar
+    Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 });
+// Route::get('/check-session-config', function () {
+//     dd(config('session'));
+// });
+
+require __DIR__.'/auth.php';
+

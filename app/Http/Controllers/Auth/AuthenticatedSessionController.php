@@ -8,6 +8,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\Session;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -34,16 +35,14 @@ class AuthenticatedSessionController extends Controller
     /**
      * Destroy an authenticated session.
      */
-    public function destroy(Request $request): RedirectResponse
-    {
-        Auth::guard('web')->logout(); // Melakukan logout
-    
-        $request->session()->invalidate(); // Membatalkan sesi saat ini
-        $request->session()->regenerateToken(); // Meregenerasi token CSRF
-    
-        // Ubah baris ini untuk mengarahkan ke halaman login
-        return redirect()->route('login');
-        // Atau jika Anda tahu path-nya, bisa juga:
-        // return redirect('/login');
-    }
+    public function destroy(Request $request)
+{
+    Auth::guard('web')->logout();
+
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
+
+    // Ubah ini agar mengarah ke halaman login
+    return redirect()->route('login'); // <-- Ini akan mengarah ke halaman login
+}
 }

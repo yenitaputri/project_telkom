@@ -80,13 +80,22 @@
                 </ul>
             </nav>
 
-            {{-- Bagian bawah sidebar: Logout --}}
-            <div class="p-6">
-                <a href="#" class="flex items-center px-6 py-3 text-gray-600 hover:bg-red-50 hover:text-red-600 rounded-lg mx-3 transition-colors duration-200">
-                    <svg class="h-5 w-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
-                    Logout
-                </a>
-            </div>
+          {{-- Tombol Logout (gunakan form POST) --}}
+<div class="p-6">
+    <form method="POST" action="{{ route('logout') }}">
+        @csrf
+        <button type="submit" class="w-full flex items-center px-6 py-3 text-gray-600 hover:bg-red-50 hover:text-red-600 rounded-lg mx-3 transition-colors duration-200">
+            <svg class="h-5 w-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+            </svg>
+            Logout
+        </button>
+    </form>
+</div>
+
+
+
         </aside>
         <div class="flex flex-col flex-1 overflow-y-auto">
             <header class="bg-white shadow-sm p-4 flex items-center justify-between">

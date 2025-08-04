@@ -23,37 +23,30 @@ use App\Http\Controllers\ProfileController;
 // Beranda
 Route::get('/', [HomeController::class, 'index'])->name('home.index');
 
-// Data Sales
-Route::get('/data-sales', [SalesController::class, 'index'])->name('sales.index');
-
-// Data Pelanggan
-Route::get('/data-pelanggan', [PelangganController::class, 'index'])->name('pelanggan.index');
-
-// Data Prodigi
-Route::get('/data-prodigi', [ProdigiController::class, 'index'])->name('prodigi.index');
-
-// Dashboard
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth'])->name('dashboard');
-
-// Data Sales
-Route::get('/data-sales', [SalesController::class, 'index'])->middleware('auth')->name('sales.index');
-
-// Data Pelanggan
-Route::get('/data-pelanggan', [PelangganController::class, 'index'])->middleware('auth')->name('pelanggan.index');
-
-// Data Prodigi
-Route::get('/data-prodigi', [ProdigiController::class, 'index'])->middleware('auth')->name('prodigi.index');
-
 // Group route yang butuh login
 Route::middleware('auth')->group(function () {
+    // Dashboard
+    Route::get('/dashboard', function () {
+        return view('dashboard');
+    })->name('dashboard');
+
+    // Data Sales
+    Route::get('/data-sales', [SalesController::class, 'index'])->name('sales.index');
+
+    // Data Pelanggan
+    Route::get('/data-pelanggan', [PelangganController::class, 'index'])->name('pelanggan.index');
+    Route::get('/data-pelanggan/create', [PelangganController::class, 'create'])->name('pelanggan.create');
+    Route::post('/data-pelanggan', [PelangganController::class, 'store'])->name('pelanggan.store');
+
+    // Detail Pelanggan
+    Route::get('/data-pelanggan/{id}', [PelangganController::class, 'show'])->name('pelanggan.show');
+
+    // Data Prodigi
+    Route::get('/prodigi', [ProdigiController::class, 'index'])->name('prodigi.index');
+
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-
-    // Logout
-    Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 });
 
 // Route bawaan dari Breeze/Jetstream/etc

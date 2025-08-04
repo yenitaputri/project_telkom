@@ -4,7 +4,15 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use App\Contracts\Interfaces\UserInterface;
+use App\Contracts\Interfaces\SalesInterface;
+
+
+
+
 use App\Contracts\Repositories\UserRepository;
+use App\Contracts\Repositories\SalesRepository;
+
+
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 
@@ -16,6 +24,7 @@ class AppServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->bind(UserInterface::class, UserRepository::class);
+        $this->app->bind(SalesInterface::class, SalesRepository::class);
     }
 
     /**

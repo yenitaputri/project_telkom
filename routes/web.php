@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\SalesController;
 use App\Http\Controllers\PelangganController;
@@ -25,8 +26,6 @@ Route::get('/', [HomeController::class, 'index'])->name('home.index');
 // Data Sales
 Route::get('/data-sales', [SalesController::class, 'index'])->name('sales.index');
 
-
-
 // Data Pelanggan
 Route::get('/data-pelanggan', [PelangganController::class, 'index'])->name('pelanggan.index');
 
@@ -38,18 +37,24 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth'])->name('dashboard');
 
-// Group route untuk autentikasi
+// Data Sales
+Route::get('/data-sales', [SalesController::class, 'index'])->middleware('auth')->name('sales.index');
+
+// Data Pelanggan
+Route::get('/data-pelanggan', [PelangganController::class, 'index'])->middleware('auth')->name('pelanggan.index');
+
+// Data Prodigi
+Route::get('/data-prodigi', [ProdigiController::class, 'index'])->middleware('auth')->name('prodigi.index');
+
+// Group route yang butuh login
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // Rute Logout sudah ada di sini dan sudah benar
-    Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
+    // Logout
+    Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 });
-// Route::get('/check-session-config', function () {
-//     dd(config('session'));
-// });
 
+// Route bawaan dari Breeze/Jetstream/etc
 require __DIR__.'/auth.php';
-

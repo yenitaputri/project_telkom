@@ -38,8 +38,8 @@
                :class="{ '-translate-x-full': !sidebarOpen, 'translate-x-0': sidebarOpen }">
 
             {{-- Bagian atas sidebar: Logo --}}
-            <div class="p-6 flex items-center justify-center border-b border-gray-200">
-                <img src="{{ asset('images/indibiz_logo.png') }}" alt="Indibiz Logo" class="h-16">
+            <div class="pt-2 pb-6 flex items-center justify-start border-b border-gray-200">
+                <img src="{{ asset('images/logo_sales.png') }}" alt="Logo Sales" class="h-16">
             </div>
 
             {{-- Bagian tengah sidebar: Navigasi --}}

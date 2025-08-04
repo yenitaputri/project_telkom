@@ -6,13 +6,11 @@ use Illuminate\Http\Request;
 
 class SalesController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
-        return view('sales.index'); // Akan menggunakan layout 'app' melalui @extends
+        // Di sini Anda bisa mengambil data prodi dari database
+        // $prodi = Prodi::all();
+        // return view('prodi.index', compact('prodi'));
+        return view('sales.index');
     }
 }

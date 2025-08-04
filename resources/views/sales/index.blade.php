@@ -3,134 +3,188 @@
 @section('title', 'Data Sales')
 
 @section('content')
-    {{-- Main content area dengan Alpine.js untuk modal --}}
-    <div class="bg-white rounded-lg shadow-md p-6 min-h-[calc(100vh-160px)] flex flex-col" x-data="{ openModal: false }">
+<div class="bg-white rounded-lg shadow p-4 min-h-[calc(100vh-160px)] flex flex-col" 
+    x-data="{ 
+        openAddModal: {{ $errors->any() ? 'true' : 'false' }},
+        openDeleteModal: false, 
+        deleteUrl: '' 
+    }">
 
-        {{-- Tombol Tambah Data di pojok kanan atas kotak putih --}}
-        <div class="flex justify-end mb-4">
-            <button @click="openModal = true" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg flex items-center transition-colors duration-200">
-                <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                Tambah Data
-            </button>
-        </div>
-
-        {{-- BAGIAN TABEL DATA SALES (Tampilan Awal) --}}
-        @php
-            // Ini adalah data dummy. Di aplikasi nyata, Anda akan mendapatkan ini dari controller:
-            // $sales = \App\Models\Sales::all(); atau dari $sales yang dilewatkan dari controller
-            $sales = [
-                ['no' => 1, 'gambar' => asset('images/default_sales_avatar.png'), 'kode' => 'MC30218', 'nama' => 'RADITYA ARYA PRAMANA', 'agency' => 'BLM'],
-                ['no' => 2, 'gambar' => asset('images/default_sales_avatar.png'), 'kode' => 'MC30219', 'nama' => 'BIMA SATRIA', 'agency' => 'ABC'],
-                ['no' => 3, 'gambar' => asset('images/default_sales_avatar.png'), 'kode' => 'MC30220', 'nama' => 'CINTA ANGGRAINI', 'agency' => 'XYZ'],
-                // Tambahkan lebih banyak data dummy jika diperlukan
-            ];
-            $hasSalesData = count($sales) > 0;
-        @endphp
-
-        @if ($hasSalesData)
-            <div class="overflow-x-auto">
-                <table class="min-w-full bg-white border border-gray-200 rounded-lg">
-                    <thead>
-                        <tr class="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">
-                            <th class="py-3 px-6 text-left">No.</th>
-                            <th class="py-3 px-6 text-left">Gambar Sales</th>
-                            <th class="py-3 px-6 text-left">Kode Sales</th>
-                            <th class="py-3 px-6 text-left">Nama Sales</th>
-                            <th class="py-3 px-6 text-left">Agency</th>
-                            <th class="py-3 px-6 text-center">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody class="text-gray-600 text-sm font-light">
-                        @foreach ($sales as $sale)
-                            <tr class="border-b border-gray-200 hover:bg-gray-50">
-                                <td class="py-3 px-6 text-left whitespace-nowrap">{{ $sale['no'] }}</td>
-                                <td class="py-3 px-6 text-left">
-                                    <img src="{{ $sale['gambar'] }}" alt="Gambar Sales" class="w-10 h-10 rounded-full object-cover">
-                                </td>
-                                <td class="py-3 px-6 text-left">{{ $sale['kode'] }}</td>
-                                <td class="py-3 px-6 text-left">{{ $sale['nama'] }}</td>
-                                <td class="py-3 px-6 text-left">{{ $sale['agency'] }}</td>
-                                <td class="py-3 px-6 text-center">
-                                    <div class="flex item-center justify-center space-x-2">
-                                        {{-- Tombol Lihat --}}
-                                        <button class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-1 px-3 rounded text-xs transition-colors duration-200">Lihat</button>
-                                        {{-- Tombol Edit --}}
-                                        <button class="bg-green-500 hover:bg-green-600 text-white font-bold py-1 px-3 rounded text-xs transition-colors duration-200">Edit</button>
-                                        {{-- Tombol Hapus --}}
-                                        <button class="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-3 rounded text-xs transition-colors duration-200">Hapus</button>
-                                    </div>
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-
-            {{-- Baris per halaman (seperti di gambar) --}}
-            <div class="flex justify-end mt-4 text-sm text-gray-600">
-                Baris per halaman 7
-            </div>
-        @else
-            {{-- Pesan "Tidak ditemukan data" jika tidak ada data sales --}}
-            <div class="flex-1 flex flex-col items-center justify-center p-4">
-                <p class="text-gray-500 text-lg text-center">Tidak ditemukan data. Mohon unggah file terlebih dahulu atau buat file baru untuk memulai.</p>
-            </div>
-        @endif
-
-
-        {{-- BAGIAN MODAL (POP-UP) TAMBAH DATA SALES --}}
-        <div x-show="openModal" class="fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center z-50 p-4" x-cloak>
-            <div @click.away="openModal = false" class="bg-white rounded-lg shadow-xl p-6 w-full max-w-md mx-auto">
-                <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">Tambah</h3>
-
-                <form action="#" method="POST" enctype="multipart/form-data"> {{-- Ganti action="#" dengan route yang sesuai --}}
-                    @csrf
-                    <div class="mb-4 text-center">
-                        {{-- Placeholder Gambar Sales --}}
-                        <div class="w-24 h-24 bg-gray-200 rounded-full mx-auto flex items-center justify-center text-gray-400 mb-2">
-                            <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                        </div>
-                        <input type="file" id="gambar_sales" name="gambar_sales" class="hidden">
-                        <label for="gambar_sales" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2 px-4 rounded inline-flex items-center cursor-pointer">
-                            <span>Choose File</span>
-                        </label>
-                        <span id="file-name" class="ml-2 text-gray-600">No file chosen</span>
-                    </div>
-
-                    <div class="mb-4">
-                        <label for="kode_sales" class="block text-gray-700 text-sm font-bold mb-2">Kode Sales</label>
-                        <input type="text" id="kode_sales" name="kode_sales" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Masukkan Kode Sales">
-                    </div>
-
-                    <div class="mb-4">
-                        <label for="nama_sales" class="block text-gray-700 text-sm font-bold mb-2">Nama Sales</label>
-                        <input type="text" id="nama_sales" name="nama_sales" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Masukkan Nama Sales">
-                    </div>
-
-                    <div class="mb-6">
-                        <label for="agency" class="block text-gray-700 text-sm font-bold mb-2">Agency</label>
-                        <input type="text" id="agency" name="agency" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Masukkan Agency">
-                    </div>
-
-                    <div class="flex justify-end space-x-4">
-                        <button type="button" @click="openModal = false" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded transition-colors duration-200">
-                            Batal
-                        </button>
-                        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition-colors duration-200">
-                            Tambah
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-
+    {{-- Tombol Tambah --}}
+    <div class="flex justify-end mb-4">
+        <button @click="openAddModal = true"
+            class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded flex items-center text-sm transition-colors">
+            <svg class="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+            </svg>
+            Tambah Data
+        </button>
     </div>
 
-    {{-- Script untuk menampilkan nama file yang dipilih --}}
-    <script>
-        document.getElementById('gambar_sales').addEventListener('change', function() {
-            var fileName = this.files[0] ? this.files[0].name : 'No file chosen';
-            document.getElementById('file-name').textContent = fileName;
-        });
-    </script>
+    {{-- Alert Sukses --}}
+@if (session('success'))
+    <div 
+        x-data="{ show: true }" 
+        x-init="setTimeout(() => show = false, 3000)" 
+        x-show="show"
+        x-transition
+        class="flex items-center p-4 mb-4 text-sm text-green-800 bg-green-100 border border-green-300 rounded-lg"
+        role="alert"
+    >
+        <svg class="w-5 h-5 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M5 13l4 4L19 7" />
+        </svg>
+        <span>{{ session('success') }}</span>
+    </div>
+@endif
+
+    {{-- Tabel Sales --}}
+    @if ($sales->count())
+        <div class="overflow-x-auto">
+            <table class="min-w-full table-auto bg-white border border-gray-200 rounded text-sm">
+            <thead class="bg-blue-100 text-gray-700">
+                <tr>
+                    <th class="border px-4 py-2 font-bold text-left align-middle">No</th>
+                    <th class="border px-4 py-2 font-bold text-left align-middle">Gambar</th>
+                    <th class="border px-4 py-2 font-bold text-left align-middle">Kode Sales</th>
+                    <th class="border px-4 py-2 font-bold text-left align-middle">Nama Sales</th>
+                    <th class="border px-4 py-2 font-bold text-left align-middle">Agency</th>
+                    <th class="border px-4 py-2 font-bold text-center align-middle">Aksi</th>
+                </tr>
+            </thead>
+            <tbody class="text-gray-600 text-sm">
+                @foreach ($sales as $index => $sale)
+                    <tr class="border-t hover:bg-gray-100 transition">
+                        <td class="px-4 py-2 text-left align-middle">{{ $loop->iteration }}</td>
+                        <td class="px-4 py-2 text-left align-middle">
+                            <div class="w-10 h-10 flex items-center">
+                                <img src="{{ asset('storage/' . $sale->gambar_sales) }}" alt="gambar"
+                                    class="w-8 h-8 rounded-full object-cover border mx-auto">
+                            </div>
+                        </td>
+                        <td class="px-4 py-2 text-left align-middle">{{ $sale->kode_sales }}</td>
+                        <td class="px-4 py-2 text-left align-middle">{{ $sale->nama_sales }}</td>
+                        <td class="px-4 py-2 text-left align-middle">{{ $sale->agency }}</td>
+                        <td class="px-4 py-2 text-center align-middle space-x-1">
+                            <a href="{{ route('sales.edit', $sale->id) }}"
+                                class="bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded text-xs transition-colors">Edit</a>
+                            <button @click="openDeleteModal = true; deleteUrl = '{{ route('sales.destroy', $sale->id) }}'"
+                                class="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded text-xs transition-colors">
+                                Hapus
+                            </button>
+                        </td>
+                    </tr>
+                @endforeach
+            </tbody>
+            </table>
+        </div>
+    @else
+        <div class="text-center text-gray-500 mt-8">
+            Tidak ditemukan data sales.
+        </div>
+    @endif
+
+    {{-- Modal Tambah Sales --}}
+    <div x-show="openAddModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 p-4" x-cloak>
+        <div @click.away="openAddModal = false" class="bg-white rounded-lg shadow-xl p-8 w-full max-w-md transition-all">
+            <h2 class="text-2xl font-bold mb-6 text-center">Tambah</h2>
+
+            <form action="{{ route('sales.store') }}" method="POST" enctype="multipart/form-data" class="space-y-4">
+                @csrf
+                
+                <div class="space-y-2">
+                    <label class="block text-sm font-medium text-gray-700">Gambar Sales</label>
+                    <div class="flex flex-col items-center space-y-2">
+                        <div class="w-16 h-16 bg-gray-200 rounded-lg flex items-center justify-center overflow-hidden">
+                            <img id="preview-image" src="#" alt="Preview" class="w-full h-full object-cover hidden rounded-lg" />
+                            <svg id="placeholder-icon" class="w-10 h-10 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                        <div class="flex items-center w-full">
+                            <input type="file" id="gambar_sales" name="gambar_sales" class="hidden" accept="image/*"
+                                onchange="previewGambar(event)">
+                            <label for="gambar_sales"
+                                class="cursor-pointer bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-l-md text-sm font-medium border border-gray-300">
+                                Pilih File
+                            </label>
+                            <span id="file-name" class="flex-1 px-3 py-2 border border-gray-300 rounded-r-md text-sm text-gray-500 bg-white truncate">
+                                Belum ada file
+                            </span>
+                        </div>
+                        @error('gambar_sales')
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Kode Sales</label>
+                    <input type="text" name="kode_sales" value="{{ old('kode_sales') }}"
+                        class="w-full mt-1 border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    @error('kode_sales')
+                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Nama Sales</label>
+                    <input type="text" name="nama_sales" value="{{ old('nama_sales') }}"
+                        class="w-full mt-1 border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    @error('nama_sales')
+                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Agency</label>
+                    <input type="text" name="agency" value="{{ old('agency') }}"
+                        class="w-full mt-1 border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    @error('agency')
+                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div class="flex justify-end space-x-2 pt-4">
+                    <button type="button" @click="openAddModal = false"
+                        class="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-md text-sm font-medium transition-colors border border-gray-300">
+                        Batal
+                    </button>
+                    <button type="submit"
+                        class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm font-medium transition-colors">
+                        Simpan
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{{-- Script untuk preview gambar --}}
+<script>
+    function previewGambar(event) {
+        const file = event.target.files[0];
+        const preview = document.getElementById('preview-image');
+        const placeholder = document.getElementById('placeholder-icon');
+        const fileName = document.getElementById('file-name');
+
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                preview.src = e.target.result;
+                preview.classList.remove('hidden');
+                placeholder.classList.add('hidden');
+            };
+            reader.readAsDataURL(file);
+
+            fileName.textContent = file.name;
+        } else {
+            preview.src = '';
+            preview.classList.add('hidden');
+            placeholder.classList.remove('hidden');
+            fileName.textContent = 'Belum ada file';
+        }
+    }
+</script>
 @endsection

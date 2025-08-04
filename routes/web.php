@@ -25,6 +25,8 @@ Route::get('/', [HomeController::class, 'index'])->name('home.index');
 // Data Sales
 Route::get('/data-sales', [SalesController::class, 'index'])->name('sales.index');
 
+
+
 // Data Pelanggan
 Route::get('/data-pelanggan', [PelangganController::class, 'index'])->name('pelanggan.index');
 

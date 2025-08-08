@@ -106,10 +106,18 @@
                     <h1 class="text-2xl font-semibold text-gray-800">Admin</h1>
                 </div>
                 <div class="relative">
-                    <input type="text" placeholder="Cari di sini..." class="py-2 px-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent pr-10">
-                    <button class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors duration-200">
-                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                    </button>
+                    @if (!request()->routeIs('pelanggan.show'))
+                        <input type="text" placeholder="Cari di sini..." class="py-2 px-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent pr-10">
+                        <button class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors duration-200">
+                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        </button>
+                    @else
+                        <div class="flex items-center space-x-2 h-full text-sm">
+                            <span class="text-black font-semibold">Data Pelanggan</span>
+                            <span class="inline-block w-2 h-2 bg-blue-600 rounded-full mx-1"></span>
+                            <span class="text-blue-600 font-semibold">Lihat</span>
+                        </div>
+                    @endif
                 </div>
             </header>
             <main class="flex-1 p-6">

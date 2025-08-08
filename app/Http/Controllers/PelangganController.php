@@ -8,9 +8,6 @@ class PelangganController extends Controller
 {
     public function index()
     {
-        // Di sini Anda bisa mengambil data pelanggan dari database
-        // $customers = Customer::all();
-        // return view('customers.index', compact('customers'));
         return view('pelanggan.index');
     }
 
@@ -56,15 +53,25 @@ class PelangganController extends Controller
             'kcontact' => 'DS/05/JR/DS50205/MUHLAS/DIGIBIZ 75MBPS/PIC 81217766672',
             'jenis_layanan' => 'INDIBIZ',
             'channel_1' => 'Sales Force DBS',
-            'cek_netmonk' => '',
-            'cek_pijar_mahir' => '',
-            'cek_eazy_cam' => '',
-            'cek_oca' => '',
-            'cek_pijar_sekolah' => '',
             'kode_sales' => 'DS50216',
             'nama_sf' => 'RYZAL RYAN (BLM)',
             'agency' => 'MCA',
         ];
-        return view('pelanggan.show', compact('data'));
+        return view('pelanggan.show', ['pelanggan' => $data]);
+    }
+
+    public function edit($id)
+    {
+        // Data statis untuk halaman edit
+        $data = [
+            'id' => $id,
+            'no_internet' => '152516209310',
+            'no_digital' => '152516209310',
+            'tanggal_ps' => '08/07/2023',
+            'datel' => 'BNYWANGI',
+            'sto' => 'RGJ',
+            'nama' => 'Toko Rofi / MOH ROFIUDIN',
+        ];
+        return view('pelanggan.edit', ['pelanggan' => $data]);
     }
 }

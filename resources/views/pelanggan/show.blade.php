@@ -3,7 +3,12 @@
 @section('title', 'Detail Data Pelanggan')
 
 @section('content')
-<div class="bg-white rounded-lg shadow-md p-6 min-h-[calc(100vh-160px)] max-w-4xl mx-auto">
+<div class="bg-white rounded-lg shadow-md p-6 min-h-[calc(100vh-160px)] max-w-4xl mx-auto relative">
+    <button onclick="window.history.back()" class="absolute top-4 right-4 text-gray-600 hover:text-gray-900 focus:outline-none" aria-label="Close">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+    </button>
     <h2 class="text-2xl font-bold mb-6 text-center">Detail Data</h2>
     <table class="w-full text-sm text-left text-gray-700 border border-gray-200 rounded-lg">
         <tbody>
@@ -32,7 +37,7 @@
         </tbody>
     </table>
     <div class="flex justify-end space-x-4 mt-6">
-        <button class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded transition-colors duration-200">Edit</button>
+        <a href="{{ route('pelanggan.edit', ['id' => 1]) }}" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded transition-colors duration-200 inline-block text-center">Edit</a>
         <button class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded transition-colors duration-200">Hapus</button>
     </div>
 </div>

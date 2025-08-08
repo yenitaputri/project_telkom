@@ -40,6 +40,8 @@ Route::middleware('auth')->group(function () {
 
     // Detail Pelanggan
     Route::get('/data-pelanggan/{id}', [PelangganController::class, 'show'])->name('pelanggan.show');
+    Route::get('/data-pelanggan/{id}/edit', [PelangganController::class, 'edit'])->name('pelanggan.edit');
+    Route::put('/data-pelanggan/{id}', [PelangganController::class, 'update'])->name('pelanggan.update');
 
     // Data Prodigi
     Route::get('/prodigi', [ProdigiController::class, 'index'])->name('prodigi.index');

@@ -12,8 +12,11 @@ class DatabaseSeeder extends Seeder
      * Seed the application's database.
      */
     public function run(): void
-{
-    $this->call(UserSeeder::class); // ✅ jalankan UserSeeder, jangan buat data manual
-}
+    {
+        $this->call([
+            UserSeeder::class,
+            PelangganSeeder::class
+        ]); // ✅ jalankan UserSeeder, jangan buat data manual
+    }
 
 }

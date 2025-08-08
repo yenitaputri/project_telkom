@@ -2,13 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Pelanggan;
 use Illuminate\Http\Request;
+use function PHPUnit\Framework\returnArgument;
 
 class PelangganController extends Controller
 {
     public function index()
     {
-        return view('pelanggan.index');
+        $pelanggan = Pelanggan::all();
+
+        return view('pelanggan.index', compact('pelanggan'));
     }
 
     public function create()
@@ -38,40 +42,15 @@ class PelangganController extends Controller
     public function show($id)
     {
         // Data statis untuk preview detail pelanggan
-        $data = [
-            'no_internet' => '152516209310',
-            'no_digital' => '152516209310',
-            'tanggal_ps' => '08/07/2023',
-            'kecepatan' => '200',
-            'bulan' => '7',
-            'tahun' => '2025',
-            'datel' => 'BNYWANGI',
-            'ro' => '',
-            'sto' => 'RGJ',
-            'nama' => 'Toko Rofi / MOH ROFIUDIN',
-            'segmen' => 'DBS-Commerce & Community Serv',
-            'kcontact' => 'DS/05/JR/DS50205/MUHLAS/DIGIBIZ 75MBPS/PIC 81217766672',
-            'jenis_layanan' => 'INDIBIZ',
-            'channel_1' => 'Sales Force DBS',
-            'kode_sales' => 'DS50216',
-            'nama_sf' => 'RYZAL RYAN (BLM)',
-            'agency' => 'MCA',
-        ];
+        $data = Pelanggan::findOrFail($id);
+
         return view('pelanggan.show', ['pelanggan' => $data]);
     }
 
     public function edit($id)
     {
         // Data statis untuk halaman edit
-        $data = [
-            'id' => $id,
-            'no_internet' => '152516209310',
-            'no_digital' => '152516209310',
-            'tanggal_ps' => '08/07/2023',
-            'datel' => 'BNYWANGI',
-            'sto' => 'RGJ',
-            'nama' => 'Toko Rofi / MOH ROFIUDIN',
-        ];
+        $data = Pelanggan::findOrFail($id);
         return view('pelanggan.edit', ['pelanggan' => $data]);
     }
 }

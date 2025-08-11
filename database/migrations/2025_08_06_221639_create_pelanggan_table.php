@@ -12,23 +12,23 @@ return new class extends Migration {
     {
         Schema::create('pelanggan', function (Blueprint $table) {
             $table->id();
-            $table->string('no_internet')->unique();
-            $table->string('no_digital');
-            $table->date('tanggal_ps');
-            $table->string('kecepatan');
-            $table->string('bulan');
-            $table->string('tahun');
-            $table->string('datel');
-            $table->string('ro');
-            $table->string('sto');
-            $table->string('nama');
-            $table->string('segmen');
-            $table->text('kcontact');
-            $table->string('jenis_layanan');
-            $table->string('channel_1');
-            $table->string('kode_sales');
-            $table->string('nama_sf');
-            $table->string('agency');
+            $table->string('no_internet')->unique()->nullable();
+            $table->string('no_digital')->nullable();
+            $table->date('tanggal_ps')->nullable();
+            $table->string('kecepatan')->nullable();
+            $table->string('bulan')->nullable();
+            $table->string('tahun')->nullable();
+            $table->string('datel')->nullable();
+            $table->string('ro')->nullable();
+            $table->string('sto')->nullable();
+            $table->string('nama')->nullable();
+            $table->string('segmen')->nullable();
+            $table->text('kcontact')->nullable();
+            $table->string('jenis_layanan')->nullable();
+            $table->string('channel_1')->nullable();
+            $table->string('kode_sales')->nullable();
+            $table->string('nama_sf')->nullable();
+            $table->string('agency')->nullable();
             $table->timestamps();
         });
     }

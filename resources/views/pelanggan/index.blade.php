@@ -4,13 +4,13 @@
 
 @section('content')
     <div x-data="{
-            openTambahModal: {{ $errors->any() ? 'true' : 'false' }},
-            openPreviewModal: false,
-            previewData() {
-                // Lakukan validasi atau tampilkan modal preview
-                this.openPreviewModal = true;
-            }
-            }" class="bg-white rounded-lg shadow-md p-6 min-h-[calc(100vh-160px)] flex flex-col">
+                            openTambahModal: {{ $errors->any() ? 'true' : 'false' }},
+                            openPreviewModal: false,
+                            previewData() {
+                                // Lakukan validasi atau tampilkan modal preview
+                                this.openPreviewModal = true;
+                            }
+                            }" class="bg-white rounded-lg shadow-md p-6 min-h-[calc(100vh-160px)] flex flex-col">
         {{-- Tombol Tambah Data dan filter tanggal --}}
         <div class="flex justify-end mb-4 space-x-4 items-center">
             <div class="flex items-center space-x-2 text-gray-500 text-sm">
@@ -106,6 +106,10 @@
                     @endforeach
                 </tbody>
             </table>
+            <!-- Navigasi Pagination -->
+            <div class="mt-4">
+                {{ $pelanggan->links() }}
+            </div>
         </div>
 
         {{-- Modal Preview Detail Data --}}
@@ -132,7 +136,7 @@
 
         {{-- Baris per halaman --}}
         <div class="flex justify-end mt-4 text-sm text-gray-600">
-            Baris per halaman 7
+            Baris per halaman 10
         </div>
     </div>
 @endsection

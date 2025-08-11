@@ -14,8 +14,7 @@ class PelangganController extends Controller
 {
     public function index()
     {
-        $pelanggan = Pelanggan::all();
-
+        $pelanggan = Pelanggan::orderBy('id', 'asc')->paginate(10); // 10 data per halaman
         return view('pelanggan.index', compact('pelanggan'));
     }
 

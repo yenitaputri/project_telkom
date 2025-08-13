@@ -43,6 +43,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/data-pelanggan/{id}', [PelangganController::class, 'show'])->name('pelanggan.show');
     Route::get('/data-pelanggan/{id}/edit', [PelangganController::class, 'edit'])->name('pelanggan.edit');
     Route::put('/data-pelanggan/{id}', [PelangganController::class, 'update'])->name('pelanggan.update');
+    Route::delete('/pelanggan/{pelanggan}', [PelangganController::class, 'destroy'])->name('pelanggan.destroy');
 
     // Data Prodigi
     Route::get('/prodigi', [ProdigiController::class, 'index'])->name('prodigi.index');
@@ -58,4 +59,4 @@ Route::middleware('auth')->group(function () {
 Route::get('/search', [App\Http\Controllers\SearchController::class, 'index'])->name('search');
 
 // Route bawaan dari Breeze/Jetstream/etc
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

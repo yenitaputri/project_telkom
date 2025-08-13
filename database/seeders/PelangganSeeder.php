@@ -14,6 +14,6 @@ class PelangganSeeder extends Seeder
     public function run(): void
     {
         // Buat 20 pelanggan
-        Pelanggan::factory()->count(20)->create();
+        // Pelanggan::factory()->count(20)->create();
     }
 }

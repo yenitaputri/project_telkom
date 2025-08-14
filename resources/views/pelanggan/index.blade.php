@@ -4,26 +4,54 @@
 
 @section('content')
     <div x-data="{
-                            openTambahModal: {{ $errors->any() ? 'true' : 'false' }},
-                            openPreviewModal: false,
-                            previewData() {
-                                // Lakukan validasi atau tampilkan modal preview
-                                this.openPreviewModal = true;
-                            }
-                            }" class="bg-white rounded-lg shadow-md p-6 min-h-[calc(100vh-160px)] flex flex-col">
+                                                                                                                        openTambahModal: {{ $errors->any() ? 'true' : 'false' }},
+                                                                                                                        openPreviewModal: false,
+                                                                                                                        previewData() {
+                                                                                                                            // Lakukan validasi atau tampilkan modal preview
+                                                                                                                            this.openPreviewModal = true;
+                                                                                                                        }
+                                                                                                                        }"
+        class="bg-white rounded-lg shadow-md p-6 min-h-[calc(100vh-160px)] flex flex-col">
         {{-- Tombol Tambah Data dan filter tanggal --}}
         <div class="flex justify-end mb-4 space-x-4 items-center">
-            <div class="flex items-center space-x-2 text-gray-500 text-sm">
-                <input type="text" value="01 Jun, 2025 to 31 Jul, 2025"
-                    class="bg-gray-100 rounded-md py-1 px-3 text-center cursor-pointer" />
-                <button class="bg-gray-200 hover:bg-gray-300 rounded-md p-1">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-600" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2v-5H3v5a2 2 0 002 2z" />
-                    </svg>
-                </button>
-            </div>
+            <form id="date-form" method="GET" action="{{ route('pelanggan.index') }}">
+                <div class="flex items-center space-x-2 text-gray-500 text-sm">
+                    <div id="date-range-picker" date-rangepicker class="flex items-center">
+                        <div class="relative">
+                            <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                                <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
+                                    xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                                    <path
+                                        d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
+                                </svg>
+                            </div>
+                            <input id="datepicker-range-start" name="start" type="text"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                placeholder="Mulai tanggal">
+                        </div>
+                        <span class="mx-4 text-gray-500">to</span>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                                <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
+                                    xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                                    <path
+                                        d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
+                                </svg>
+                            </div>
+                            <input id="datepicker-range-end" name="end" type="text"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                placeholder="Sampai tanggal">
+                        </div>
+                    </div>
+                    <button class="bg-gray-200 hover:bg-gray-300 rounded-md p-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor" class="size-6">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5m-9-6h.008v.008H12v-.008ZM12 15h.008v.008H12V15Zm0 2.25h.008v.008H12v-.008ZM9.75 15h.008v.008H9.75V15Zm0 2.25h.008v.008H9.75v-.008ZM7.5 15h.008v.008H7.5V15Zm0 2.25h.008v.008H7.5v-.008Zm6.75-4.5h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V15Zm0 2.25h.008v.008h-.008v-.008Zm2.25-4.5h.008v.008H16.5v-.008Zm0 2.25h.008v.008H16.5V15Z" />
+                        </svg>
+                    </button>
+                </div>
+            </form>
 
             <!-- Tombol Tambah Data -->
             <button @click="openTambahModal = true"
@@ -87,7 +115,7 @@
                     </tr>
                 </thead>
                 <tbody class="text-gray-600 text-sm font-light">
-                    @foreach ($pelanggan as $item)
+                    @forelse ($pelanggan as $item)
                         <tr class="border-b border-gray-200 hover:bg-gray-50">
                             <td class="py-3 px-6 text-left whitespace-nowrap">{{ $item['id'] }}.</td>
                             <td class="py-3 px-6 text-left">{{ $item['no_internet'] }}</td>
@@ -98,17 +126,23 @@
                             <td class="py-3 px-6 text-left font-semibold">{{ $item['nama'] }}</td>
                             <td class="py-3 px-6 text-center">
                                 <div class="flex item-center justify-center space-x-2">
-                                    <a href="{{ route('pelanggan.show', ['id' => $item['id']]) }}"
+                                    <a href="{{ route('pelanggan.show', ['id' => $item['id'], 'page' => request('page', 1)]) }}"
                                         class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-1 px-3 rounded text-xs transition-colors duration-200 inline-block text-center">Lihat</a>
                                 </div>
                             </td>
                         </tr>
-                    @endforeach
+                    @empty
+                        <tr>
+                            <td colspan="8" class="py-3 px-6 text-center text-gray-500">
+                                Tidak ada data
+                            </td>
+                        </tr>
+                    @endforelse
                 </tbody>
             </table>
             <!-- Navigasi Pagination -->
             <div class="mt-4">
-                {{ $pelanggan->links() }}
+                {{ $pelanggan->appends(['start' => request('start'), 'end' => request('end')])->links() }}
             </div>
         </div>
 
@@ -139,4 +173,21 @@
             Baris per halaman 10
         </div>
     </div>
+    <script>
+        document.getElementById('date-form').addEventListener('submit', function (e) {
+            const startEl = document.getElementById('datepicker-range-start');
+            const endEl = document.getElementById('datepicker-range-end');
+
+            function formatToYMD(dateStr) {
+                const d = new Date(dateStr);
+                if (isNaN(d)) return ''; // kalau tidak valid
+                let month = (d.getMonth() + 1).toString().padStart(2, '0');
+                let day = d.getDate().toString().padStart(2, '0');
+                return `${d.getFullYear()}-${month}-${day}`;
+            }
+
+            startEl.value = formatToYMD(startEl.value);
+            endEl.value = formatToYMD(endEl.value);
+        });
+    </script>
 @endsection

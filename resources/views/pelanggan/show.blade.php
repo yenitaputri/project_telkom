@@ -106,7 +106,7 @@
         </table>
         <div class="flex justify-end space-x-4 mt-6">
 
-            <a href="{{ route('pelanggan.edit', ['id' => $pelanggan['id']]) }}"
+            <a href="{{ route('pelanggan.edit', ['id' => $pelanggan['id'], 'page' => request('page', 1)]) }}"
                 class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded transition-colors duration-200 inline-block text-center">Edit</a>
             <button
                 class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded transition-colors duration-200"

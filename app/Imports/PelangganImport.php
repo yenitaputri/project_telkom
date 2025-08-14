@@ -17,12 +17,13 @@ class PelangganImport implements ToModel, WithHeadingRow
     public function model(array $row)
     {
         $tanggal = $this->convertDate($row['order_date']);
+        $kecepatan = $this->extractMbps($row['package_name']);
 
         return new Pelanggan([
             'no_internet' => $row['order_id'],
             'no_digital' => null,
             'tanggal_ps' => $tanggal->format('Y-m-d'),
-            'kecepatan' => null,
+            'kecepatan' => $kecepatan,
             'bulan' => intval($tanggal->format('m')), // Ambil bulan dari tanggal_ps
             'tahun' => intval($tanggal->format('Y')), // Ambil bulan dari tanggal_ps
             'datel' => $row['datel'],
@@ -50,5 +51,20 @@ class PelangganImport implements ToModel, WithHeadingRow
             return Date::excelToDateTimeObject($value);
         }
         return \Carbon\Carbon::parse($value);
+    }
+
+    private function extractMbps($packageName): ?int
+    {
+        // Regex untuk menangkap angka sebelum "Mbps"
+        if (preg_match('/(\d+)\s*Mbps/i', $packageName, $matches)) {
+            return (int) $matches[1];
+        }
+
+        // Opsional: bisa juga deteksi HSIExxM
+        if (preg_match('/HSIE(\d+)M/i', $packageName, $matches)) {
+            return (int) $matches[1];
+        }
+
+        return null; // jika tidak ada kecepatan ditemukan
     }
 }

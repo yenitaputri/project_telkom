@@ -3,10 +3,6 @@
 @section('title', 'Data Sales')
 
 @section('content')
-@php
-    // Logic to check for validation errors
-    $hasErrors = $errors->any();
-@endphp
 
 <div class="bg-white rounded-lg shadow p-4 min-h-[calc(100vh-160px)] flex flex-col">
 
@@ -21,54 +17,38 @@
         </button>
     </div>
 
-    {{-- Alert Sukses --}}
-    @if (session('success'))
-    <div
-        id="success-alert"
-        class="flex items-center p-4 mb-4 text-sm text-green-800 bg-green-100 border border-green-300 rounded-lg transition-opacity duration-300"
-        role="alert"
-    >
-        <svg class="w-5 h-5 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-        </svg>
-        <span>{{ session('success') }}</span>
-    </div>
-    @endif
-
     {{-- Tabel Sales --}}
     @if ($sales->count())
     <div class="overflow-x-auto">
         <table class="min-w-full table-auto bg-white border border-gray-200 rounded text-sm">
             <thead class="bg-blue-100 text-gray-700">
                 <tr>
-                    <th class="border px-4 py-2 font-bold text-left align-middle">No</th>
-                    <th class="border px-4 py-2 font-bold text-left align-middle">Gambar</th>
-                    <th class="border px-4 py-2 font-bold text-left align-middle">Kode Sales</th>
-                    <th class="border px-4 py-2 font-bold text-left align-middle">Nama Sales</th>
-                    <th class="border px-4 py-2 font-bold text-left align-middle">Agency</th>
-                    <th class="border px-4 py-2 font-bold text-center align-middle">Aksi</th>
+                    <th class="border px-2 py-2 font-bold text-left align-middle">No</th>
+                    <th class="border px-2 py-2 font-bold text-left align-middle">Gambar</th>
+                    <th class="border px-2 py-2 font-bold text-left align-middle">Kode Sales</th>
+                    <th class="border px-2 py-2 font-bold text-left align-middle">Nama Sales</th>
+                    <th class="border px-2 py-2 font-bold text-left align-middle">Agency</th>
+                    <th class="border px-2 py-2 font-bold text-center align-middle">Aksi</th>
                 </tr>
             </thead>
-            <tbody class="text-gray-600 text-sm">
+            <tbody class="text-gray-600">
                 @foreach ($sales as $index => $sale)
                 <tr class="border-t hover:bg-gray-100 transition">
-                    <td class="px-4 py-2 text-left align-middle">{{ $loop->iteration }}</td>
-                    <td class="px-4 py-2 text-left align-middle">
+                    <td class="px-2 py-2 text-left align-middle">{{ $loop->iteration }}</td>
+                    <td class="px-2 py-2 text-left align-middle">
                         <div class="w-10 h-10 flex items-center">
                             <img src="{{ asset('storage/' . $sale->gambar_sales) }}" alt="gambar"
                                 class="w-8 h-8 rounded-full object-cover border mx-auto">
                         </div>
                     </td>
-                    <td class="px-4 py-2 text-left align-middle">{{ $sale->kode_sales }}</td>
-                    <td class="px-4 py-2 text-left align-middle">{{ $sale->nama_sales }}</td>
-                    <td class="px-4 py-2 text-left align-middle">{{ $sale->agency }}</td>
-                    <td class="px-4 py-2 text-center align-middle space-x-1">
+                    <td class="px-2 py-2 text-left align-middle">{{ $sale->kode_sales }}</td>
+                    <td class="px-2 py-2 text-left align-middle">{{ $sale->nama_sales }}</td>
+                    <td class="px-2 py-2 text-left align-middle">{{ $sale->agency }}</td>
+                    <td class="px-2 py-2 text-center align-middle space-x-1">
                         <button type="button"
                             class="openEditModalBtn bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded text-xs transition-colors"
-                            data-id="{{ $sale->id }}"
-                            data-gambar="{{ $sale->gambar_sales }}"
-                            data-kode="{{ $sale->kode_sales }}"
-                            data-nama="{{ $sale->nama_sales }}"
+                            data-id="{{ $sale->id }}" data-gambar="{{ $sale->gambar_sales }}"
+                            data-kode="{{ $sale->kode_sales }}" data-nama="{{ $sale->nama_sales }}"
                             data-agency="{{ $sale->agency }}">
                             Edit
                         </button>
@@ -114,8 +94,8 @@
 
     {{-- Modal Tambah Sales --}}
     <div id="addModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 p-4" style="display: none;">
-        <div class="bg-white rounded-lg shadow-xl p-8 w-full max-w-md transition-all">
-            <h2 class="text-2xl font-bold mb-6 text-center">Tambah</h2>
+        <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-md transition-all">
+            <h2 class="text-xl font-bold mb-4 text-center">Tambah Sales</h2>
 
             <form action="{{ route('sales.store') }}" method="POST" enctype="multipart/form-data" class="space-y-4">
                 @csrf
@@ -132,10 +112,10 @@
                         <div class="flex items-center w-full">
                             <input type="file" id="gambar_sales" name="gambar_sales" class="hidden" accept="image/*" onchange="previewGambar(event)">
                             <label for="gambar_sales"
-                                class="cursor-pointer bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-l-md text-sm font-medium border border-gray-300">
+                                class="cursor-pointer bg-gray-200 hover:bg-gray-300 px-3 py-1.5 rounded-l-md text-sm font-medium border border-gray-300">
                                 Pilih File
                             </label>
-                            <span id="file-name" class="flex-1 px-3 py-2 border border-gray-300 rounded-r-md text-sm text-gray-500 bg-white truncate">
+                            <span id="file-name" class="flex-1 px-3 py-1.5 border border-gray-300 rounded-r-md text-sm text-gray-500 bg-white truncate">
                                 Belum ada file
                             </span>
                         </div>
@@ -188,16 +168,16 @@
 
     {{-- Modal Edit Sales --}}
     <div id="editModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 p-4" style="display: none;">
-        <div class="bg-white rounded-lg shadow-xl p-8 w-full max-w-md transition-all">
-            <div class="flex justify-between items-center mb-6">
+        <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-md transition-all">
+            <div class="flex justify-between items-center mb-4">
                 <button type="button" class="closeModalBtn flex items-center text-gray-500 hover:text-gray-700 transition-colors">
                     <svg class="h-4 w-4 mr-1 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
                     </svg>
                     <span class="text-sm">Kembali</span>
                 </button>
-                <h2 class="text-2xl font-bold">Edit</h2>
-                <div class="w-10"></div> {{-- Placeholder untuk menjaga layout tetap simetris --}}
+                <h2 class="text-xl font-bold">Edit Sales</h2>
+                <div class="w-8"></div> {{-- Placeholder untuk menjaga layout tetap simetris --}}
             </div>
 
             <form id="editForm" method="POST" enctype="multipart/form-data" class="space-y-4">
@@ -216,10 +196,10 @@
                         <div class="flex items-center w-full">
                             <input type="file" id="gambar_edit_sales" name="gambar_sales" class="hidden" accept="image/*" onchange="previewEditGambar(event)">
                             <label for="gambar_edit_sales"
-                                class="cursor-pointer bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-l-md text-sm font-medium border border-gray-300">
+                                class="cursor-pointer bg-gray-200 hover:bg-gray-300 px-3 py-1.5 rounded-l-md text-sm font-medium border border-gray-300">
                                 Pilih File
                             </label>
-                            <span id="file-edit-name" class="flex-1 px-3 py-2 border border-gray-300 rounded-r-md text-sm text-gray-500 bg-white truncate">
+                            <span id="file-edit-name" class="flex-1 px-3 py-1.5 border border-gray-300 rounded-r-md text-sm text-gray-500 bg-white truncate">
                                 Belum ada file
                             </span>
                         </div>
@@ -280,20 +260,20 @@
             </div>
 
             {{-- Teks --}}
-            <h3 class="text-xl font-bold text-gray-900" id="modal-title">
+            <h3 class="text-lg font-bold text-gray-900" id="modal-title">
                 Apakah Anda yakin ingin menghapus data ini?
             </h3>
         </div>
 
         {{-- Tombol Aksi --}}
         <div class="mt-6 flex justify-center space-x-4">
-            <button id="closeDeleteModalBtn" type="button" class="w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-200 sm:w-auto sm:text-sm">
+            <button id="closeDeleteModalBtn" type="button" class="w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-200 sm:w-auto sm:text-sm">
                 Tidak
             </button>
             <form id="deleteForm" method="POST" class="inline-block">
                 @csrf
                 @method('DELETE')
-                <button type="submit" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:w-auto sm:text-sm">
+                <button type="submit" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:w-auto sm:text-sm">
                     Ya, Hapus
                 </button>
             </form>
@@ -323,8 +303,18 @@
         const closeDeleteModalBtn = document.getElementById('closeDeleteModalBtn');
         const deleteForm = document.getElementById('deleteForm');
 
+        // Fungsi reset form tambah
+        function resetAddForm() {
+            const addForm = addModal.querySelector('form');
+            addForm.reset();
+            document.getElementById('preview-image').classList.add('hidden');
+            document.getElementById('placeholder-icon').classList.remove('hidden');
+            document.getElementById('file-name').textContent = 'Belum ada file';
+        }
+
         // Logic untuk Modal Tambah
         openAddModalBtn.addEventListener('click', () => {
+            resetAddForm(); // Pastikan kosong setiap dibuka
             addModal.style.display = 'flex';
         });
 
@@ -333,6 +323,7 @@
             btn.addEventListener('click', () => {
                 addModal.style.display = 'none';
                 editModal.style.display = 'none';
+                resetAddForm(); // kosongkan kalau modal tambah ditutup
             });
         });
 
@@ -432,21 +423,25 @@
             }
         }
 
-        // Panggil fungsi preview gambar di luar event listener
-        // karena fungsinya sudah didefinisikan secara global
         window.previewGambar = previewGambar;
         window.previewEditGambar = previewEditGambar;
 
         // Auto open modal on validation error
-        @if ($hasErrors && !session('is_edit'))
-            addModal.style.display = 'flex';
-        @endif
-        @if ($hasErrors && session('is_edit'))
-            editModal.style.display = 'flex';
-            // Populate the edit modal with old data if validation fails
-            document.getElementById('edit-kode_sales').value = '{{ old('kode_sales') }}';
-            document.getElementById('edit-nama_sales').value = '{{ old('nama_sales') }}';
-            document.getElementById('edit-agency').value = '{{ old('agency') }}';
+        @if ($errors->any())
+            const hasErrors = {!! json_encode($errors->messages()) !!};
+            const oldInput = {!! json_encode(old()) !!};
+            if (oldInput.hasOwnProperty('id') && oldInput.id) {
+                // Open edit modal
+                editModal.style.display = 'flex';
+                editForm.action = `{{ url('sales') }}/${oldInput.id}`;
+                editKodeSales.value = oldInput.kode_sales;
+                editNamaSales.value = oldInput.nama_sales;
+                editAgency.value = oldInput.agency;
+                // Note: Image preview for old data in edit mode is more complex and usually handled via a separate mechanism or a hidden input.
+            } else {
+                // Open add modal
+                addModal.style.display = 'flex';
+            }
         @endif
         
         // Hide success alert after 3 seconds
@@ -459,4 +454,5 @@
         }
     });
 </script>
+
 @endsection

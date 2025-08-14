@@ -42,10 +42,12 @@
             class="fixed inset-y-0 left-0 w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out z-20 flex flex-col lg:relative lg:translate-x-0"
             :class="{ '-translate-x-full': !sidebarOpen, 'translate-x-0': sidebarOpen }">
 
-            {{-- Bagian atas sidebar: Logo --}}
-            <div class="pt-2 pb-6 flex items-center justify-start border-b border-gray-200">
-                <img src="{{ asset('images/logo_sales.png') }}" alt="Logo Sales" class="h-16">
-            </div>
+               {{-- Bagian atas sidebar: Logo --}}
+<div class="pt-2 pb-6 flex items-center justify-start border-b border-gray-200 h-23 overflow-hidden">
+<img src="{{ asset('images/logosales2.png') }}" alt="Logo Sales" class="h-20 w-auto object-contain">
+</div>
+
+
 
             {{-- Bagian tengah sidebar: Navigasi --}}
             <nav class="mt-8 flex-1 overflow-y-auto">

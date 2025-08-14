@@ -31,7 +31,8 @@ Route::middleware('auth')->group(function () {
     })->name('dashboard');
 
     // Data Sales
-    Route::get('/data-sales', [SalesController::class, 'index'])->name('sales.index');
+    // Route::get('/data-sales', [SalesController::class, 'index'])->name('sales.index');
+    Route::resource('sales', SalesController::class);
 
     // Data Pelanggan
     Route::get('/data-pelanggan', [PelangganController::class, 'index'])->name('pelanggan.index');
@@ -54,6 +55,8 @@ Route::middleware('auth')->group(function () {
     // Logout
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 });
+
+Route::get('/search', [App\Http\Controllers\SearchController::class, 'index'])->name('search');
 
 // Route bawaan dari Breeze/Jetstream/etc
 require __DIR__ . '/auth.php';

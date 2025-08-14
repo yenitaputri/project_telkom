@@ -27,12 +27,12 @@
 
         <div class="relative z-10 text-center w-full max-w-7xl mx-auto px-4">
             <h1 class="text-white text-4xl md:text-5xl mb-8 drop-shadow-lg" style="font-family: 'Poppins', sans-serif;">
-                Selamat Datang Admin <span class="text-white-300 font-bold">Indibiz</span>
+                Selamat Datang Admin <span class="text-white-300 font-bold">Smart Sales</span>
             </h1>
 
             <div class="bg-white rounded-xl shadow-xl p-8 sm:p-10 max-w-xl mx-auto">
                 <div class="flex justify-center mb-8">
-                    <img src="{{ asset('images/logo.png') }}" alt="Indibiz Logo" class="w-36 h-auto">
+                    <img src="{{ asset('images/logosales2.png') }}" alt="Indibiz Logo" class="w-36 h-auto">
                 </div>
 
                 @if (session('status'))

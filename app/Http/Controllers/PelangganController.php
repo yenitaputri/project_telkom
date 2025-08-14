@@ -6,17 +6,29 @@ use App\Http\Requests\Pelanggan\ImportPelangganRequest;
 use App\Http\Requests\Pelanggan\UpdatePelangganRequest;
 use App\Imports\PelangganImport;
 use App\Models\Pelanggan;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use function PHPUnit\Framework\returnArgument;
 
 class PelangganController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $pelanggan = Pelanggan::orderBy('id', 'asc')->paginate(10); // 10 data per halaman
+        $query = Pelanggan::orderBy('id', 'asc');
+
+        if ($request->filled('start') && $request->filled('end')) {
+            $startDate = Carbon::parse($request->start)->format('Y-m-d');
+            $endDate = Carbon::parse($request->end)->format('Y-m-d');
+
+            $query->whereBetween('tanggal_ps', [$startDate, $endDate]);
+        }
+
+        $pelanggan = $query->paginate(10);
+
         return view('pelanggan.index', compact('pelanggan'));
     }
+
 
     public function create()
     {
@@ -37,19 +49,23 @@ class PelangganController extends Controller
         return redirect()->route('pelanggan.index')->with('success', 'Data pelanggan berhasil ditambahkan');
     }
 
-    public function show($id)
+    public function show($id, Request $request)
     {
+        $page = $request->input('page', 1);
+
         // Data statis untuk preview detail pelanggan
         $data = Pelanggan::findOrFail($id);
 
-        return view('pelanggan.show', ['pelanggan' => $data]);
+        return view('pelanggan.show', ['pelanggan' => $data, 'page' => $page]);
     }
 
-    public function edit($id)
+    public function edit($id, Request $request)
     {
+        $page = $request->input('page', 1);
+
         // Data statis untuk halaman edit
         $data = Pelanggan::findOrFail($id);
-        return view('pelanggan.edit', ['pelanggan' => $data]);
+        return view('pelanggan.edit', ['pelanggan' => $data, 'page' => $page]);
     }
 
     public function update(UpdatePelangganRequest $request, $id)
@@ -58,7 +74,7 @@ class PelangganController extends Controller
         $pelanggan->update($request->validated());
 
         return redirect()
-            ->route('pelanggan.index')
+            ->route('pelanggan.index', ['page' => $request->input('page')])
             ->with('success', 'Data pelanggan berhasil diperbarui.');
     }
 

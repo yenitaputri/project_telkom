@@ -14,7 +14,7 @@ use App\Contracts\Interfaces\SearchInterface;
 // Repositories
 use App\Contracts\Repositories\UserRepository;
 use App\Contracts\Repositories\SalesRepository;
-use App\Repositories\SearchRepository;
+use App\Contracts\Repositories\SearchRepository;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -26,7 +26,7 @@ class AppServiceProvider extends ServiceProvider
         // Binding Repositories
         $this->app->bind(UserInterface::class, UserRepository::class);
         $this->app->bind(SalesInterface::class, SalesRepository::class);
-        $this->app->bind(SearchInterface::class, SearchRepository::class); // tambahkan ini
+        $this->app->bind(SearchInterface::class, SearchRepository::class);
     }
 
     /**

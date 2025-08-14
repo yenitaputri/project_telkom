@@ -24,6 +24,6 @@ class SearchController extends Controller
 
         $results = $this->searchRepository->search($keyword);
 
-        return view('search.results', compact('results', 'keyword'));
+        return view('search.result', compact('results', 'keyword'));
     }
 }

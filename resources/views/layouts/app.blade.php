@@ -42,10 +42,10 @@
             class="fixed inset-y-0 left-0 w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out z-20 flex flex-col lg:relative lg:translate-x-0"
             :class="{ '-translate-x-full': !sidebarOpen, 'translate-x-0': sidebarOpen }">
 
-               {{-- Bagian atas sidebar: Logo --}}
-<div class="pt-2 pb-6 flex items-center justify-start border-b border-gray-200 h-23 overflow-hidden">
-<img src="{{ asset('images/logosales2.png') }}" alt="Logo Sales" class="h-20 w-auto object-contain">
-</div>
+            {{-- Bagian atas sidebar: Logo --}}
+            <div class="pt-2 pb-6 flex items-center justify-start border-b border-gray-200 h-23 overflow-hidden">
+                <img src="{{ asset('images/logosales2.png') }}" alt="Logo Sales" class="h-20 w-auto object-contain">
+            </div>
 
 
 
@@ -145,16 +145,20 @@
                 </div>
                 <div class="relative">
                     @if (!request()->routeIs('pelanggan.show'))
-                        <input type="text" placeholder="Cari di sini..."
-                            class="py-2 px-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent pr-10">
-                        <button
-                            class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors duration-200">
-                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                            </svg>
-                        </button>
+                        <form action="{{ route('search') }}" method="get">
+                            <div class="relative w-full max-w-xs">
+                                <input type="text" name="q" placeholder="Cari di sini..."
+                                    class="w-full py-2 px-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent pr-10">
+                                <button type="submit"
+                                    class="absolute top-0 bottom-0 right-4 text-gray-500 hover:text-gray-700 transition-colors duration-200">
+                                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z">
+                                        </path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </form>
                     @else
                         <div class="flex items-center space-x-2 h-full text-sm">
                             <span class="text-black font-semibold">Data Pelanggan</span>

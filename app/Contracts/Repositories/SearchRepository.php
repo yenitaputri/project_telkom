@@ -1,11 +1,13 @@
 <?php
 
-namespace App\Repositories;
+namespace App\Contracts\Repositories;
 
 use App\Contracts\Interfaces\SearchInterface;
+use App\Models\Pelanggan;
 use App\Models\Sales;
 use App\Models\Product;
 use App\Models\Customer;
+use Illuminate\Support\Facades\Schema;
 
 class SearchRepository implements SearchInterface
 {
@@ -13,28 +15,30 @@ class SearchRepository implements SearchInterface
     {
         $results = [];
 
-        // Contoh pencarian di tabel sales
-        $sales = Sales::where('name', 'like', "%{$keyword}%")
-            ->orWhere('email', 'like', "%{$keyword}%")
-            ->get();
-        if ($sales->isNotEmpty()) {
-            $results['sales'] = $sales;
-        }
+        // Daftar model yang mau dicari
+        $models = [
+            'pelanggan' => Pelanggan::class,
+        ];
 
-        // Contoh pencarian di tabel produk
-        $products = Product::where('name', 'like', "%{$keyword}%")
-            ->orWhere('description', 'like', "%{$keyword}%")
-            ->get();
-        if ($products->isNotEmpty()) {
-            $results['products'] = $products;
-        }
+        foreach ($models as $key => $modelClass) {
+            $model = new $modelClass;
+            $columns = Schema::getColumnListing($model->getTable());
 
-        // Contoh pencarian di tabel customer
-        $customers = Customer::where('name', 'like', "%{$keyword}%")
-            ->orWhere('email', 'like', "%{$keyword}%")
-            ->get();
-        if ($customers->isNotEmpty()) {
-            $results['customers'] = $customers;
+            // Query pencarian di semua kolom
+            $query = $modelClass::query()->where(function ($q) use ($columns, $keyword) {
+                foreach ($columns as $column) {
+                    $q->orWhere($column, 'like', "%{$keyword}%");
+                }
+            });
+
+            $data = $query->get();
+
+            if ($data->isNotEmpty()) {
+                // Konversi semua row menjadi array
+                $results[$key] = $data->map(function ($item) use ($columns) {
+                    return collect($item->only($columns))->toArray();
+                })->toArray(); // <- tambahkan ini supaya jadi array biasa
+            }
         }
 
         return $results;

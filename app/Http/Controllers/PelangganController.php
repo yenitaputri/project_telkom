@@ -10,12 +10,27 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use function PHPUnit\Framework\returnArgument;
+use Illuminate\Support\Facades\Schema;
 
 class PelangganController extends Controller
 {
     public function index(Request $request)
     {
         $query = Pelanggan::orderBy('id', 'asc');
+
+        // Filter pencarian untuk semua kolom
+        if ($request->filled('q')) {
+            $keyword = $request->q;
+
+            // Ambil semua kolom dari tabel pelanggan
+            $columns = Schema::getColumnListing('pelanggan');
+
+            $query->where(function ($q) use ($columns, $keyword) {
+                foreach ($columns as $column) {
+                    $q->orWhere($column, 'like', "%{$keyword}%");
+                }
+            });
+        }
 
         if ($request->filled('start') && $request->filled('end')) {
             $startDate = Carbon::parse($request->start)->format('Y-m-d');

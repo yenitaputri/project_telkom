@@ -31,7 +31,8 @@ Route::middleware('auth')->group(function () {
     })->name('dashboard');
 
     // Data Sales
-    Route::get('/data-sales', [SalesController::class, 'index'])->name('sales.index');
+    // Route::get('/data-sales', [SalesController::class, 'index'])->name('sales.index');
+    Route::resource('sales', SalesController::class);
 
     // Data Pelanggan
     Route::get('/data-pelanggan', [PelangganController::class, 'index'])->name('pelanggan.index');
@@ -42,6 +43,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/data-pelanggan/{id}', [PelangganController::class, 'show'])->name('pelanggan.show');
     Route::get('/data-pelanggan/{id}/edit', [PelangganController::class, 'edit'])->name('pelanggan.edit');
     Route::put('/data-pelanggan/{id}', [PelangganController::class, 'update'])->name('pelanggan.update');
+    Route::delete('/pelanggan/{pelanggan}', [PelangganController::class, 'destroy'])->name('pelanggan.destroy');
 
     // Data Prodigi
     Route::get('/prodigi', [ProdigiController::class, 'index'])->name('prodigi.index');
@@ -54,5 +56,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 });
 
+Route::get('/search', [App\Http\Controllers\SearchController::class, 'index'])->name('search');
+
 // Route bawaan dari Breeze/Jetstream/etc
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

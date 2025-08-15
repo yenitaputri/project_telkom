@@ -4,13 +4,13 @@
 
 @section('content')
     <div class="bg-white rounded-lg shadow-md p-6 min-h-[calc(100vh-160px)] max-w-4xl mx-auto relative">
-        <button onclick="window.history.back()"
+        <a href="{{ route('pelanggan.index') }}"
             class="absolute top-4 right-4 text-gray-600 hover:text-gray-900 focus:outline-none" aria-label="Close">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"
                 stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
             </svg>
-        </button>
+        </a>
         <h2 class="text-2xl font-bold mb-6 text-center">Detail Data</h2>
         <table class="w-full text-sm text-left text-gray-700 border border-gray-200 rounded-lg">
             <tbody>
@@ -105,10 +105,19 @@
             </tbody>
         </table>
         <div class="flex justify-end space-x-4 mt-6">
-            <a href="{{ route('pelanggan.edit', ['id' => $pelanggan['id']]) }}"
+
+            <a href="{{ route('pelanggan.edit', ['id' => $pelanggan['id'], 'page' => request('page', 1)]) }}"
                 class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded transition-colors duration-200 inline-block text-center">Edit</a>
             <button
-                class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded transition-colors duration-200">Hapus</button>
+                class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded transition-colors duration-200"
+                onclick="confirmDelete({{ $pelanggan->id }})">Hapus</button>
         </div>
+
+        <!-- Form hapus tersembunyi -->
+        <form id="delete-form-{{ $pelanggan->id }}" action="{{ route('pelanggan.destroy', $pelanggan->id) }}" method="POST"
+            class="hidden">
+            @csrf
+            @method('DELETE')
+        </form>
     </div>
 @endsection

@@ -37,26 +37,32 @@ class SalesController extends Controller
     }
 
     public function update(UpdateSalesRequest $request, $id)
-    {
-        $sales = Sales::findOrFail($id);
+{
+    $sales = Sales::findOrFail($id);
 
-        if ($request->hasFile('gambar_sales')) {
-            // Hapus gambar lama jika ada
-            if ($sales->gambar_sales && Storage::exists('public/' . $sales->gambar_sales)) {
-                Storage::delete('public/' . $sales->gambar_sales);
-            }
+    // Ambil semua data yang sudah tervalidasi
+    $validated = $request->validated();
 
-            // Simpan gambar baru
-            $validated['gambar_sales'] = $request->file('gambar_sales')->store('sales', 'public');
-        } else {
-            // Jika tidak ada gambar baru, gunakan gambar lama
-            $validated['gambar_sales'] = $sales->gambar_sales;
+    // Proses gambar
+    if ($request->hasFile('gambar_sales')) {
+        // Hapus gambar lama jika ada
+        if ($sales->gambar_sales && Storage::exists('public/' . $sales->gambar_sales)) {
+            Storage::delete('public/' . $sales->gambar_sales);
         }
 
-        $sales->update($validated);
-
-        return redirect()->route('sales.index')->with('success', 'Data sales berhasil diperbarui.');
+        // Simpan gambar baru
+        $validated['gambar_sales'] = $request->file('gambar_sales')->store('sales', 'public');
+    } else {
+        // Jika tidak ada gambar baru, tetap gunakan gambar lama
+        $validated['gambar_sales'] = $sales->gambar_sales;
     }
+
+    // Update semua kolom
+    $sales->update($validated);
+
+    return redirect()->route('sales.index')->with('success', 'Data sales berhasil diperbarui.');
+}
+
 
     public function destroy(Sales $sale)
     {

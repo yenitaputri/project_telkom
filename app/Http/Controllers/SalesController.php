@@ -8,6 +8,7 @@ use App\Models\Sales;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\StoreSalesRequest;
 use App\Http\Requests\UpdateSalesRequest;
+use Illuminate\Support\Facades\Schema;
 
 class SalesController extends Controller
 {
@@ -16,10 +17,27 @@ class SalesController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $perPage = request()->get('per_page', 10); // default 10 baris
-        $sales = Sales::latest()->paginate($perPage);
+        $query = Sales::query()->latest();
+
+        // Filter pencarian untuk semua kolom
+        if ($request->filled('q')) {
+            $keyword = $request->q;
+
+            // Ambil semua kolom dari tabel sales
+            $columns = Schema::getColumnListing('sales');
+
+            $query->where(function ($q) use ($columns, $keyword) {
+                foreach ($columns as $column) {
+                    $q->orWhere($column, 'like', "%{$keyword}%");
+                }
+            });
+        }
+
+        $perPage = $request->get('per_page', 10); // default 10 baris
+        $sales = $query->paginate($perPage)->appends($request->query());
+
         return view('sales.index', compact('sales'));
     }
 
@@ -37,31 +55,31 @@ class SalesController extends Controller
     }
 
     public function update(UpdateSalesRequest $request, $id)
-{
-    $sales = Sales::findOrFail($id);
+    {
+        $sales = Sales::findOrFail($id);
 
-    // Ambil semua data yang sudah tervalidasi
-    $validated = $request->validated();
+        // Ambil semua data yang sudah tervalidasi
+        $validated = $request->validated();
 
-    // Proses gambar
-    if ($request->hasFile('gambar_sales')) {
-        // Hapus gambar lama jika ada
-        if ($sales->gambar_sales && Storage::exists('public/' . $sales->gambar_sales)) {
-            Storage::delete('public/' . $sales->gambar_sales);
+        // Proses gambar
+        if ($request->hasFile('gambar_sales')) {
+            // Hapus gambar lama jika ada
+            if ($sales->gambar_sales && Storage::exists('public/' . $sales->gambar_sales)) {
+                Storage::delete('public/' . $sales->gambar_sales);
+            }
+
+            // Simpan gambar baru
+            $validated['gambar_sales'] = $request->file('gambar_sales')->store('sales', 'public');
+        } else {
+            // Jika tidak ada gambar baru, tetap gunakan gambar lama
+            $validated['gambar_sales'] = $sales->gambar_sales;
         }
 
-        // Simpan gambar baru
-        $validated['gambar_sales'] = $request->file('gambar_sales')->store('sales', 'public');
-    } else {
-        // Jika tidak ada gambar baru, tetap gunakan gambar lama
-        $validated['gambar_sales'] = $sales->gambar_sales;
+        // Update semua kolom
+        $sales->update($validated);
+
+        return redirect()->route('sales.index')->with('success', 'Data sales berhasil diperbarui.');
     }
-
-    // Update semua kolom
-    $sales->update($validated);
-
-    return redirect()->route('sales.index')->with('success', 'Data sales berhasil diperbarui.');
-}
 
 
     public function destroy(Sales $sale)

@@ -17,6 +17,7 @@ class SearchRepository implements SearchInterface
 
         // Daftar model yang mau dicari
         $models = [
+            'Sales' => Sales::class,
             'pelanggan' => Pelanggan::class,
         ];
 

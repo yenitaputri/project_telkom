@@ -4,16 +4,31 @@
 
 @section('content')
     <div x-data="{
-                                                                                                                        openTambahModal: {{ $errors->any() ? 'true' : 'false' }},
-                                                                                                                        openPreviewModal: false,
-                                                                                                                        previewData() {
-                                                                                                                            // Lakukan validasi atau tampilkan modal preview
-                                                                                                                            this.openPreviewModal = true;
-                                                                                                                        }
-                                                                                                                        }"
-        class="bg-white rounded-lg shadow-md p-6 min-h-[calc(100vh-160px)] flex flex-col">
+                            openTambahModal: {{ $errors->any() ? 'true' : 'false' }},
+                            openPreviewModal: false,
+                            previewData() {
+                                // Lakukan validasi atau tampilkan modal preview
+                                this.openPreviewModal = true;
+                            }
+                            }" class="bg-white rounded-lg shadow-md p-6 min-h-[calc(100vh-160px)] flex flex-col">
         {{-- Tombol Tambah Data dan filter tanggal --}}
         <div class="flex justify-end mb-4 space-x-4 items-center">
+
+            <form action="{{ route('pelanggan.index') }}" method="get" class="mr-auto">
+                <div class="relative w-full max-w-xs">
+                    <input type="text" name="q" placeholder="Cari di sini..."
+                        class="w-full py-2 px-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent pr-10">
+                    <button type="submit"
+                        class="absolute top-0 bottom-0 right-4 text-gray-500 hover:text-gray-700 transition-colors duration-200">
+                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z">
+                            </path>
+                        </svg>
+                    </button>
+                </div>
+            </form>
+
             <form id="date-form" method="GET" action="{{ route('pelanggan.index') }}">
                 <div class="flex items-center space-x-2 text-gray-500 text-sm">
                     <div id="date-range-picker" date-rangepicker class="flex items-center">
@@ -101,6 +116,19 @@
 
         {{-- Tabel data pelanggan --}}
         <div class="overflow-x-auto">
+            @if(request('q') || (request('start') && request('end')))
+                <p class="mb-4 text-sm text-gray-600">
+                    Hasil pencarian untuk:
+                    @if(request('q'))
+                        <span class="font-semibold">"{{ request('q') }}"</span>
+                    @endif
+                    @if(request('start') && request('end'))
+                        dari <span class="font-semibold">{{ request('start') }}</span>
+                        sampai <span class="font-semibold">{{ request('end') }}</span>
+                    @endif
+                    <a href="{{ route('pelanggan.index') }}" class="text-blue-500 hover:underline ml-2">Reset</a>
+                </p>
+            @endif
             <table class="min-w-full bg-white border border-gray-200 rounded-lg">
                 <thead>
                     <tr class="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">

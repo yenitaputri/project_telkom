@@ -39,7 +39,9 @@ class PelangganController extends Controller
             $query->whereBetween('tanggal_ps', [$startDate, $endDate]);
         }
 
-        $pelanggan = $query->paginate(10);
+        $perPage = $request->input('per_page', 10);
+
+        $pelanggan = $query->paginate($perPage);
 
         return view('pelanggan.index', compact('pelanggan'));
     }

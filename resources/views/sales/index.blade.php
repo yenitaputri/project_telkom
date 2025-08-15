@@ -92,7 +92,7 @@
                     <form method="GET" action="{{ route('sales.index') }}" class="flex items-center space-x-2">
                         <label for="per_page" class="text-sm text-gray-700">Baris per halaman:</label>
                         <select name="per_page" id="per_page" onchange="this.form.submit()"
-                            class="border-gray-300 rounded-md text-sm px-2 py-1">
+                            class="border-gray-300 rounded-md text-sm py-1">
                             @foreach([5, 10, 25, 50, 100] as $limit)
                                 <option value="{{ $limit }}" {{ request('per_page', 10) == $limit ? 'selected' : '' }}>
                                     {{ $limit }}
@@ -490,8 +490,8 @@
                 }
             @endif
 
-                                // Hide success alert after 3 seconds
-                                const successAlert = document.getElementById('success-alert');
+                                        // Hide success alert after 3 seconds
+                                        const successAlert = document.getElementById('success-alert');
             if (successAlert) {
                 setTimeout(() => {
                     successAlert.style.opacity = '0';

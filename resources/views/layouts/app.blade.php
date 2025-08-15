@@ -145,7 +145,7 @@
                 </div>
                 <div class="relative">
                     @if (!request()->routeIs('pelanggan.show'))
-                        <form action="{{ route('search') }}" method="get">
+                        <!-- <form action="{{ route('search') }}" method="get">
                             <div class="relative w-full max-w-xs">
                                 <input type="text" name="q" placeholder="Cari di sini..."
                                     class="w-full py-2 px-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent pr-10">
@@ -158,7 +158,7 @@
                                     </svg>
                                 </button>
                             </div>
-                        </form>
+                        </form> -->
                     @else
                         <div class="flex items-center space-x-2 h-full text-sm">
                             <span class="text-black font-semibold">Data Pelanggan</span>

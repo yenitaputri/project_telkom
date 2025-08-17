@@ -4,13 +4,13 @@
 
 @section('content')
     <div x-data="{
-                            openTambahModal: {{ $errors->any() ? 'true' : 'false' }},
-                            openPreviewModal: false,
-                            previewData() {
-                                // Lakukan validasi atau tampilkan modal preview
-                                this.openPreviewModal = true;
-                            }
-                            }" class="bg-white rounded-lg shadow-md p-6 min-h-[calc(100vh-160px)] flex flex-col">
+                                openTambahModal: {{ $errors->any() ? 'true' : 'false' }},
+                                openPreviewModal: false,
+                                previewData() {
+                                    // Lakukan validasi atau tampilkan modal preview
+                                    this.openPreviewModal = true;
+                                }
+                                }" class="bg-white rounded-lg shadow-md p-6 min-h-[calc(100vh-160px)] flex flex-col">
         {{-- Tombol Tambah Data dan filter tanggal --}}
         <div class="flex justify-end mb-4 space-x-4 items-center">
 
@@ -168,6 +168,22 @@
                     @endforelse
                 </tbody>
             </table>
+
+            {{-- Baris per halaman --}}
+            <div class="flex justify-start mt-4 text-sm text-gray-600">
+                <form method="GET" action="{{ route('pelanggan.index') }}" class="flex items-center space-x-2">
+                    <label for="per_page" class="text-sm text-gray-700">Baris per halaman:</label>
+                    <select name="per_page" id="per_page" onchange="this.form.submit()"
+                        class="border-gray-300 rounded-md text-sm py-1">
+                        @foreach([5, 10, 25, 50, 100] as $limit)
+                            <option value="{{ $limit }}" {{ request('per_page', 10) == $limit ? 'selected' : '' }}>
+                                {{ $limit }}
+                            </option>
+                        @endforeach
+                    </select>
+                </form>
+            </div>
+
             <!-- Navigasi Pagination -->
             <div class="mt-4">
                 {{ $pelanggan->appends(['start' => request('start'), 'end' => request('end')])->links() }}
@@ -194,11 +210,6 @@
                     </table>
                 </div>
             </div>
-        </div>
-
-        {{-- Baris per halaman --}}
-        <div class="flex justify-end mt-4 text-sm text-gray-600">
-            Baris per halaman 10
         </div>
     </div>
     <script>

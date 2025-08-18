@@ -1,21 +1,181 @@
 @extends('layouts.app')
 
-@section('title', 'Data Sales')
+@section('title', 'Data Prodigi')
 
 @section('content')
-    {{-- Main content area --}}
-    <div class="bg-white rounded-lg shadow-md p-6 min-h-[calc(100vh-160px)] flex flex-col">
-        {{-- Tombol Tambah Data di pojok kanan atas kotak putih --}}
-        <div class="flex justify-end mb-4">
-            <button class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg flex items-center transition-colors duration-200">
-                <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+    <div x-data="{}" class="bg-white rounded-lg shadow-md p-6 min-h-[calc(100vh-160px)] flex flex-col">
+        {{-- Tombol Tambah Data dan filter tanggal --}}
+        <div class="flex justify-end mb-4 space-x-4 items-center">
+
+            <form action="#" method="get" class="mr-auto">
+                <div class="relative w-full max-w-xs">
+                    <input type="text" name="q" placeholder="Cari di sini..."
+                        class="w-full py-2 px-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent pr-10">
+                    <button type="submit"
+                        class="absolute top-0 bottom-0 right-4 text-gray-500 hover:text-gray-700 transition-colors duration-200">
+                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z">
+                            </path>
+                        </svg>
+                    </button>
+                </div>
+            </form>
+
+            <form id="date-form" method="GET" action="#">
+                <div class="flex items-center space-x-2 text-gray-500 text-sm">
+                    <div id="date-range-picker" date-rangepicker class="flex items-center">
+                        <div class="relative">
+                            <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                                <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
+                                    xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                                    <path
+                                        d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
+                                </svg>
+                            </div>
+                            <input id="datepicker-range-start" name="start" type="text"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                placeholder="Mulai tanggal">
+                        </div>
+                        <span class="mx-4 text-gray-500">to</span>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                                <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
+                                    xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                                    <path
+                                        d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
+                                </svg>
+                            </div>
+                            <input id="datepicker-range-end" name="end" type="text"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                placeholder="Sampai tanggal">
+                        </div>
+                    </div>
+                    <button class="bg-gray-200 hover:bg-gray-300 rounded-md p-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor" class="size-6">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5m-9-6h.008v.008H12v-.008ZM12 15h.008v.008H12V15Zm0 2.25h.008v.008H12v-.008ZM9.75 15h.008v.008H9.75V15Zm0 2.25h.008v.008H9.75v-.008ZM7.5 15h.008v.008H7.5V15Zm0 2.25h.008v.008H7.5v-.008Zm6.75-4.5h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V15Zm0 2.25h.008v.008h-.008v-.008Zm2.25-4.5h.008v.008H16.5v-.008Zm0 2.25h.008v.008H16.5V15Z" />
+                        </svg>
+                    </button>
+                </div>
+            </form>
+
+            <button
+                class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg flex items-center transition-colors duration-200 inline-flex">
+                <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                </svg>
                 Tambah Data
             </button>
         </div>
 
-        {{-- Area untuk pesan "Tidak ditemukan data" atau tabel data --}}
-        <div class="flex-1 flex flex-col items-center justify-center p-4">
-            <p class="text-gray-500 text-lg text-center">Tidak ditemukan data. Mohon unggah file terlebih dahulu atau buat file baru untuk memulai.</p>
+        {{-- Tabel data prodigi --}}
+        <div class="overflow-x-auto">
+            <table class="min-w-full bg-white border border-gray-200 rounded-lg">
+                <thead>
+                    <tr class="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">
+                        <th class="py-3 px-6 text-left">No.</th>
+                        <th class="py-3 px-6 text-left">Order_ID</th>
+                        <th class="py-3 px-6 text-left">ND</th>
+                        <th class="py-3 px-6 text-left">Customer Name</th>
+                        <th class="py-3 px-6 text-left">Witel</th>
+                        <th class="py-3 px-6 text-left">Telda</th>
+                        <th class="py-3 px-6 text-left">Produk</th>
+                        <th class="py-3 px-6 text-left">Tanggal_PS</th>
+                        <th class="py-3 px-6 text-center">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody class="text-gray-600 text-sm font-light">
+                    {{-- Data statis --}}
+                    <tr class="border-b border-gray-200 hover:bg-gray-50">
+                        <td class="py-3 px-6 text-left whitespace-nowrap">1.</td>
+                        <td class="py-3 px-6 text-left">0123456789</td>
+                        <td class="py-3 px-6 text-left">87654321</td>
+                        <td class="py-3 px-6 text-left">Budi Santoso</td>
+                        <td class="py-3 px-6 text-left">Jakarta Pusat</td>
+                        <td class="py-3 px-6 text-left">021-1234567</td>
+                        <td class="py-3 px-6 text-left">Indihome 1P</td>
+                        <td class="py-3 px-6 text-left">2024-08-18</td>
+                        <td class="py-3 px-6 text-center">
+                            <div class="flex item-center justify-center space-x-2">
+                                <span class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-1 px-3 rounded text-xs transition-colors duration-200 inline-block text-center">Lihat</span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr class="border-b border-gray-200 hover:bg-gray-50">
+                        <td class="py-3 px-6 text-left whitespace-nowrap">2.</td>
+                        <td class="py-3 px-6 text-left">0123456790</td>
+                        <td class="py-3 px-6 text-left">98765432</td>
+                        <td class="py-3 px-6 text-left">Siti Aminah</td>
+                        <td class="py-3 px-6 text-left">Bandung Selatan</td>
+                        <td class="py-3 px-6 text-left">022-9876543</td>
+                        <td class="py-3 px-6 text-left">Indihome 2P</td>
+                        <td class="py-3 px-6 text-left">2024-08-17</td>
+                        <td class="py-3 px-6 text-center">
+                            <div class="flex item-center justify-center space-x-2">
+                                <span class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-1 px-3 rounded text-xs transition-colors duration-200 inline-block text-center">Lihat</span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr class="border-b border-gray-200 hover:bg-gray-50">
+                        <td class="py-3 px-6 text-left whitespace-nowrap">3.</td>
+                        <td class="py-3 px-6 text-left">0123456791</td>
+                        <td class="py-3 px-6 text-left">12345678</td>
+                        <td class="py-3 px-6 text-left">Joko Susilo</td>
+                        <td class="py-3 px-6 text-left">Surabaya Barat</td>
+                        <td class="py-3 px-6 text-left">031-2345678</td>
+                        <td class="py-3 px-6 text-left">Indihome 3P</td>
+                        <td class="py-3 px-6 text-left">2024-08-16</td>
+                        <td class="py-3 px-6 text-center">
+                            <div class="flex item-center justify-center space-x-2">
+                                <span class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-1 px-3 rounded text-xs transition-colors duration-200 inline-block text-center">Lihat</span>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
+
+        {{-- Baris per halaman (bagian ini bisa diabaikan atau disederhanakan) --}}
+        <div class="flex justify-start mt-4 text-sm text-gray-600">
+            <form method="GET" action="#" class="flex items-center space-x-2">
+                <label for="per_page" class="text-sm text-gray-700">Baris per halaman:</label>
+                <select name="per_page" id="per_page"
+                    class="border-gray-300 rounded-md text-sm py-1">
+                    <option value="5">5</option>
+                    <option value="10" selected>10</option>
+                    <option value="25">25</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                </select>
+            </form>
+        </div>
+
+        <div class="mt-4">
+            <p class="text-gray-500 text-sm">Contoh Pagination Statis: <span>1</span> <span>2</span> <span>3</span></p>
+        </div>
+
     </div>
+    <script>
+        // Script untuk form tetap, tetapi tidak akan memengaruhi rute
+        document.getElementById('date-form').addEventListener('submit', function (e) {
+            e.preventDefault(); // Mencegah form dikirim
+            const startEl = document.getElementById('datepicker-range-start');
+            const endEl = document.getElementById('datepicker-range-end');
+
+            function formatToYMD(dateStr) {
+                const d = new Date(dateStr);
+                if (isNaN(d)) return ''; // kalau tidak valid
+                let month = (d.getMonth() + 1).toString().padStart(2, '0');
+                let day = d.getDate().toString().padStart(2, '0');
+                return `${d.getFullYear()}-${month}-${day}`;
+            }
+
+            // Ini hanya untuk tampilan di konsol, tidak akan memengaruhi data
+            console.log('Start Date:', formatToYMD(startEl.value));
+            console.log('End Date:', formatToYMD(endEl.value));
+        });
+    </script>
 @endsection

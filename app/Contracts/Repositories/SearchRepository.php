@@ -23,7 +23,10 @@ class SearchRepository implements SearchInterface
 
         foreach ($models as $key => $modelClass) {
             $model = new $modelClass;
-            $columns = Schema::getColumnListing($model->getTable());
+            // Gunakan properti $searchable jika ada, jika tidak, baru cari semua kolom
+            $columns = property_exists($model, 'searchable')
+                ? $model->searchable
+                : Schema::getColumnListing($model->getTable());
 
             // Query pencarian di semua kolom
             $query = $modelClass::query()->where(function ($q) use ($columns, $keyword) {

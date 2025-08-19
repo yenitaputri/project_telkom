@@ -15,7 +15,8 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             UserSeeder::class,
-            // PelangganSeeder::class
+                // PelangganSeeder::class,
+            ProdigiSeeder::class
         ]); // ✅ jalankan UserSeeder, jangan buat data manual
     }
 

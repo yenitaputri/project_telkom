@@ -7,7 +7,7 @@
         {{-- Tombol Tambah Data dan filter tanggal --}}
         <div class="flex justify-end mb-4 space-x-4 items-center">
 
-            <form action="#" method="get" class="mr-auto">
+            <form action="{{ route('pelanggan.index') }}" method="get" class="mr-auto">
                 <div class="relative w-full max-w-xs">
                     <input type="text" name="q" placeholder="Cari di sini..."
                         class="w-full py-2 px-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent pr-10">
@@ -22,7 +22,7 @@
                 </div>
             </form>
 
-            <form id="date-form" method="GET" action="#">
+            <form id="date-form" method="GET" action="{{ route('pelanggan.index') }}">
                 <div class="flex items-center space-x-2 text-gray-500 text-sm">
                     <div id="date-range-picker" date-rangepicker class="flex items-center">
                         <div class="relative">
@@ -88,73 +88,53 @@
                     </tr>
                 </thead>
                 <tbody class="text-gray-600 text-sm font-light">
-                    {{-- Data statis --}}
-                    <tr class="border-b border-gray-200 hover:bg-gray-50">
-                        <td class="py-3 px-6 text-left whitespace-nowrap">1.</td>
-                        <td class="py-3 px-6 text-left">0123456789</td>
-                        <td class="py-3 px-6 text-left">87654321</td>
-                        <td class="py-3 px-6 text-left">Budi Santoso</td>
-                        <td class="py-3 px-6 text-left">Jakarta Pusat</td>
-                        <td class="py-3 px-6 text-left">021-1234567</td>
-                        <td class="py-3 px-6 text-left">Indihome 1P</td>
-                        <td class="py-3 px-6 text-left">2024-08-18</td>
-                        <td class="py-3 px-6 text-center">
-                            <div class="flex item-center justify-center space-x-2">
-                                <span class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-1 px-3 rounded text-xs transition-colors duration-200 inline-block text-center">Lihat</span>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr class="border-b border-gray-200 hover:bg-gray-50">
-                        <td class="py-3 px-6 text-left whitespace-nowrap">2.</td>
-                        <td class="py-3 px-6 text-left">0123456790</td>
-                        <td class="py-3 px-6 text-left">98765432</td>
-                        <td class="py-3 px-6 text-left">Siti Aminah</td>
-                        <td class="py-3 px-6 text-left">Bandung Selatan</td>
-                        <td class="py-3 px-6 text-left">022-9876543</td>
-                        <td class="py-3 px-6 text-left">Indihome 2P</td>
-                        <td class="py-3 px-6 text-left">2024-08-17</td>
-                        <td class="py-3 px-6 text-center">
-                            <div class="flex item-center justify-center space-x-2">
-                                <span class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-1 px-3 rounded text-xs transition-colors duration-200 inline-block text-center">Lihat</span>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr class="border-b border-gray-200 hover:bg-gray-50">
-                        <td class="py-3 px-6 text-left whitespace-nowrap">3.</td>
-                        <td class="py-3 px-6 text-left">0123456791</td>
-                        <td class="py-3 px-6 text-left">12345678</td>
-                        <td class="py-3 px-6 text-left">Joko Susilo</td>
-                        <td class="py-3 px-6 text-left">Surabaya Barat</td>
-                        <td class="py-3 px-6 text-left">031-2345678</td>
-                        <td class="py-3 px-6 text-left">Indihome 3P</td>
-                        <td class="py-3 px-6 text-left">2024-08-16</td>
-                        <td class="py-3 px-6 text-center">
-                            <div class="flex item-center justify-center space-x-2">
-                                <span class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-1 px-3 rounded text-xs transition-colors duration-200 inline-block text-center">Lihat</span>
-                            </div>
-                        </td>
-                    </tr>
+                    @forelse($prodigi as $item)
+                        <tr class="border-b border-gray-200 hover:bg-gray-50">
+                            <td class="py-3 px-6 text-left whitespace-nowrap">{{ $item->id }}.</td>
+                            <td class="py-3 px-6 text-left">{{ $item->order_id }}</td>
+                            <td class="py-3 px-6 text-left">{{ $item->nd }}</td>
+                            <td class="py-3 px-6 text-left">{{ $item->customer_name }}</td>
+                            <td class="py-3 px-6 text-left">{{ $item->witel }}</td>
+                            <td class="py-3 px-6 text-left">{{ $item->telda }}</td>
+                            <td class="py-3 px-6 text-left">{{ $item->produk }}</td>
+                            <td class="py-3 px-6 text-left">{{ $item->tanggal_ps }}</td>
+                            <td class="py-3 px-6 text-center">
+                                <div class="flex item-center justify-center space-x-2">
+                                    <a href="{{ route('prodigi.show', ['id' => $item['id']]) }}"
+                                        class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-1 px-3 rounded text-xs transition-colors duration-200 inline-block text-center">Lihat</a>
+                                </div>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="9" class="text-center py-3 text-gray-500">
+                                Tidak ditemukan data. Mohon unggah file
+                                terlebih dahulu atau buat file baru untuk memulai.
+                            </td>
+                        </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>
 
-        {{-- Baris per halaman (bagian ini bisa diabaikan atau disederhanakan) --}}
+        {{-- Baris per halaman --}}
         <div class="flex justify-start mt-4 text-sm text-gray-600">
-            <form method="GET" action="#" class="flex items-center space-x-2">
+            <form method="GET" action="{{ route('prodigi.index') }}" class="flex items-center space-x-2">
                 <label for="per_page" class="text-sm text-gray-700">Baris per halaman:</label>
-                <select name="per_page" id="per_page"
+                <select name="per_page" id="per_page" onchange="this.form.submit()"
                     class="border-gray-300 rounded-md text-sm py-1">
-                    <option value="5">5</option>
-                    <option value="10" selected>10</option>
-                    <option value="25">25</option>
-                    <option value="50">50</option>
-                    <option value="100">100</option>
+                    @foreach([5, 10, 25, 50, 100] as $limit)
+                        <option value="{{ $limit }}" {{ request('per_page', 10) == $limit ? 'selected' : '' }}>
+                            {{ $limit }}
+                        </option>
+                    @endforeach
                 </select>
             </form>
         </div>
 
+        <!-- Navigasi Pagination -->
         <div class="mt-4">
-            <p class="text-gray-500 text-sm">Contoh Pagination Statis: <span>1</span> <span>2</span> <span>3</span></p>
+            {{ $prodigi->appends(['start' => request('start'), 'end' => request('end')])->links() }}
         </div>
 
     </div>

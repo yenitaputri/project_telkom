@@ -23,6 +23,10 @@
                     <td class="py-2 px-4 border-b">{{ $pelanggan['no_digital'] }}</td>
                 </tr>
                 <tr>
+                    <th class="py-2 px-4 font-semibold border-b">Regional</th>
+                    <td class="py-2 px-4 border-b">{{ $pelanggan['regional'] }}</td>
+                </tr>
+                <tr>
                     <th class="py-2 px-4 font-semibold border-b">Tanggal PS</th>
                     <td class="py-2 px-4 border-b">{{ $pelanggan['tanggal_ps'] }}</td>
                 </tr>
@@ -63,12 +67,12 @@
                     <td class="py-2 px-4 border-b">{{ $pelanggan['kcontact'] }}</td>
                 </tr>
                 <tr>
-                    <th class="py-2 px-4 font-semibold border-b">Jenis Layanan</th>
-                    <td class="py-2 px-4 border-b">{{ $pelanggan['jenis_layanan'] }}</td>
+                    <th class="py-2 px-4 font-semibold border-b">Channel</th>
+                    <td class="py-2 px-4 border-b">{{ $pelanggan['channel'] }}</td>
                 </tr>
                 <tr>
-                    <th class="py-2 px-4 font-semibold border-b">Channel 1</th>
-                    <td class="py-2 px-4 border-b">{{ $pelanggan['channel_1'] }}</td>
+                    <th class="py-2 px-4 font-semibold border-b">Jenis Layanan</th>
+                    <td class="py-2 px-4 border-b">{{ $pelanggan['jenis_layanan'] }}</td>
                 </tr>
                 <tr>
                     <th class="py-2 px-4 font-semibold border-b">Cek Netmonk</th>

@@ -4,13 +4,13 @@
 
 @section('content')
     <div x-data="{
-                                openTambahModal: {{ $errors->any() ? 'true' : 'false' }},
-                                openPreviewModal: false,
-                                previewData() {
-                                    // Lakukan validasi atau tampilkan modal preview
-                                    this.openPreviewModal = true;
-                                }
-                                }" class="bg-white rounded-lg shadow-md p-6 min-h-[calc(100vh-160px)] flex flex-col">
+                                    openTambahModal: {{ $errors->any() ? 'true' : 'false' }},
+                                    openPreviewModal: false,
+                                    previewData() {
+                                        // Lakukan validasi atau tampilkan modal preview
+                                        this.openPreviewModal = true;
+                                    }
+                                    }" class="bg-white rounded-lg shadow-md p-6 min-h-[calc(100vh-160px)] flex flex-col">
         {{-- Tombol Tambah Data dan filter tanggal --}}
         <div class="flex justify-end mb-4 space-x-4 items-center">
 
@@ -92,7 +92,7 @@
                             Unggah Data Pelanggan
                         </label>
                         <input type="file" id="file_upload" name="file_upload" accept=".xls,.xlsx"
-                            class="w-full border border-gray-300 rounded px-3 py-2 @error('file_upload') border-red-500 @enderror" />
+                            class="w-full border border-gray-300 rounded px-3 @error('file_upload') border-red-500 @enderror" />
                         <p class="text-red-600 text-sm mt-1">
                             *Unggah file dengan format Excel (.xls atau .xlsx)
                         </p>

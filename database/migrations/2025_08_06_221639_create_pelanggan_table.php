@@ -16,6 +16,7 @@ return new class extends Migration {
             $table->string('no_digital')->nullable();
             $table->date('tanggal_ps')->nullable();
             $table->string('kecepatan')->nullable();
+            $table->string('regional')->nullable();
             $table->integer('bulan')->nullable();
             $table->integer('tahun')->nullable();
             $table->string('datel')->nullable();
@@ -24,8 +25,8 @@ return new class extends Migration {
             $table->string('nama')->nullable();
             $table->string('segmen')->nullable();
             $table->text('kcontact')->nullable();
+            $table->string('channel')->nullable();
             $table->string('jenis_layanan')->nullable();
-            $table->string('channel_1')->nullable();
             $table->string('cek_netmonk')->nullable();
             $table->string('cek_pijar_mahir')->nullable();
             $table->string('cek_eazy_cam')->nullable();

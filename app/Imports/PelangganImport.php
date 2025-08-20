@@ -20,10 +20,11 @@ class PelangganImport implements ToModel, WithHeadingRow
         $kecepatan = $this->extractMbps($row['package_name']);
 
         return new Pelanggan([
-            'no_internet' => $row['order_id'],
+            'no_internet' => trim($row['ndem'], "'"),
             'no_digital' => null,
             'tanggal_ps' => $tanggal->format('Y-m-d'),
             'kecepatan' => $kecepatan,
+            'regional' => $row['regional'] == 3 ? 5 : null, // Jika 3 maka menjadi 5, jika tidak maka null
             'bulan' => intval($tanggal->format('m')), // Ambil bulan dari tanggal_ps
             'tahun' => intval($tanggal->format('Y')), // Ambil bulan dari tanggal_ps
             'datel' => $row['datel'],
@@ -32,8 +33,8 @@ class PelangganImport implements ToModel, WithHeadingRow
             'nama' => $row['customer_name'],
             'segmen' => $row['provider'],
             'kcontact' => $row['device_id'],
-            'jenis_layanan' => $row['group_paket'],
-            'channel_1' => $row['channel'],
+            'channel' => $row['channel'],
+            'jenis_layanan' => $row['channel'] == 'MYDIGIBIZPARTNER' ? 'OTHER' : 'INDIBIZ',
             'cek_netmonk' => null,
             'cek_pijar_mahir' => null,
             'cek_eazy_cam' => null,

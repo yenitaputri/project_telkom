@@ -47,6 +47,10 @@ Route::middleware('auth')->group(function () {
 
     // Data Prodigi
     Route::get('/data-prodigi', [ProdigiController::class, 'index'])->name('prodigi.index');
+    Route::post('/data-prodigi', [ProdigiController::class, 'store'])->name('prodigi.store');
+    Route::get('/data-prodigi/{id}/edit', [ProdigiController::class, 'edit'])->name('prodigi.edit');
+    Route::put('/data-prodigi/{id}', [ProdigiController::class, 'update'])->name('prodigi.update');
+    Route::delete('/prodigi/{prodigi}', [ProdigiController::class, 'destroy'])->name('prodigi.destroy');
 
     // Detail prodigi
     Route::get('/data-prodigi/{id}', [ProdigiController::class, 'show'])->name('prodigi.show');

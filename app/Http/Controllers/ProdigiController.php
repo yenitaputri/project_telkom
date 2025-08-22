@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ImportProdigiRequest;
+use App\Imports\ProdigiImport;
 use App\Models\Prodigi;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ProdigiController extends Controller
 {
@@ -29,6 +32,20 @@ class ProdigiController extends Controller
         return view('prodigi.index', compact('prodigi'));
     }
 
+    public function store(ImportProdigiRequest $request)
+    {
+        // // Ambil data yang sudah divalidasi dari Form Request
+        // $validated = $request->validated();
+
+        // // Simpan data ke database
+        // Pelanggan::create($validated);
+
+        Excel::import(new ProdigiImport, $request->file('file_upload'));
+
+        // Redirect dengan pesan sukses
+        return redirect()->route('prodigi.index')->with('success', 'Data pelanggan berhasil ditambahkan');
+    }
+
     public function show($id)
     {
 
@@ -37,5 +54,37 @@ class ProdigiController extends Controller
 
         // Kirim data ke view
         return view('prodigi.show', compact('prodigi'));
+    }
+
+    public function edit($id, Request $request)
+    {
+        $page = $request->input('page', 1);
+
+        // Data statis untuk halaman edit
+        $data = Prodigi::findOrFail($id);
+        return view('pelanggan.edit', ['pelanggan' => $data, 'page' => $page]);
+    }
+
+    public function update(UpdatePelangganRequest $request, $id)
+    {
+        $pelanggan = Prodigi::findOrFail($id);
+        $pelanggan->update($request->validated());
+
+        return redirect()
+            ->route('prodigi.index', ['page' => $request->input('page')])
+            ->with('success', 'Data prodigi berhasil diperbarui.');
+    }
+
+    public function destroy($id)
+    {
+        // Cari data berdasarkan ID
+        $pelanggan = Prodigi::findOrFail($id);
+
+        // Hapus data
+        $pelanggan->delete();
+
+        // Redirect kembali dengan pesan sukses
+        return redirect()->route('prodigi.index')
+            ->with('success', 'Data Prodigi berhasil dihapus');
     }
 }

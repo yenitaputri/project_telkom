@@ -17,7 +17,7 @@ class Prodigi extends Model
         'customer_name',
         'witel',
         'telda',
-        'produk',
+        'paket',
         'tanggal_ps',
         'rev',
         'device',

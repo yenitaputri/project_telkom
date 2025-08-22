@@ -31,7 +31,7 @@ class PelangganImport implements ToModel, WithHeadingRow
             'ro' => null,
             'sto' => $row['sto'],
             'nama' => $row['customer_name'],
-            'segmen' => $row['provider'],
+            'segmen' => $row['provider'] == 'RBS-Regional 3' ? 'RBS-Regional 5' : $row['provider'],
             'kcontact' => $row['device_id'],
             'channel' => $row['channel'],
             'jenis_layanan' => $row['channel'] == 'MYDIGIBIZPARTNER' ? 'OTHER' : 'INDIBIZ',

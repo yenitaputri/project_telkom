@@ -31,7 +31,7 @@
                     </tr>
                     <tr class="border-b">
                         <th class="py-3 px-4 font-semibold">Paket</th>
-                        <td class="py-3 px-4">{{ $prodigi->produk }}</td>
+                        <td class="py-3 px-4">{{ $prodigi->paket }}</td>
                     </tr>
                     <tr class="border-b">
                         <th class="py-3 px-4 font-semibold">Tanggal PS</th>
@@ -47,14 +47,30 @@
                     </tr>
                     <tr class="border-b">
                         <th class="py-3 px-4 font-semibold">REV</th>
-                        <td class="py-3 px-4"></td>
+                        <td class="py-3 px-4">{{ $prodigi->rev }}</td>
                     <tr>
                         <th class="py-3 px-4 font-semibold">Device</th>
-                        <td class="py-3 px-4"></td>
+                        <td class="py-3 px-4">{{ $prodigi->device }}</td>
                     </tr>
                 </tbody>
             </table>
         </div>
+
+        <div class="flex justify-end space-x-4 mt-6">
+
+            <a href="{{ route('prodigi.edit', ['id' => $prodigi['id'], 'page' => request('page', 1)]) }}"
+                class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded transition-colors duration-200 inline-block text-center">Edit</a>
+            <button
+                class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded transition-colors duration-200"
+                onclick="confirmDelete({{ $prodigi->id }})">Hapus</button>
+        </div>
+
+        <!-- Form hapus tersembunyi -->
+        <form id="delete-form-{{ $prodigi->id }}" action="{{ route('prodigi.destroy', $prodigi->id) }}" method="POST"
+            class="hidden">
+            @csrf
+            @method('DELETE')
+        </form>
 
         <div class="flex justify-end space-x-4 mt-6">
             <a href="{{ route('prodigi.index') }}"

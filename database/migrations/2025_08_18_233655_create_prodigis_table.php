@@ -14,10 +14,10 @@ return new class extends Migration {
             $table->id();
             $table->string('order_id')->nullable();
             $table->string('nd')->nullable();
-            $table->string('customer_name');
+            $table->string('customer_name')->nullable();
             $table->string('witel')->nullable();
             $table->string('telda')->nullable();
-            $table->string('produk')->nullable();
+            $table->string('paket')->nullable();
             $table->date('tanggal_ps')->nullable();
             $table->string('rev')->nullable();
             $table->string('device')->nullable();

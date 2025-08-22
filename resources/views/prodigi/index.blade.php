@@ -3,11 +3,12 @@
 @section('title', 'Data Prodigi')
 
 @section('content')
-    <div x-data="{}" class="bg-white rounded-lg shadow-md p-6 min-h-[calc(100vh-160px)] flex flex-col">
+    <div x-data="{ openTambahModal: false }"
+        class="bg-white rounded-lg shadow-md p-6 min-h-[calc(100vh-160px)] flex flex-col">
         {{-- Tombol Tambah Data dan filter tanggal --}}
         <div class="flex justify-end mb-4 space-x-4 items-center">
 
-            <form action="{{ route('pelanggan.index') }}" method="get" class="mr-auto">
+            <form action="{{ route('prodigi.index') }}" method="get" class="mr-auto">
                 <div class="relative w-full max-w-xs">
                     <input type="text" name="q" placeholder="Cari di sini..."
                         class="w-full py-2 px-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent pr-10">
@@ -22,7 +23,7 @@
                 </div>
             </form>
 
-            <form id="date-form" method="GET" action="{{ route('pelanggan.index') }}">
+            <form id="date-form" method="GET" action="{{ route('prodigi.index') }}">
                 <div class="flex items-center space-x-2 text-gray-500 text-sm">
                     <div id="date-range-picker" date-rangepicker class="flex items-center">
                         <div class="relative">
@@ -61,7 +62,7 @@
                 </div>
             </form>
 
-            <button
+            <button @click="openTambahModal = true"
                 class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg flex items-center transition-colors duration-200 inline-flex">
                 <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                     xmlns="http://www.w3.org/2000/svg">
@@ -69,6 +70,41 @@
                 </svg>
                 Tambah Data
             </button>
+        </div>
+
+        <!-- Modal Tambah Data -->
+        <div x-show="openTambahModal"
+            class="fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center z-50 p-4" x-cloak>
+            <div @click.away="openTambahModal = false"
+                class="bg-white rounded-lg shadow-xl p-6 w-full max-w-md mx-auto relative">
+                <h3 class="text-xl font-bold mb-4 text-center">Tambah Data Prodigi</h3>
+                <form action="{{ route('prodigi.store') }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    <div class="mb-4">
+                        <label for="file_upload" class="block text-gray-700 font-semibold mb-2">
+                            Unggah Data Pelanggan
+                        </label>
+                        <input type="file" id="file_upload" name="file_upload" accept=".xls,.xlsx"
+                            class="w-full border border-gray-300 rounded px-3 @error('file_upload') border-red-500 @enderror" />
+                        <p class="text-red-600 text-sm mt-1">
+                            *Unggah file dengan format Excel (.xls atau .xlsx)
+                        </p>
+                        @error('file_upload')
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+                    <div class="flex justify-end space-x-4">
+                        <button type="button" @click="openTambahModal = false"
+                            class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded transition-colors duration-200">
+                            Batal
+                        </button>
+                        <button type="submit"
+                            class=" bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition-colors duration-200">
+                            Tambah
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
 
         {{-- Tabel data prodigi --}}
@@ -82,7 +118,7 @@
                         <th class="py-3 px-6 text-left">Customer Name</th>
                         <th class="py-3 px-6 text-left">Witel</th>
                         <th class="py-3 px-6 text-left">Telda</th>
-                        <th class="py-3 px-6 text-left">Produk</th>
+                        <th class="py-3 px-6 text-left">Paket</th>
                         <th class="py-3 px-6 text-left">Tanggal_PS</th>
                         <th class="py-3 px-6 text-center">Aksi</th>
                     </tr>
@@ -96,7 +132,7 @@
                             <td class="py-3 px-6 text-left">{{ $item->customer_name }}</td>
                             <td class="py-3 px-6 text-left">{{ $item->witel }}</td>
                             <td class="py-3 px-6 text-left">{{ $item->telda }}</td>
-                            <td class="py-3 px-6 text-left">{{ $item->produk }}</td>
+                            <td class="py-3 px-6 text-left">{{ $item->paket }}</td>
                             <td class="py-3 px-6 text-left">{{ $item->tanggal_ps }}</td>
                             <td class="py-3 px-6 text-center">
                                 <div class="flex item-center justify-center space-x-2">

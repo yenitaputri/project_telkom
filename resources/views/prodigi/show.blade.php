@@ -71,12 +71,5 @@
             @csrf
             @method('DELETE')
         </form>
-
-        {{-- <div class="flex justify-end space-x-4 mt-6">
-            <a href="{{ route('prodigi.index') }}"
-                class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded transition-colors duration-200">
-                Kembali
-            </a>
-        </div> --}}
     </div>
 @endsection

@@ -109,6 +109,19 @@
 
         {{-- Tabel data prodigi --}}
         <div class="overflow-x-auto">
+            @if(request('q') || (request('start') && request('end')))
+                <p class="mb-4 text-sm text-gray-600">
+                    Hasil pencarian untuk:
+                    @if(request('q'))
+                        <span class="font-semibold">"{{ request('q') }}"</span>
+                    @endif
+                    @if(request('start') && request('end'))
+                        dari <span class="font-semibold">{{ request('start') }}</span>
+                        sampai <span class="font-semibold">{{ request('end') }}</span>
+                    @endif
+                    <a href="{{ route('prodigi.index') }}" class="text-blue-500 hover:underline ml-2">Reset</a>
+                </p>
+            @endif
             <table class="min-w-full bg-white border border-gray-200 rounded-lg">
                 <thead>
                     <tr class="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">

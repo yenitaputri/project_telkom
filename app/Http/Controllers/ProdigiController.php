@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ImportProdigiRequest;
+use App\Http\Requests\Prodigi\ImportProdigiRequest;
+use App\Http\Requests\Prodigi\UpdateProdigiRequest;
 use App\Imports\ProdigiImport;
 use App\Models\Prodigi;
 use Illuminate\Http\Request;
@@ -34,12 +35,6 @@ class ProdigiController extends Controller
 
     public function store(ImportProdigiRequest $request)
     {
-        // // Ambil data yang sudah divalidasi dari Form Request
-        // $validated = $request->validated();
-
-        // // Simpan data ke database
-        // Pelanggan::create($validated);
-
         Excel::import(new ProdigiImport, $request->file('file_upload'));
 
         // Redirect dengan pesan sukses
@@ -62,13 +57,13 @@ class ProdigiController extends Controller
 
         // Data statis untuk halaman edit
         $data = Prodigi::findOrFail($id);
-        return view('pelanggan.edit', ['pelanggan' => $data, 'page' => $page]);
+        return view('prodigi.edit', ['prodigi' => $data, 'page' => $page]);
     }
 
-    public function update(UpdatePelangganRequest $request, $id)
+    public function update(UpdateProdigiRequest $request, $id)
     {
-        $pelanggan = Prodigi::findOrFail($id);
-        $pelanggan->update($request->validated());
+        $prodigi = Prodigi::findOrFail($id);
+        $prodigi->update($request->validated());
 
         return redirect()
             ->route('prodigi.index', ['page' => $request->input('page')])
@@ -78,10 +73,10 @@ class ProdigiController extends Controller
     public function destroy($id)
     {
         // Cari data berdasarkan ID
-        $pelanggan = Prodigi::findOrFail($id);
+        $prodigi = Prodigi::findOrFail($id);
 
         // Hapus data
-        $pelanggan->delete();
+        $prodigi->delete();
 
         // Redirect kembali dengan pesan sukses
         return redirect()->route('prodigi.index')

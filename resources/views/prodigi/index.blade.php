@@ -146,7 +146,9 @@
                             <td class="py-3 px-6 text-left">{{ $item->witel }}</td>
                             <td class="py-3 px-6 text-left">{{ $item->telda }}</td>
                             <td class="py-3 px-6 text-left">{{ $item->paket }}</td>
-                            <td class="py-3 px-6 text-left">{{ $item->tanggal_ps }}</td>
+                            <td class="py-3 px-6 text-left">
+                                {{ \Carbon\Carbon::parse($item->tanggal_ps)->format('m/d/Y') }}
+                            </td>
                             <td class="py-3 px-6 text-center">
                                 <div class="flex item-center justify-center space-x-2">
                                     <a href="{{ route('prodigi.show', ['id' => $item['id']]) }}"

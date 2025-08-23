@@ -41,24 +41,24 @@ class ProdigiImport implements ToCollection, WithStartRow
             $deviceKanan = $row[19] ?? null;
 
             // ============ Data blok kiri ============
-            if (! empty($orderIdKiri)) {
-                $witel = strtolower(trim($witelKiri));
-                $telda = strtolower(trim($teldaKiri));
+            // if (! empty($orderIdKiri)) {
+            //     $witel = strtolower(trim($witelKiri));
+            //     $telda = strtolower(trim($teldaKiri));
 
-                if ($witel == 'jatim timur' && $telda == 'banyuwangi') {
-                    Prodigi::create([
-                        'order_id' => $orderIdKiri,
-                        'nd' => $ndKiri,
-                        'customer_name' => $customerKiri,
-                        'witel' => $witelKiri,
-                        'telda' => $teldaKiri,
-                        'paket' => $paketKiri,
-                        'tanggal_ps' => $this->convertDate($tglPsKiri)->format('Y-m-d'),
-                        'rev' => $revKiri,
-                        'device' => $deviceKiri,
-                    ]);
-                }
-            }
+            //     if ($witel == 'jatim timur' && $telda == 'banyuwangi') {
+            //         Prodigi::create([
+            //             'order_id' => $orderIdKiri,
+            //             'nd' => $ndKiri,
+            //             'customer_name' => $customerKiri,
+            //             'witel' => $witelKiri,
+            //             'telda' => $teldaKiri,
+            //             'paket' => $paketKiri,
+            //             'tanggal_ps' => $this->convertDate($tglPsKiri)->format('Y-m-d'),
+            //             'rev' => $revKiri,
+            //             'device' => $deviceKiri,
+            //         ]);
+            //     }
+            // }
 
             // ============ Data blok kanan ============
             if (! empty($orderIdKanan)) {

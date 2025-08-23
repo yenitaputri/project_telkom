@@ -3,61 +3,90 @@
 namespace App\Imports;
 
 use App\Models\Prodigi;
+use Maatwebsite\Excel\Concerns\WithStartRow;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\ToCollection;
-use Maatwebsite\Excel\Concerns\WithHeadingRow;
 
-class ProdigiImport implements ToCollection, WithHeadingRow
+class ProdigiImport implements ToCollection, WithStartRow
 {
-    public function headingRow(): int
+    public function startRow(): int
     {
-        return 3; // row ke-3 dianggap header
+        return 4;
     }
 
     public function collection(Collection $rows)
     {
         foreach ($rows as $row) {
-            // ========================
-            // Data blok kiri (kolom A-J)
-            // ========================
-            if (!empty($row['order_id'])) {
-                $tanggal = $this->convertDate($row['tgl_ps']);
-                Prodigi::create([
-                    'order_id' => $row['order_id'] ?? null,
-                    'nd' => $row['nd'] ?? null,
-                    'customer_name' => $row['customer_name'] ?? null,
-                    'witel' => $row['witel'] ?? null,
-                    'telda' => $row['telda'] ?? null,
-                    'produk' => $row['paket'] ?? null,
-                    'tanggal_ps' => $tanggal->format('Y-m-d') ?? null,
-                    'rev' => $row['rev'] ?? null,
-                    'device' => $row['device'] ?? null,
-                ]);
+            // Kolom A-J → index 0-8
+            $orderIdKiri = $row[0] ?? null; // kolom A
+            $witelKiri = $row[1] ?? null; // kolom D
+            $teldaKiri = $row[2] ?? null; // kolom E
+            $paketKiri = $row[3] ?? null; // kolom F
+            $tglPsKiri = $row[5] ?? null; // kolom G
+            $ndKiri = $row[6] ?? null; // kolom B
+            $customerKiri = $row[7] ?? null; // kolom C
+            $revKiri = $row[8] ?? null; // kolom H
+            $deviceKiri = $row[9] ?? null; // kolom I
+
+            // Kolom L-T → index 11-19
+            $orderIdKanan = $row[11] ?? null; // kolom L
+            $witelKanan = $row[12] ?? null;
+            $teldaKanan = $row[13] ?? null;
+            $paketKanan = $row[14] ?? null;
+            $tglPsKanan = $row[15] ?? null;
+            $ndKanan = $row[16] ?? null;
+            $customerKanan = $row[17] ?? null;
+            $revKanan = $row[18] ?? null;
+            $deviceKanan = $row[19] ?? null;
+
+            // ============ Data blok kiri ============
+            if (! empty($orderIdKiri)) {
+                $witel = strtolower(trim($witelKiri));
+                $telda = strtolower(trim($teldaKiri));
+
+                if ($witel == 'jatim timur' && $telda == 'banyuwangi') {
+                    Prodigi::create([
+                        'order_id' => $orderIdKiri,
+                        'nd' => $ndKiri,
+                        'customer_name' => $customerKiri,
+                        'witel' => $witelKiri,
+                        'telda' => $teldaKiri,
+                        'paket' => $paketKiri,
+                        'tanggal_ps' => $this->convertDate($tglPsKiri)->format('Y-m-d'),
+                        'rev' => $revKiri,
+                        'device' => $deviceKiri,
+                    ]);
+                }
             }
 
-            // ========================
-            // Data blok kanan (kolom L-T → auto jadi *_2)
-            // ========================
-            if (!empty($row['order_id_2'])) {
-                $tanggal = $this->convertDate($row['tgl_ps_2']);
-                Prodigi::create([
-                    'order_id' => $row['order_id_2'] ?? null,
-                    'nd' => $row['nd_2'] ?? null,
-                    'customer_name' => $row['customer_name_2'] ?? null,
-                    'witel' => $row['witel_2'] ?? null,
-                    'telda' => $row['telda_2'] ?? null,
-                    'produk' => $row['paket_2'] ?? null,
-                    'tanggal_ps' => $tanggal->format('Y-m-d') ?? null,
-                    'rev' => $row['rev_2'] ?? null,
-                    'device' => $row['device_2'] ?? null,
-                ]);
+            // ============ Data blok kanan ============
+            if (! empty($orderIdKanan)) {
+                $witel = strtolower(trim($witelKanan));
+                $telda = strtolower(trim($teldaKanan));
+
+                if ($witel == 'jatim timur' && $telda == 'banyuwangi') {
+                    Prodigi::create([
+                        'order_id' => $orderIdKanan,
+                        'nd' => $ndKanan,
+                        'customer_name' => $customerKanan,
+                        'witel' => $witelKanan,
+                        'telda' => $teldaKanan,
+                        'paket' => $paketKanan,
+                        'tanggal_ps' => $this->convertDate($tglPsKanan)->format('Y-m-d'),
+                        'rev' => $revKanan,
+                        'device' => $deviceKanan,
+                    ]);
+                }
             }
         }
     }
 
     private function convertDate($value)
     {
+        if (empty($value)) {
+            return now();
+        }
         if (is_numeric($value)) {
             return Date::excelToDateTimeObject($value);
         }

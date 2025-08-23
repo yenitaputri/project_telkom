@@ -35,7 +35,7 @@ class UpdatePelangganRequest extends FormRequest
             'segmen' => 'nullable|string|max:255',
             'kcontact' => 'nullable|string|max:255',
             'jenis_layanan' => 'nullable|string|max:255',
-            'channel_1' => 'nullable|string|max:255',
+            'channel' => 'nullable|string|max:255',
             'kode_sales' => 'nullable|string|max:255',
             'nama_sf' => 'nullable|string|max:255',
             'agency' => 'nullable|string|max:255',

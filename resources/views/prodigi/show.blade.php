@@ -35,7 +35,7 @@
                     </tr>
                     <tr class="border-b">
                         <th class="py-3 px-4 font-semibold">Tanggal PS</th>
-                        <td class="py-3 px-4">{{ $prodigi->tanggal_ps }}</td>
+                        <td class="py-3 px-4">{{ \Carbon\Carbon::parse($prodigi->tanggal_ps)->format('m/d/Y') }}</td>
                     </tr>
                     <tr class="border-b">
                         <th class="py-3 px-4 font-semibold">ND</th>

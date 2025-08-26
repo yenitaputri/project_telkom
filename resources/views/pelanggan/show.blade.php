@@ -28,7 +28,9 @@
                 </tr>
                 <tr>
                     <th class="py-2 px-4 font-semibold border-b">Tanggal PS</th>
-                    <td class="py-2 px-4 border-b">{{ $pelanggan['tanggal_ps'] }}</td>
+                    <td class="py-2 px-4 border-b">
+                        {{ \Carbon\Carbon::parse($pelanggan['tanggal_ps'])->format('m/d/Y') }}
+                    </td>
                 </tr>
                 <tr>
                     <th class="py-2 px-4 font-semibold border-b">Kecepatan</th>

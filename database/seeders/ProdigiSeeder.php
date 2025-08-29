@@ -19,7 +19,7 @@ class ProdigiSeeder extends Seeder
                 'customer_name' => 'Budi Santoso',
                 'witel' => 'Jakarta Pusat',
                 'telda' => '021-1234567',
-                'produk' => 'Indihome 1P',
+                'paket' => 'Indihome 1P',
                 'tanggal_ps' => '2024-08-18',
             ],
             [
@@ -28,7 +28,7 @@ class ProdigiSeeder extends Seeder
                 'customer_name' => 'Siti Aminah',
                 'witel' => 'Bandung Selatan',
                 'telda' => '022-9876543',
-                'produk' => 'Indihome 2P',
+                'paket' => 'Indihome 2P',
                 'tanggal_ps' => '2024-08-17',
             ],
             [
@@ -37,7 +37,7 @@ class ProdigiSeeder extends Seeder
                 'customer_name' => 'Joko Susilo',
                 'witel' => 'Surabaya Barat',
                 'telda' => '031-2345678',
-                'produk' => 'Indihome 3P',
+                'paket' => 'Indihome 3P',
                 'tanggal_ps' => '2024-08-16',
             ],
         ];

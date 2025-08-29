@@ -68,10 +68,10 @@
                 </div>
 
                 <div>
-                    <label for="produk" class="block text-gray-700 font-semibold mb-1">Produk</label>
-                    <input type="text" id="produk" name="produk" value="{{ old('produk', $prodigi->produk ?? '') }}"
+                    <label for="paket" class="block text-gray-700 font-semibold mb-1">Paket</label>
+                    <input type="text" id="paket" name="paket" value="{{ old('paket', $prodigi->paket ?? '') }}"
                         class="w-full border border-gray-300 rounded px-4 py-2" />
-                    @error('produk')
+                    @error('paket')
                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                     @enderror
                 </div>

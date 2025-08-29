@@ -27,7 +27,7 @@ class UpdateProdigiRequest extends FormRequest
             'customer_name' => ['required', 'string', 'max:255'],
             'witel' => ['nullable', 'string', 'max:255'],
             'telda' => ['nullable', 'string', 'max:255'],
-            'produk' => ['nullable', 'string', 'max:255'],
+            'paket' => ['nullable', 'string', 'max:255'],
             'tanggal_ps' => ['nullable', 'date'],
             'rev' => ['nullable', 'string', 'max:255'],
             'device' => ['nullable', 'string', 'max:255'],

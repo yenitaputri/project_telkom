@@ -18,32 +18,32 @@
             <table class="w-full text-sm text-left text-gray-700">
                 <tbody>
                     <tr class="border-b">
-                        <th class="py-3 px-4 font-semibold w-1/3">Order ID</th>
+                        <th class="py-3 px-4 font-semibold w-1/3">ND</th>
+                        <td class="py-3 px-4">{{ $prodigi->nd }}</td>
+                    </tr>
+                    <tr class="border-b">
+                        <th class="py-3 px-4 font-semibold">Order_ID</th>
                         <td class="py-3 px-4">{{ $prodigi->order_id }}</td>
-                    </tr>
-                    <tr class="border-b">
-                        <th class="py-3 px-4 font-semibold">Witel</th>
-                        <td class="py-3 px-4">{{ $prodigi->witel }}</td>
-                    </tr>
-                    <tr class="border-b">
-                        <th class="py-3 px-4 font-semibold">Telda</th>
-                        <td class="py-3 px-4">{{ $prodigi->telda }}</td>
-                    </tr>
-                    <tr class="border-b">
-                        <th class="py-3 px-4 font-semibold">Paket</th>
-                        <td class="py-3 px-4">{{ $prodigi->paket }}</td>
                     </tr>
                     <tr class="border-b">
                         <th class="py-3 px-4 font-semibold">Tanggal PS</th>
                         <td class="py-3 px-4">{{ \Carbon\Carbon::parse($prodigi->tanggal_ps)->format('m/d/Y') }}</td>
                     </tr>
                     <tr class="border-b">
-                        <th class="py-3 px-4 font-semibold">ND</th>
-                        <td class="py-3 px-4">{{ $prodigi->nd }}</td>
+                        <th class="py-3 px-4 font-semibold">Telda</th>
+                        <td class="py-3 px-4">{{ $prodigi->telda }}</td>
                     </tr>
                     <tr class="border-b">
                         <th class="py-3 px-4 font-semibold">Customer Name</th>
                         <td class="py-3 px-4">{{ $prodigi->customer_name }}</td>
+                    </tr>
+                    <tr class="border-b">
+                        <th class="py-3 px-4 font-semibold">Paket</th>
+                        <td class="py-3 px-4">{{ $prodigi->paket }}</td>
+                    </tr>
+                    <tr class="border-b">
+                        <th class="py-3 px-4 font-semibold">Witel</th>
+                        <td class="py-3 px-4">{{ $prodigi->witel }}</td>
                     </tr>
                     <tr class="border-b">
                         <th class="py-3 px-4 font-semibold">REV</th>

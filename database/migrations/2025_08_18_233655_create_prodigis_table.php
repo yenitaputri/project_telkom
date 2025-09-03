@@ -12,13 +12,13 @@ return new class extends Migration {
     {
         Schema::create('prodigi', function (Blueprint $table) {
             $table->id();
-            $table->string('order_id')->nullable();
             $table->string('nd')->nullable();
-            $table->string('customer_name')->nullable();
-            $table->string('witel')->nullable();
+            $table->string('order_id')->nullable();
+            $table->string('tanggal_ps')->nullable();
             $table->string('telda')->nullable();
+            $table->string('customer_name')->nullable();
             $table->string('paket')->nullable();
-            $table->date('tanggal_ps')->nullable();
+            $table->date('witel')->nullable();
             $table->string('rev')->nullable();
             $table->string('device')->nullable();
             $table->timestamps();

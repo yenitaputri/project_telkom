@@ -67,13 +67,13 @@ class ProdigiImport implements ToCollection, WithStartRow
 
                 if ($witel == 'jatim timur' && $telda == 'banyuwangi') {
                     Prodigi::create([
-                        'order_id' => $orderIdKanan,
                         'nd' => $ndKanan,
-                        'customer_name' => $customerKanan,
-                        'witel' => $witelKanan,
-                        'telda' => $teldaKanan,
-                        'paket' => $paketKanan,
+                        'order_id' => $orderIdKanan,
                         'tanggal_ps' => $this->convertDate($tglPsKanan)->format('Y-m-d'),
+                        'telda' => $teldaKanan,
+                        'customer_name' => $customerKanan,
+                        'paket' => $paketKanan,
+                        'witel' => $witelKanan,
                         'rev' => $revKanan,
                         'device' => $deviceKanan,
                     ]);

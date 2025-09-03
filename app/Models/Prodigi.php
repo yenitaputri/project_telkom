@@ -12,13 +12,13 @@ class Prodigi extends Model
     protected $table = 'prodigi';
 
     protected $fillable = [
-        'order_id',
         'nd',
-        'customer_name',
-        'witel',
-        'telda',
-        'paket',
+        'order_id',
         'tanggal_ps',
+        'telda',
+        'customer_name',
+        'paket',
+        'witel',
         'rev',
         'device',
     ];

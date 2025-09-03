@@ -22,13 +22,13 @@ class UpdateProdigiRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'order_id' => ['nullable', 'string', 'max:255'],
             'nd' => ['nullable', 'string', 'max:255'],
-            'customer_name' => ['required', 'string', 'max:255'],
-            'witel' => ['nullable', 'string', 'max:255'],
-            'telda' => ['nullable', 'string', 'max:255'],
-            'paket' => ['nullable', 'string', 'max:255'],
+            'order_id' => ['nullable', 'string', 'max:255'],
             'tanggal_ps' => ['nullable', 'date'],
+            'telda' => ['nullable', 'string', 'max:255'],
+            'customer_name' => ['required', 'string', 'max:255'],
+            'paket' => ['nullable', 'string', 'max:255'],
+            'witel' => ['nullable', 'string', 'max:255'],
             'rev' => ['nullable', 'string', 'max:255'],
             'device' => ['nullable', 'string', 'max:255'],
         ];

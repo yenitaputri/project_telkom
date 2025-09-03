@@ -126,13 +126,13 @@
                 <thead>
                     <tr class="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">
                         <th class="py-3 px-6 text-left">No.</th>
-                        <th class="py-3 px-6 text-left">Order_ID</th>
                         <th class="py-3 px-6 text-left">ND</th>
-                        <th class="py-3 px-6 text-left">Customer Name</th>
-                        <th class="py-3 px-6 text-left">Witel</th>
-                        <th class="py-3 px-6 text-left">Telda</th>
-                        <th class="py-3 px-6 text-left">Paket</th>
+                        <th class="py-3 px-6 text-left">Order_ID</th>
                         <th class="py-3 px-6 text-left">Tanggal_PS</th>
+                        <th class="py-3 px-6 text-left">Telda</th>
+                        <th class="py-3 px-6 text-left">Customer Name</th>
+                        <th class="py-3 px-6 text-left">Paket</th>
+                        <!-- <th class="py-3 px-6 text-left">Tanggal_PS</th> -->
                         <th class="py-3 px-6 text-center">Aksi</th>
                     </tr>
                 </thead>
@@ -140,14 +140,14 @@
                     @forelse($prodigi as $item)
                         <tr class="border-b border-gray-200 hover:bg-gray-50">
                             <td class="py-3 px-6 text-left whitespace-nowrap">{{ $item->id }}.</td>
-                            <td class="py-3 px-6 text-left">{{ $item->order_id }}</td>
                             <td class="py-3 px-6 text-left">{{ $item->nd }}</td>
-                            <td class="py-3 px-6 text-left">{{ $item->customer_name }}</td>
-                            <td class="py-3 px-6 text-left">{{ $item->witel }}</td>
+                            <td class="py-3 px-6 text-left">{{ $item->order_id }}</td>
                             <td class="py-3 px-6 text-left">{{ $item->telda }}</td>
+                            <td class="py-3 px-6 text-left">{{ $item->customer_name }}</td>
                             <td class="py-3 px-6 text-left">{{ $item->paket }}</td>
+                            <!-- <td class="py-3 px-6 text-left">{{ $item->paket }}</td> -->
                             <td class="py-3 px-6 text-left">
-                                {{ \Carbon\Carbon::parse($item->tanggal_ps)->format('m/d/Y') }}
+                                {{ \Carbon\Carbon::parse($item['tanggal_ps'])->format('m/d/Y') }}
                             </td>
                             <td class="py-3 px-6 text-center">
                                 <div class="flex item-center justify-center space-x-2">
@@ -190,23 +190,23 @@
 
     </div>
     <script>
-        // Script untuk form tetap, tetapi tidak akan memengaruhi rute
-        document.getElementById('date-form').addEventListener('submit', function (e) {
-            e.preventDefault(); // Mencegah form dikirim
-            const startEl = document.getElementById('datepicker-range-start');
-            const endEl = document.getElementById('datepicker-range-end');
+        // // Script untuk form tetap, tetapi tidak akan memengaruhi rute
+        // document.getElementById('date-form').addEventListener('submit', function (e) {
+        //     e.preventDefault(); // Mencegah form dikirim
+        //     const startEl = document.getElementById('datepicker-range-start');
+        //     const endEl = document.getElementById('datepicker-range-end');
 
-            function formatToYMD(dateStr) {
-                const d = new Date(dateStr);
-                if (isNaN(d)) return ''; // kalau tidak valid
-                let month = (d.getMonth() + 1).toString().padStart(2, '0');
-                let day = d.getDate().toString().padStart(2, '0');
-                return `${d.getFullYear()}-${month}-${day}`;
-            }
+        //     function formatToYMD(dateStr) {
+        //         const d = new Date(dateStr);
+        //         if (isNaN(d)) return ''; // kalau tidak valid
+        //         let month = (d.getMonth() + 1).toString().padStart(2, '0');
+        //         let day = d.getDate().toString().padStart(2, '0');
+        //         return `${d.getFullYear()}-${month}-${day}`;
+        //     }
 
-            // Ini hanya untuk tampilan di konsol, tidak akan memengaruhi data
-            console.log('Start Date:', formatToYMD(startEl.value));
-            console.log('End Date:', formatToYMD(endEl.value));
-        });
+        //     // Ini hanya untuk tampilan di konsol, tidak akan memengaruhi data
+        //     console.log('Start Date:', formatToYMD(startEl.value));
+        //     console.log('End Date:', formatToYMD(endEl.value));
+        // });
     </script>
 @endsection

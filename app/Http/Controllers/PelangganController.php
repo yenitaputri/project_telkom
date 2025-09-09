@@ -9,7 +9,6 @@ use App\Models\Pelanggan;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
-use function PHPUnit\Framework\returnArgument;
 use Illuminate\Support\Facades\Schema;
 
 class PelangganController extends Controller
@@ -41,7 +40,7 @@ class PelangganController extends Controller
 
         $perPage = $request->input('per_page', 10);
 
-        $pelanggan = $query->paginate($perPage);
+        $pelanggan = $query->orderByDesc('created_at')->paginate($perPage);
 
         return view('pelanggan.index', compact('pelanggan'));
     }

@@ -8,6 +8,7 @@ use App\Imports\ProdigiImport;
 use App\Models\Prodigi;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
+use Carbon\Carbon;
 
 class ProdigiController extends Controller
 {
@@ -24,11 +25,16 @@ class ProdigiController extends Controller
 
         // filter tanggal
         if ($request->filled('start') && $request->filled('end')) {
-            $query->whereBetween('tanggal_ps', [$request->start, $request->end]);
+            $startDate = Carbon::parse($request->start)->format('Y-m-d');
+            $endDate = Carbon::parse($request->end)->format('Y-m-d');
+
+            $query->whereBetween('tanggal_ps', [$startDate, $endDate]);
         }
 
         $perPage = $request->get('per_page', 10);
-        $prodigi = $query->paginate($perPage)->appends($request->query());
+        $prodigi = $query->orderByDesc('created_at')
+            ->paginate($perPage)
+            ->appends($request->query());
 
         return view('prodigi.index', compact('prodigi'));
     }

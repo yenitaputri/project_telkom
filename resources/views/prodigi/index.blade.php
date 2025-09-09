@@ -142,13 +142,13 @@
                             <td class="py-3 px-6 text-left whitespace-nowrap">{{ $item->id }}.</td>
                             <td class="py-3 px-6 text-left">{{ $item->nd }}</td>
                             <td class="py-3 px-6 text-left">{{ $item->order_id }}</td>
+                            <td class="py-3 px-6 text-left">
+                                {{ \Carbon\Carbon::parse($item['tanggal_ps'])->format('m/d/Y') }}
+                            </td>
                             <td class="py-3 px-6 text-left">{{ $item->telda }}</td>
                             <td class="py-3 px-6 text-left">{{ $item->customer_name }}</td>
                             <td class="py-3 px-6 text-left">{{ $item->paket }}</td>
                             <!-- <td class="py-3 px-6 text-left">{{ $item->paket }}</td> -->
-                            <td class="py-3 px-6 text-left">
-                                {{ \Carbon\Carbon::parse($item['tanggal_ps'])->format('m/d/Y') }}
-                            </td>
                             <td class="py-3 px-6 text-center">
                                 <div class="flex item-center justify-center space-x-2">
                                     <a href="{{ route('prodigi.show', ['id' => $item['id']]) }}"
@@ -208,5 +208,20 @@
         //     console.log('Start Date:', formatToYMD(startEl.value));
         //     console.log('End Date:', formatToYMD(endEl.value));
         // });
+        document.getElementById('date-form').addEventListener('submit', function (e) {
+            const startEl = document.getElementById('datepicker-range-start');
+            const endEl = document.getElementById('datepicker-range-end');
+
+            function formatToYMD(dateStr) {
+                const d = new Date(dateStr);
+                if (isNaN(d)) return ''; // kalau tidak valid
+                let month = (d.getMonth() + 1).toString().padStart(2, '0');
+                let day = d.getDate().toString().padStart(2, '0');
+                return `${d.getFullYear()}-${month}-${day}`;
+            }
+
+            startEl.value = formatToYMD(startEl.value);
+            endEl.value = formatToYMD(endEl.value);
+        });
     </script>
 @endsection

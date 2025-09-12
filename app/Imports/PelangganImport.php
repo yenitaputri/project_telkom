@@ -91,9 +91,11 @@ class PelangganImport implements ToModel, WithHeadingRow
 
     private function extractKodeSales($text)
     {
-        if (preg_match('/\bM\d{7,}\b/', $text, $matches)) {
-            return $matches[0]; // Ambil kode_sales
+        // Ambil kode setelah slash terakhir
+        if (preg_match('/\/([A-Z]{1,2}\d{5,})\b/', $text, $matches)) {
+            return $matches[1];
         }
-        return null; // Jika tidak ketemu
+
+        return null;
     }
 }

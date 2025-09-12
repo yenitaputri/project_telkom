@@ -102,11 +102,11 @@
                 </tr>
                 <tr>
                     <th class="py-2 px-4 font-semibold border-b">Nama SF</th>
-                    <td class="py-2 px-4 border-b">{{ $pelanggan['nama_sf'] }}</td>
+                    <td class="py-2 px-4 border-b">{{ $pelanggan->sales->nama_sales ?? "-" }}</td>
                 </tr>
                 <tr>
                     <th class="py-2 px-4 font-semibold border-b">Agency</th>
-                    <td class="py-2 px-4 border-b">{{ $pelanggan['agency'] }}</td>
+                    <td class="py-2 px-4 border-b">{{ $pelanggan->sales->agency ?? "-"}}</td>
                 </tr>
             </tbody>
         </table>

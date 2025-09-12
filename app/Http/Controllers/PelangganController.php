@@ -70,7 +70,7 @@ class PelangganController extends Controller
         $page = $request->input('page', 1);
 
         // Data statis untuk preview detail pelanggan
-        $data = Pelanggan::findOrFail($id);
+        $data = Pelanggan::with('sales')->findOrFail($id);
 
         return view('pelanggan.show', ['pelanggan' => $data, 'page' => $page]);
     }

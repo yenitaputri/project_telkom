@@ -33,8 +33,14 @@ class Pelanggan extends Model
         'cek_eazy_cam',
         'cek_oca',
         'cek_pijar_sekolah',
+
+        // Kode Sales
         'kode_sales',
-        'nama_sf',
-        'agency',
     ];
+
+    public function sales()
+    {
+        return $this->belongsTo(Sales::class, 'kode_sales', 'kode_sales');
+    }
+
 }

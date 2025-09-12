@@ -3,6 +3,7 @@
 namespace App\Imports;
 
 use App\Models\Pelanggan;
+use App\Models\Sales;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
@@ -18,6 +19,22 @@ class PelangganImport implements ToModel, WithHeadingRow
     {
         $tanggal = $this->convertDate($row['order_date']);
         $kecepatan = $this->extractMbps($row['package_name']);
+        $kodeSales = $this->extractKodeSales($row['device_id']);
+
+        $namaSF = null;
+        $agency = null;
+
+        if (isset($kodeSales)) {
+            // satu query, ambil field yang diperlukan
+            $sales = Sales::select('nama_sales', 'agency')
+                ->where('kode_sales', $kodeSales)
+                ->first();
+
+            if ($sales) {
+                $namaSF = $sales->nama_sales;
+                $agency = $sales->agency;
+            }
+        }
 
         return new Pelanggan([
             'no_internet' => trim($row['ndem'], "'"),
@@ -41,9 +58,11 @@ class PelangganImport implements ToModel, WithHeadingRow
             'cek_eazy_cam' => null,
             'cek_oca' => null,
             'cek_pijat_sekolah' => null,
-            'kode_sales' => null,
-            'nama_sf' => null,
-            'agency' => null,
+
+            // Kode Sales
+            'kode_sales' => $kodeSales,
+            'nama_sf' => $namaSF,
+            'agency' => $agency,
         ]);
     }
 
@@ -68,5 +87,13 @@ class PelangganImport implements ToModel, WithHeadingRow
         }
 
         return null; // jika tidak ada kecepatan ditemukan
+    }
+
+    private function extractKodeSales($text)
+    {
+        if (preg_match('/\bM\d{7,}\b/', $text, $matches)) {
+            return $matches[0]; // Ambil kode_sales
+        }
+        return null; // Jika tidak ketemu
     }
 }

@@ -4,7 +4,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     /**
      * Run the migrations.
      */
@@ -32,9 +33,9 @@ return new class extends Migration {
             $table->string('cek_eazy_cam')->nullable();
             $table->string('cek_oca')->nullable();
             $table->string('cek_pijar_sekolah')->nullable();
+
+            // Relasi ke sales
             $table->string('kode_sales')->nullable();
-            $table->string('nama_sf')->nullable();
-            $table->string('agency')->nullable();
             $table->timestamps();
         });
     }

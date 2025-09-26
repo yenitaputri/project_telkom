@@ -13,7 +13,6 @@ class HomeController extends Controller
         $sales = Sales::all();
         $pelanggan = Pelanggan::all();
 
-        // Controller
         $agency = [
             [
                 'agency' => 'BLM',
@@ -52,7 +51,21 @@ class HomeController extends Controller
             ],
         ];
 
+        $sales = collect([
+            (object) [
+                'gambar_sales' => 'sales1.jpg',
+                'kode_sales' => 'S001',
+                'nama_sales' => 'Budi Santoso',
+            ],
+            (object) [
+                'gambar_sales' => 'sales2.jpg',
+                'kode_sales' => 'S002',
+                'nama_sales' => 'Andi Saputra',
+            ],
+        ]);
 
-        return view('home.index', compact('sales', 'pelanggan', 'agency')); // Akan dibuat di langkah view
+
+
+        return view('home.index', compact('sales', 'pelanggan', 'agency', 'sales')); // Akan dibuat di langkah view
     }
 }

@@ -17,5 +17,8 @@
     },
     "volta": {
         "node": "24.5.0"
+    },
+    "dependencies": {
+        "apexcharts": "^3.46.0"
     }
 }

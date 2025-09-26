@@ -145,21 +145,21 @@
                     <h1 class="text-2xl font-semibold text-gray-800">Admin</h1>
                 </div>
                 <div class="relative">
-                    @if (!request()->routeIs('pelanggan.show'))
+                    @if (! request()->routeIs('pelanggan.show'))
                         <!-- <form action="{{ route('search') }}" method="get">
-                                                                                                <div class="relative w-full max-w-xs">
-                                                                                                    <input type="text" name="q" placeholder="Cari di sini..."
-                                                                                                        class="w-full py-2 px-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent pr-10">
-                                                                                                    <button type="submit"
-                                                                                                        class="absolute top-0 bottom-0 right-4 text-gray-500 hover:text-gray-700 transition-colors duration-200">
-                                                                                                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                                                                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z">
-                                                                                                            </path>
-                                                                                                        </svg>
-                                                                                                    </button>
-                                                                                                </div>
-                                                                                            </form> -->
+                                                                                                        <div class="relative w-full max-w-xs">
+                                                                                                            <input type="text" name="q" placeholder="Cari di sini..."
+                                                                                                                class="w-full py-2 px-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent pr-10">
+                                                                                                            <button type="submit"
+                                                                                                                class="absolute top-0 bottom-0 right-4 text-gray-500 hover:text-gray-700 transition-colors duration-200">
+                                                                                                                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                                                                                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z">
+                                                                                                                    </path>
+                                                                                                                </svg>
+                                                                                                            </button>
+                                                                                                        </div>
+                                                                                                    </form> -->
                     @else
                         <div class="flex items-center space-x-2 h-full text-sm">
                             <span class="text-black font-semibold">Data Pelanggan</span>
@@ -175,6 +175,7 @@
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.46.0/dist/apexcharts.min.js"></script>
     @if(session('success'))
         <script>
             Swal.fire({
@@ -204,6 +205,7 @@
         }
     </script>
     <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
+    @stack('scripts')
 </body>
 
 </html>

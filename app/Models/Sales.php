@@ -17,4 +17,12 @@ class Sales extends Model
         'nama_sales',
         'agency',
     ];
+    public function pelanggans()
+    {
+        return $this->hasMany(Pelanggan::class, 'kode_sales', 'kode_sales');
+    }
+    public function pelanggan()
+    {
+        return $this->hasMany(Pelanggan::class, 'kode_sales', 'kode_sales');
+    }
 }

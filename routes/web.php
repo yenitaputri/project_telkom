@@ -6,6 +6,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\SalesController;
 use App\Http\Controllers\PelangganController;
 use App\Http\Controllers\ProdigiController;
+use App\Http\Controllers\AstinetController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\ProfileController;
 
@@ -55,6 +56,9 @@ Route::middleware('auth')->group(function () {
     // Detail prodigi
     Route::get('/data-prodigi/{id}', [ProdigiController::class, 'show'])->name('prodigi.show');
 
+
+    // Detail Astinet
+    Route::resource('astinet', AstinetController::class);
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

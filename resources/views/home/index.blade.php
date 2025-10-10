@@ -13,18 +13,18 @@
                     <div class="flex items-center">
                         <!-- Start Date -->
                         <div class="relative">
-                            <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                            {{-- <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                                 <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
                                     xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
                                     <path
                                         d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
                                 </svg>
-                            </div>
+                            </div> --}}
                             <input id="datepicker-range-start" name="start" type="date"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg 
-                                                                focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 
-                                                                dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 
-                                                                dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                                                                                                                                            focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 
+                                                                                                                                                            dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 
+                                                                                                                                                            dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                 value="{{ request('start', \Carbon\Carbon::now()->startOfMonth()->format('Y-m-d')) }}">
                         </div>
 
@@ -32,18 +32,18 @@
 
                         <!-- End Date -->
                         <div class="relative">
-                            <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                            {{-- <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                                 <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
                                     xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
                                     <path
                                         d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
                                 </svg>
-                            </div>
+                            </div> --}}
                             <input id="datepicker-range-end" name="end" type="date"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg 
-                                                                focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 
-                                                                dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 
-                                                                dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                                                                                                                                            focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 
+                                                                                                                                                            dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 
+                                                                                                                                                            dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                 value="{{ request('end', \Carbon\Carbon::now()->endOfMonth()->format('Y-m-d')) }}">
                         </div>
                     </div>
@@ -51,7 +51,22 @@
                     <!-- Submit Button -->
                     <button type="submit"
                         class="bg-blue-600 hover:bg-blue-700 text-white rounded-md p-2 px-4 transition duration-200">
-                        Filter
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor" class="size-6">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5m-9-6h.008v.008H12v-.008ZM12 15h.008v.008H12V15Zm0 2.25h.008v.008H12v-.008ZM9.75 15h.008v.008H9.75V15Zm0 2.25h.008v.008H9.75v-.008ZM7.5 15h.008v.008H7.5V15Zm0 2.25h.008v.008H7.5v-.008Zm6.75-4.5h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V15Zm0 2.25h.008v.008h-.008v-.008Zm2.25-4.5h.008v.008H16.5v-.008Zm0 2.25h.008v.008H16.5V15Z" />
+                        </svg>
+                    </button>
+
+                    <!-- Reset Button -->
+                    <button type="button" id="reset-btn"
+                        class="bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-md p-2 px-4 transition duration-200">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor" class="size-6">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+                        </svg>
+
                     </button>
                 </div>
             </form>
@@ -110,7 +125,7 @@
                     </svg>
                 </div>
                 <div class="flex flex-col items-center justify-center">
-                    <h2 class="text-3xl font-bold">101</h2>
+                    <h2 class="text-3xl font-bold">{{ $astinet->count() }}</h2>
                     <p>Total Astinet</p>
                 </div>
             </div>
@@ -133,7 +148,7 @@
                             </tr>
                         </thead>
                         <tbody class="text-gray-600">
-                            @foreach ($sales->sortByDesc('pelanggans_count') as $index => $sale)
+                            @forelse ($sales->sortByDesc('pelanggans_count') as $index => $sale)
                                 <tr class="border-t hover:bg-gray-100 transition">
                                     <td class="px-2 py-2 text-left align-middle">{{ $loop->iteration }}</td>
                                     <td class="px-2 py-2 text-left align-middle">
@@ -155,7 +170,11 @@
                                         {{ $ach }}%
                                     </td>
                                 </tr>
-                            @endforeach
+                            @empty
+                                <tr class="border-t hover:bg-gray-100 transition">
+                                    <td class="px-2 py-2 text-center" colspan="6">Tidak Ada Data</td>
+                                </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>
@@ -176,15 +195,20 @@
                             </tr>
                         </thead>
                         <tbody class="text-gray-600">
-                            @foreach ($agency as $sale)
-                                <tr class="border-t hover:bg-gray-100 transition">
-                                    <td class="px-2 py-2 text-left align-middle">{{ $sale['agency'] }}</td>
-                                    <td class="px-2 py-2 text-left align-middle">{{ $sale['target'] }}</td>
-                                    <td class="px-2 py-2 text-left align-middle">{{ $sale['realisasi'] }}</td>
-                                    <td class="px-2 py-2 text-left align-middle">{{ $sale['ach'] }}</td>
-                                    <td class="px-2 py-2 text-left align-middle">{{ $sale['rank'] }}</td>
+                            @forelse ($rankedAgencies as $agency)
+                                <tr>
+                                    <td class="border px-2 py-2">{{ $agency->agency }}</td>
+                                    <td class="border px-2 py-2">{{ number_format($agency->total_target) }}</td>
+                                    <td class="border px-2 py-2">{{ number_format($agency->total_realisasi) }}</td>
+                                    <td class="border px-2 py-2">{{ $agency->achievement }}%</td>
+                                    <td class="border px-2 py-2">{{ $agency->rank }}</td>
                                 </tr>
-                            @endforeach
+                            @empty
+                                <tr>
+                                    <td colspan="5" class="border px-2 py-2 text-center text-gray-500">Tidak ada data agency
+                                        aktif.</td>
+                                </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>
@@ -299,6 +323,24 @@
 
     @push('scripts')
         <script>
+            // Reset Button
+            document.getElementById('reset-btn').addEventListener('click', function () {
+                const startInput = document.getElementById('datepicker-range-start');
+                const endInput = document.getElementById('datepicker-range-end');
+
+                // Kembalikan ke default (awal dan akhir bulan sekarang)
+                const now = new Date();
+                const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
+                const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+
+                const formatDate = (date) => date.toISOString().split('T')[0];
+
+                startInput.value = formatDate(firstDay);
+                endInput.value = formatDate(lastDay);
+
+                // Optional: otomatis submit setelah reset
+                document.getElementById('date-form').submit();
+            });
             // Auto submit form ketika tanggal berubah
             document.addEventListener('DOMContentLoaded', function () {
                 const dateInputs = document.querySelectorAll('#datepicker-range-start, #datepicker-range-end');
@@ -343,26 +385,26 @@
                         items.forEach((item, idx) => {
                             const [name, value] = item.split(":").map((s) => s.trim());
                             rows += `
-                                                                                        <tr>
-                                                                                          <td style="padding:4px;">${idx + 1}.  ${name}</td>
-                                                                                          <td style="padding:4px; font-weight:600; text-align:right;">${value}</td>
-                                                                                        </tr>
-                                                                                      `;
+                                                                                                                                                                                                                                                                                <tr>
+                                                                                                                                                                                                                                                                                  <td style="padding:4px;">${idx + 1}.  ${name}</td>
+                                                                                                                                                                                                                                                                                  <td style="padding:4px; font-weight:600; text-align:right;">${value}</td>
+                                                                                                                                                                                                                                                                                </tr>
+                                                                                                                                                                                                                                                                              `;
                         });
 
                         return `
-                                                                                      <div style="padding:8px; font-size:12px; min-width:200px;">
-                                                                                        <div style="font-weight:600; margin-bottom:4px; border-bottom:1px solid #ddd; padding-bottom:4px;">
-                                                                                          Pencapaian Poin Sales - ${data.x}
-                                                                                        </div>
-                                                                                        <div style="margin-bottom:6px;">Total: <b>${data.y}</b></div>
-                                                                                        <table>
-                                                                                          <tbody>
-                                                                                            ${rows}
-                                                                                          </tbody>
-                                                                                        </table>
-                                                                                      </div>
-                                                                                    `;
+                                                                                                                                                                                                                                                                              <div style="padding:8px; font-size:12px; min-width:200px;">
+                                                                                                                                                                                                                                                                                <div style="font-weight:600; margin-bottom:4px; border-bottom:1px solid #ddd; padding-bottom:4px;">
+                                                                                                                                                                                                                                                                                  Pencapaian Poin Sales - ${data.x}
+                                                                                                                                                                                                                                                                                </div>
+                                                                                                                                                                                                                                                                                <div style="margin-bottom:6px;">Total: <b>${data.y}</b></div>
+                                                                                                                                                                                                                                                                                <table>
+                                                                                                                                                                                                                                                                                  <tbody>
+                                                                                                                                                                                                                                                                                    ${rows}
+                                                                                                                                                                                                                                                                                  </tbody>
+                                                                                                                                                                                                                                                                                </table>
+                                                                                                                                                                                                                                                                              </div>
+                                                                                                                                                                                                                                                                            `;
                     },
                 },
                 states: {
@@ -404,8 +446,8 @@
             }
 
             // Bar Chart Configuration
-            const achievements = [25, 25, 25, 35];
-            const targets = [50, 40, 50, 40];
+            const achievements = @json($chartData['bar_achievement']);;
+            const targets = @json($chartData['bar_target']);
             const categories = ["Netmonk", "Oca", "Antarez", "Pijar Sekolah"];
 
             const percentages = achievements.map(

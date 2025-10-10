@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Astinet;
 use Illuminate\Http\Request;
 use App\Models\Sales;
 use App\Models\Pelanggan;
@@ -27,30 +28,47 @@ class HomeController extends Controller
             $endDate = Carbon::now()->endOfMonth();
         }
 
-        // Data sales lengkap + hitung jumlah pelanggan
-        $sales = Sales::withCount(['pelanggans' => function ($query) use ($startDate, $endDate) {
-            $query->whereBetween('tanggal_ps', [$startDate, $endDate]);
-        }])
-            ->with(['pelanggans' => function ($query) use ($startDate, $endDate) {
-                $query->whereBetween('tanggal_ps', [$startDate, $endDate]);
-            }])
-            ->get();
+        $sales = Sales::withCount([
+            'pelanggans as pelanggans_count' => fn ($q) =>
+                $q->whereBetween('tanggal_ps', [$startDate, $endDate])
+        ])->get();
 
         // Data pelanggan dengan filter tanggal
         $pelanggan = Pelanggan::whereBetween('tanggal_ps', [$startDate, $endDate])->get();
 
+        // Total Astinet
+        $astinet = Astinet::all();
+
         // // Data agency dengan filter tanggal
-        // $agency = $this->getAgencyData($startDate, $endDate);
-        $agency = [];
+        $agencies = DB::table('sales')
+            ->join('pelanggan', 'pelanggan.kode_sales', '=', 'sales.kode_sales')
+            ->select(
+                'sales.agency',
+                DB::raw('NULL as total_target'),
+                DB::raw('COUNT(pelanggan.kode_sales) as total_realisasi'),
+                DB::raw('ROUND(COUNT(pelanggan.kode_sales) * 100.0 / 
+                (SELECT COUNT(*) FROM pelanggan), 2) as achievement'),
+            )
+            ->groupBy('sales.agency')
+            ->orderByDesc('achievement')
+            ->get();
+
+        $rankedAgencies = $agencies->map(function ($item, $index) {
+            $item->rank = $index + 1;
+            return $item;
+        });
+
+
 
         // // Data untuk chart
         $chartData = $this->getChartData($startDate, $endDate);
-        // $chartData = [];
+        // return dd($chartData['bar_achievement']);
 
         return view('home.index', compact(
             'sales',
             'pelanggan',
-            'agency',
+            'astinet',
+            'rankedAgencies',
             'chartData',
             'startDate',
             'endDate',
@@ -134,7 +152,7 @@ class HomeController extends Controller
             if ($columnData->isEmpty()) {
                 \Log::info('No data found, using sample data');
                 $columnData = collect([[
-                    'x' => Carbon::now()->format('M'),
+                    'x' => Carbon::now()->format('M y'),
                     'y' => 0,
                     'detail' => '',
                     'year' => Carbon::now()->year,
@@ -144,8 +162,8 @@ class HomeController extends Controller
 
             return [
                 'column_data' => $columnData,
-                'bar_achievement' => [25, 25, 25, 35],
-                'bar_target' => [50, 40, 50, 40],
+                'bar_achievement' => [25, 10, 25, 35],
+                'bar_target' => [50, 100, 50, 40],
             ];
         } catch (\Exception $e) {
             \Log::error('Error in getChartData: '.$e->getMessage());
@@ -158,7 +176,7 @@ class HomeController extends Controller
                     'year' => Carbon::now()->year,
                     'month' => Carbon::now()->month,
                 ]],
-                'bar_achievement' => [25, 25, 25, 35],
+                'bar_achievement' => [25, 100, 25, 35],
                 'bar_target' => [50, 40, 50, 40],
             ];
         }

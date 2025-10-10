@@ -21,8 +21,4 @@ class Sales extends Model
     {
         return $this->hasMany(Pelanggan::class, 'kode_sales', 'kode_sales');
     }
-    public function pelanggan()
-    {
-        return $this->hasMany(Pelanggan::class, 'kode_sales', 'kode_sales');
-    }
 }

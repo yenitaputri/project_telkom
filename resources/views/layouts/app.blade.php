@@ -44,8 +44,10 @@
             -translate-x-full" :class="{'translate-x-0': sidebarOpen }">
 
             {{-- Bagian atas sidebar: Logo --}}
-            <div class="pt-2 pb-6 flex items-center justify-start border-b border-gray-200 h-23 overflow-hidden">
-                <img src="{{ asset('images/logosales2.png') }}" alt="Logo Sales" class="h-20 w-auto object-contain">
+            <div class="pt-2 pb-6 flex items-center justify-start border-b border-gray-200 h-23 overflow-hidden ">
+                <a href="{{ route('home.index') }}">
+                    <img src="{{ asset('images/logosales2.png') }}" alt="Logo Sales" class="h-20 w-auto object-contain">
+                </a>
             </div>
 
 
@@ -113,11 +115,11 @@
                         <a href="{{ route('astinet.index') }}" class="flex items-center px-6 py-3 text-gray-600 hover:bg-teal-50 hover:text-teal-600 rounded-lg mx-3 transition-colors duration-200
                             {{ request()->routeIs('astinet.index') ? 'bg-blue-600 text-white font-semibold' : '' }}">
                             {{-- DIUBAH DI SINI --}}
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-     stroke-width="1.5" stroke="currentColor" class="h-5 w-5 mr-3">
-  <path stroke-linecap="round" stroke-linejoin="round"
-        d="M7.5 14.25v2.25m3-4.5v4.5m3-6.75v6.75m3-9v9M6 20.25h12A2.25 2.25 0 0 0 20.25 18V6A2.25 2.25 0 0 0 18 3.75H6A2.25 2.25 0 0 0 3.75 6v12A2.25 2.25 0 0 0 6 20.25Z" />
-</svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                stroke="currentColor" class="h-5 w-5 mr-3">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M7.5 14.25v2.25m3-4.5v4.5m3-6.75v6.75m3-9v9M6 20.25h12A2.25 2.25 0 0 0 20.25 18V6A2.25 2.25 0 0 0 18 3.75H6A2.25 2.25 0 0 0 3.75 6v12A2.25 2.25 0 0 0 6 20.25Z" />
+                            </svg>
 
                             Data Astinet
                         </a>
@@ -161,19 +163,19 @@
                 <div class="relative">
                     @if (! request()->routeIs('pelanggan.show'))
                         <!-- <form action="{{ route('search') }}" method="get">
-                                                                                                        <div class="relative w-full max-w-xs">
-                                                                                                            <input type="text" name="q" placeholder="Cari di sini..."
-                                                                                                                class="w-full py-2 px-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent pr-10">
-                                                                                                            <button type="submit"
-                                                                                                                class="absolute top-0 bottom-0 right-4 text-gray-500 hover:text-gray-700 transition-colors duration-200">
-                                                                                                                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                                                                                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z">
-                                                                                                                    </path>
-                                                                                                                </svg>
-                                                                                                            </button>
-                                                                                                        </div>
-                                                                                                    </form> -->
+                                                                                                                        <div class="relative w-full max-w-xs">
+                                                                                                                            <input type="text" name="q" placeholder="Cari di sini..."
+                                                                                                                                class="w-full py-2 px-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent pr-10">
+                                                                                                                            <button type="submit"
+                                                                                                                                class="absolute top-0 bottom-0 right-4 text-gray-500 hover:text-gray-700 transition-colors duration-200">
+                                                                                                                                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                                                                                                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z">
+                                                                                                                                    </path>
+                                                                                                                                </svg>
+                                                                                                                            </button>
+                                                                                                                        </div>
+                                                                                                                    </form> -->
                     @else
                         <div class="flex items-center space-x-2 h-full text-sm">
                             <span class="text-black font-semibold">Data Pelanggan</span>

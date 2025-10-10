@@ -41,80 +41,80 @@
             </p>
         @endif
         {{-- Tabel Sales --}}
-        @if ($sales->count())
-            <div class="overflow-x-auto">
-                <table class="min-w-full table-auto bg-white border border-gray-200 rounded text-sm">
-                    <thead class="bg-blue-100 text-gray-700">
-                        <tr>
-                            <th class="border px-2 py-2 font-bold text-left align-middle">No</th>
-                            <th class="border px-2 py-2 font-bold text-left align-middle">Gambar</th>
-                            <th class="border px-2 py-2 font-bold text-left align-middle">Kode Sales</th>
-                            <th class="border px-2 py-2 font-bold text-left align-middle">Nama Sales</th>
-                            <th class="border px-2 py-2 font-bold text-left align-middle">Agency</th>
-                            <th class="border px-2 py-2 font-bold text-center align-middle">Aksi</th>
+        <div class="overflow-x-auto">
+            <table class="min-w-full table-auto bg-white border border-gray-200 rounded text-sm">
+                <thead class="bg-blue-100 text-gray-700">
+                    <tr>
+                        <th class="border px-2 py-2 font-bold text-left align-middle">No</th>
+                        <th class="border px-2 py-2 font-bold text-left align-middle">Gambar</th>
+                        <th class="border px-2 py-2 font-bold text-left align-middle">Kode Sales</th>
+                        <th class="border px-2 py-2 font-bold text-left align-middle">Nama Sales</th>
+                        <th class="border px-2 py-2 font-bold text-left align-middle">Agency</th>
+                        <th class="border px-2 py-2 font-bold text-center align-middle">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody class="text-gray-600">
+                    @forelse($sales as $index => $sale)
+                        <tr class="border-t hover:bg-gray-100 transition">
+                            <td class="px-2 py-2 text-left align-middle">{{ $loop->iteration }}</td>
+                            <td class="px-2 py-2 text-left align-middle">
+                                <div class="w-10 h-10 flex items-center">
+                                    <img src="{{ asset('storage/'.$sale->gambar_sales) }}" alt="gambar"
+                                        class="w-8 h-8 rounded-full object-cover border mx-auto">
+                                </div>
+                            </td>
+                            <td class="px-2 py-2 text-left align-middle">{{ $sale->kode_sales }}</td>
+                            <td class="px-2 py-2 text-left align-middle">{{ $sale->nama_sales }}</td>
+                            <td class="px-2 py-2 text-left align-middle">{{ $sale->agency }}</td>
+                            <td class="px-2 py-2 text-center align-middle space-x-1">
+                                <button type="button"
+                                    class="openEditModalBtn bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded text-xs transition-colors"
+                                    data-id="{{ $sale->id }}" data-gambar="{{ $sale->gambar_sales }}"
+                                    data-kode="{{ $sale->kode_sales }}" data-nama="{{ $sale->nama_sales }}"
+                                    data-agency="{{ $sale->agency }}">
+                                    Edit
+                                </button>
+                                <button type="button"
+                                    class="openDeleteModalBtn bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded text-xs transition-colors"
+                                    data-id="{{ $sale->id }}">
+                                    Hapus
+                                </button>
+                            </td>
                         </tr>
-                    </thead>
-                    <tbody class="text-gray-600">
-                        @foreach ($sales as $index => $sale)
-                            <tr class="border-t hover:bg-gray-100 transition">
-                                <td class="px-2 py-2 text-left align-middle">{{ $loop->iteration }}</td>
-                                <td class="px-2 py-2 text-left align-middle">
-                                    <div class="w-10 h-10 flex items-center">
-                                        <img src="{{ asset('storage/' . $sale->gambar_sales) }}" alt="gambar"
-                                            class="w-8 h-8 rounded-full object-cover border mx-auto">
-                                    </div>
-                                </td>
-                                <td class="px-2 py-2 text-left align-middle">{{ $sale->kode_sales }}</td>
-                                <td class="px-2 py-2 text-left align-middle">{{ $sale->nama_sales }}</td>
-                                <td class="px-2 py-2 text-left align-middle">{{ $sale->agency }}</td>
-                                <td class="px-2 py-2 text-center align-middle space-x-1">
-                                    <button type="button"
-                                        class="openEditModalBtn bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded text-xs transition-colors"
-                                        data-id="{{ $sale->id }}" data-gambar="{{ $sale->gambar_sales }}"
-                                        data-kode="{{ $sale->kode_sales }}" data-nama="{{ $sale->nama_sales }}"
-                                        data-agency="{{ $sale->agency }}">
-                                        Edit
-                                    </button>
-                                    <button type="button"
-                                        class="openDeleteModalBtn bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded text-xs transition-colors"
-                                        data-id="{{ $sale->id }}">
-                                        Hapus
-                                    </button>
-                                </td>
-                            </tr>
+                    @empty
+                        <tr>
+                            <td colspan="9" class="text-center py-3 text-gray-500">
+                                Tidak ditemukan data sales.
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+
+            {{-- Baris per halaman + Pagination --}}
+            <div class="flex flex-col sm:flex-row justify-between items-center mt-4 px-2 gap-y-2">
+                {{-- Dropdown per page --}}
+                <form method="GET" action="{{ route('sales.index') }}" class="flex items-center space-x-2">
+                    <label for="per_page" class="text-sm text-gray-700">Baris per halaman:</label>
+                    <select name="per_page" id="per_page" onchange="this.form.submit()"
+                        class="border-gray-300 rounded-md text-sm py-1">
+                        @foreach([5, 10, 25, 50, 100] as $limit)
+                            <option value="{{ $limit }}" {{ request('per_page', 10) == $limit ? 'selected' : '' }}>
+                                {{ $limit }}
+                            </option>
                         @endforeach
-                    </tbody>
-                </table>
+                    </select>
+                </form>
 
-                {{-- Baris per halaman + Pagination --}}
-                <div class="flex flex-col sm:flex-row justify-between items-center mt-4 px-2 gap-y-2">
-                    {{-- Dropdown per page --}}
-                    <form method="GET" action="{{ route('sales.index') }}" class="flex items-center space-x-2">
-                        <label for="per_page" class="text-sm text-gray-700">Baris per halaman:</label>
-                        <select name="per_page" id="per_page" onchange="this.form.submit()"
-                            class="border-gray-300 rounded-md text-sm py-1">
-                            @foreach([5, 10, 25, 50, 100] as $limit)
-                                <option value="{{ $limit }}" {{ request('per_page', 10) == $limit ? 'selected' : '' }}>
-                                    {{ $limit }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </form>
-
-                    {{-- Info + Navigasi Paginasi --}}
-                    <div
-                        class="flex flex-col sm:flex-row sm:items-center sm:space-x-4 w-full sm:w-auto justify-between sm:justify-end">
-                        <div>
-                            {{ $sales->appends(request()->query())->links() }}
-                        </div>
+                {{-- Info + Navigasi Paginasi --}}
+                <div
+                    class="flex flex-col sm:flex-row sm:items-center sm:space-x-4 w-full sm:w-auto justify-between sm:justify-end">
+                    <div>
+                        {{ $sales->appends(request()->query())->links() }}
                     </div>
                 </div>
             </div>
-        @else
-            <div class="text-center text-gray-500 mt-8">
-                Tidak ditemukan data sales.
-            </div>
-        @endif
+        </div>
 
         {{-- Modal Tambah Sales --}}
         <div id="addModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 p-4"
@@ -490,8 +490,8 @@
                 }
             @endif
 
-                                        // Hide success alert after 3 seconds
-                                        const successAlert = document.getElementById('success-alert');
+                                                        // Hide success alert after 3 seconds
+                                                        const successAlert = document.getElementById('success-alert');
             if (successAlert) {
                 setTimeout(() => {
                     successAlert.style.opacity = '0';

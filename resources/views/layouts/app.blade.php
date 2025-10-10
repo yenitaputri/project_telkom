@@ -124,6 +124,21 @@
                             Data Astinet
                         </a>
                     </li>
+                    <li>
+                        {{-- DATA Pengaturan --}}
+                        <a href="{{ route('target.index') }}" class="flex items-center px-6 py-3 text-gray-600 hover:bg-teal-50 hover:text-teal-600 rounded-lg mx-3 transition-colors duration-200
+                            {{ request()->routeIs('setting.index') ? 'bg-blue-600 text-white font-semibold' : '' }}">
+                            {{-- DIUBAH DI SINI --}}
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                stroke="currentColor" class="h-5 w-5 mr-3">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M10.5 6a7.5 7.5 0 1 0 7.5 7.5h-7.5V6Z" />
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M13.5 10.5H21A7.5 7.5 0 0 0 13.5 3v7.5Z" />
+                            </svg>
+                            Target
+                        </a>
+                    </li>
                 </ul>
             </nav>
 
@@ -163,19 +178,19 @@
                 <div class="relative">
                     @if (! request()->routeIs('pelanggan.show'))
                         <!-- <form action="{{ route('search') }}" method="get">
-                                                                                                                        <div class="relative w-full max-w-xs">
-                                                                                                                            <input type="text" name="q" placeholder="Cari di sini..."
-                                                                                                                                class="w-full py-2 px-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent pr-10">
-                                                                                                                            <button type="submit"
-                                                                                                                                class="absolute top-0 bottom-0 right-4 text-gray-500 hover:text-gray-700 transition-colors duration-200">
-                                                                                                                                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                                                                                                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z">
-                                                                                                                                    </path>
-                                                                                                                                </svg>
-                                                                                                                            </button>
-                                                                                                                        </div>
-                                                                                                                    </form> -->
+                                                                                                                                                                        <div class="relative w-full max-w-xs">
+                                                                                                                                                                            <input type="text" name="q" placeholder="Cari di sini..."
+                                                                                                                                                                                class="w-full py-2 px-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent pr-10">
+                                                                                                                                                                            <button type="submit"
+                                                                                                                                                                                class="absolute top-0 bottom-0 right-4 text-gray-500 hover:text-gray-700 transition-colors duration-200">
+                                                                                                                                                                                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                                                                                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                                                                                                                                                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z">
+                                                                                                                                                                                    </path>
+                                                                                                                                                                                </svg>
+                                                                                                                                                                            </button>
+                                                                                                                                                                        </div>
+                                                                                                                                                                    </form> -->
                     @else
                         <div class="flex items-center space-x-2 h-full text-sm">
                             <span class="text-black font-semibold">Data Pelanggan</span>

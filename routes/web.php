@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\SettingController;
+use App\Http\Controllers\TargetController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\HomeController;
@@ -60,6 +62,9 @@ Route::middleware('auth')->group(function () {
     // Detail Astinet
     Route::resource('astinet', AstinetController::class);
 
+    Route::resource('target', TargetController::class);
+    // Route::get('/target', [SettingController::class, 'index'])->name('setting.index');
+
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
@@ -71,4 +76,4 @@ Route::middleware('auth')->group(function () {
 Route::get('/search', [App\Http\Controllers\SearchController::class, 'index'])->name('search');
 
 // Route bawaan dari Breeze/Jetstream/etc
-require __DIR__ . '/auth.php';
+require __DIR__.'/auth.php';

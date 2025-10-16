@@ -142,6 +142,7 @@ class HomeController extends Controller
 
             // 🔹 Ambil data untuk masing-masing chart
             $columnData = $this->getColumnChartData($start, $end);
+            // $columnData = $this->getColumnChartDataDummy($start, $end);
             $barData = $this->getProdigiBarData($start, $end);
 
             return [
@@ -160,36 +161,82 @@ class HomeController extends Controller
         }
     }
 
+    // private function getColumnChartDataDummy($start, $end)
+    // {
+    //     $dates = collect([
+    //         '01-'.$start->format('m-Y'),
+    //         '05-'.$start->format('m-Y'),
+    //         '10-'.$start->format('m-Y'),
+    //         '15-'.$start->format('m-Y'),
+    //         '20-'.$start->format('m-Y'),
+    //         '25-'.$start->format('m-Y'),
+    //     ]);
+
+    //     $salesNames = ['Riza', 'Yenita', 'Andi', 'Siti', 'Budi'];
+
+    //     return $dates->map(function ($date, $i) use ($salesNames) {
+    //         // contoh total dan detail
+    //         $total = rand(10, 100);
+    //         $details = collect($salesNames)
+    //             ->map(fn ($name) => $name.': '.rand(5, 50))
+    //             ->implode(', ');
+
+    //         return [
+    //             'x' => $date,
+    //             'y' => $total,
+    //             'detail' => $details,
+    //         ];
+    //     });
+    // }
+
     private function getColumnChartData($start, $end)
     {
-        // Ambil data dengan field tanggal tertentu
+        // Ambil data dari database dalam rentang tanggal
         $monthlyData = $this->fetchMonthlyData($start->format('Y-m-d'), $end->format('Y-m-d'), 'tanggal_ps');
 
-        // Kelompokkan data per bulan (YYYY-MM)
+        // Kelompokkan data berdasarkan bulan (YYYY-MM)
         $groupedData = $monthlyData->groupBy(fn ($item) => sprintf('%d-%02d', $item->year, $item->month));
 
-        $columnData = $groupedData->map(function ($monthData) {
-            $firstItem = $monthData->first();
-            $monthName = Carbon::create()->month($firstItem->month)->format('M');
-            $total = $monthData->sum('total_per_sales');
+        // 🔹 Buat daftar semua bulan dalam range
+        $monthsRange = collect();
+        $current = $start->copy();
+        while ($current->lte($end)) {
+            $monthsRange->push([
+                'year' => $current->year,
+                'month' => $current->month,
+                'key' => sprintf('%d-%02d', $current->year, $current->month),
+                'label' => $current->format('M Y'),
+            ]);
+            $current->addMonth();
+        }
 
-            $details = $monthData->map(fn ($salesData) =>
-                "{$salesData->nama_sales}: {$salesData->total_per_sales}"
-            )->implode(', ');
+        // 🔹 Gabungkan data dari DB dan isi bulan kosong dengan 0
+        $columnData = $monthsRange->map(function ($m) use ($groupedData) {
+            $monthData = $groupedData->get($m['key']);
+
+            if ($monthData) {
+                $total = $monthData->sum('total_per_sales');
+                $details = $monthData->map(fn ($salesData) =>
+                    "{$salesData->nama_sales}: {$salesData->total_per_sales}"
+                )->implode(', ');
+            } else {
+                $total = 0;
+                $details = '';
+            }
 
             return [
-                'x' => $monthName,
+                'x' => $m['label'], // contoh: "Jan 2025"
                 'y' => $total,
                 'detail' => $details,
-                'year' => $firstItem->year,
-                'month' => $firstItem->month,
+                'year' => $m['year'],
+                'month' => $m['month'],
             ];
-        })->values();
+        });
 
-        // Jika kosong, fallback ke sample data
+        // 🔹 Fallback jika tidak ada data sama sekali
         if ($columnData->isEmpty()) {
             $columnData = collect([[
-                'x' => Carbon::now()->format('M y'),
+                'x' => Carbon::now()->format('M Y'),
                 'y' => 0,
                 'detail' => '',
                 'year' => Carbon::now()->year,
@@ -197,8 +244,9 @@ class HomeController extends Controller
             ]]);
         }
 
-        return $columnData;
+        return $columnData->values();
     }
+
 
     private function getProdigiBarData($start, $end)
     {

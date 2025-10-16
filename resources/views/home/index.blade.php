@@ -22,9 +22,9 @@
                             </div> --}}
                             <input id="datepicker-range-start" name="start" type="date"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg 
-                                                                                                                                                                                                    focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 
-                                                                                                                                                                                                    dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 
-                                                                                                                                                                                                    dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                                                                                                                                                                                                                                                                                                                                        focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 
+                                                                                                                                                                                                                                                                                                                                                        dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 
+                                                                                                                                                                                                                                                                                                                                                        dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                 value="{{ request('start', \Carbon\Carbon::now()->startOfMonth()->format('Y-m-d')) }}">
                         </div>
 
@@ -41,9 +41,9 @@
                             </div> --}}
                             <input id="datepicker-range-end" name="end" type="date"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg 
-                                                                                                                                                                                                    focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 
-                                                                                                                                                                                                    dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 
-                                                                                                                                                                                                    dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                                                                                                                                                                                                                                                                                                                                        focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 
+                                                                                                                                                                                                                                                                                                                                                        dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 
+                                                                                                                                                                                                                                                                                                                                                        dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                 value="{{ request('end', \Carbon\Carbon::now()->endOfMonth()->format('Y-m-d')) }}">
                         </div>
                     </div>
@@ -225,15 +225,15 @@
                                 Total PS Bulanan
                             </h5>
                             <p class="text-sm font-normal text-gray-500 dark:text-gray-400">
-                                {{ \Carbon\Carbon::parse($startDate)->format('M d') }} -
-                                {{ \Carbon\Carbon::parse($endDate)->format('M d') }}
+                                {{ \Carbon\Carbon::parse($startDate)->format('M d Y') }} -
+                                {{ \Carbon\Carbon::parse($endDate)->format('M d Y') }}
                             </p>
                         </div>
                     </div>
                 </div>
 
                 <!-- 🔹 Tambahkan wrapper scroll -->
-                <div class="overflow-x-auto">
+                <div class="overflow-x-scroll">
                     <div id="column-chart" class="min-w-[800px]"></div>
                 </div>
             </div>
@@ -248,8 +248,8 @@
                                     Performance Telda Banyuwangi
                                 </h5>
                                 <p class="text-sm font-normal text-gray-500 dark:text-gray-400">
-                                    {{ \Carbon\Carbon::parse($startDate)->format('M d') }} -
-                                    {{ \Carbon\Carbon::parse($endDate)->format('M d') }}
+                                    {{ \Carbon\Carbon::parse($startDate)->format('M d Y') }} -
+                                    {{ \Carbon\Carbon::parse($endDate)->format('M d Y') }}
                                 </p>
                             </div>
                         </div>
@@ -375,7 +375,6 @@
                 });
             });
 
-            // Column Chart Configuration
             const columnOptions = {
                 colors: ["#1A56DB"],
                 series: [{
@@ -385,10 +384,22 @@
                 }],
                 chart: {
                     type: "bar",
-                    height: "320px",
+                    height: 320,
                     fontFamily: "Inter, sans-serif",
                     toolbar: { show: false },
+                    parentHeightOffset: 0,
+                    foreColor: "#333",
+                    events: {
+                        dataPointSelection: function (event, chartContext, config) {
+                            event.stopPropagation(); // jangan bubble ke document click
+                            const { seriesIndex, dataPointIndex, w } = config;
+                            const data = w.globals.initialSeries[seriesIndex].data[dataPointIndex];
+                            const pos = { x: event.clientX, y: event.clientY };
+                            showCustomTooltip(data, seriesIndex, dataPointIndex, pos);
+                        }
+                    }
                 },
+                tooltip: { enabled: false },
                 plotOptions: {
                     bar: {
                         horizontal: false,
@@ -397,72 +408,108 @@
                         borderRadius: 8,
                     },
                 },
-                tooltip: {
-                    custom: function ({ series, seriesIndex, dataPointIndex, w }) {
-                        const data = w.globals.initialSeries[seriesIndex].data[dataPointIndex];
-
-                        // pecah string "Riza: 80, Yenita: 40" -> ["Riza: 80", "Yenita: 40"]
-                        const items = data.detail.split(",").map((s) => s.trim());
-
-                        // buat baris tabel
-                        let rows = "";
-                        items.forEach((item, idx) => {
-                            const [name, value] = item.split(":").map((s) => s.trim());
-                            rows += `
-                                                                                                                                                                                                                                                                                                                                                                <tr>
-                                                                                                                                                                                                                                                                                                                                                                  <td style="padding:4px;">${idx + 1}.  ${name}</td>
-                                                                                                                                                                                                                                                                                                                                                                  <td style="padding:4px; font-weight:600; text-align:right;">${value}</td>
-                                                                                                                                                                                                                                                                                                                                                                </tr>
-                                                                                                                                                                                                                                                                                                                                                              `;
-                        });
-
-                        return `
-                                                                                                                                                                                                                                                                                                                                                              <div style="padding:8px; font-size:12px; min-width:200px;">
-                                                                                                                                                                                                                                                                                                                                                                <div style="font-weight:600; margin-bottom:4px; border-bottom:1px solid #ddd; padding-bottom:4px;">
-                                                                                                                                                                                                                                                                                                                                                                  Pencapaian Poin Sales - ${data.x}
-                                                                                                                                                                                                                                                                                                                                                                </div>
-                                                                                                                                                                                                                                                                                                                                                                <div style="margin-bottom:6px;">Total: <b>${data.y}</b></div>
-                                                                                                                                                                                                                                                                                                                                                                <table>
-                                                                                                                                                                                                                                                                                                                                                                  <tbody>
-                                                                                                                                                                                                                                                                                                                                                                    ${rows}
-                                                                                                                                                                                                                                                                                                                                                                  </tbody>
-                                                                                                                                                                                                                                                                                                                                                                </table>
-                                                                                                                                                                                                                                                                                                                                                              </div>
-                                                                                                                                                                                                                                                                                                                                                            `;
-                    },
-                },
-                states: {
-                    hover: {
-                        filter: { type: "darken", value: 1 },
-                    },
-                },
-                stroke: {
-                    show: true,
-                    width: 0,
-                    colors: ["transparent"],
-                },
-                grid: {
-                    show: false,
-                    strokeDashArray: 4,
-                    padding: { left: 2, right: 2, top: -14 },
-                },
+                states: { hover: { filter: { type: "darken", value: 1 } } },
+                stroke: { show: true, width: 0, colors: ["transparent"] },
+                grid: { show: false },
                 dataLabels: { enabled: false },
                 legend: { show: false },
                 xaxis: {
-                    floating: false,
-                    labels: {
-                        show: true,
-                        style: {
-                            fontFamily: "Inter, sans-serif",
-                            cssClass: 'text-xs font-normal fill-gray-500 dark:fill-gray-400'
-                        }
-                    },
+                    labels: { show: true },
                     axisBorder: { show: false },
                     axisTicks: { show: false },
                 },
                 yaxis: { show: false },
                 fill: { opacity: 1 },
             };
+
+
+            // ===== Custom Tooltip =====
+            function showCustomTooltip(data, seriesIndex, dataPointIndex, pos) {
+                const items = data.detail.split(",").map(s => s.trim());
+                const hasMore = items.length > 3;
+                const tooltipId = `tooltip-${seriesIndex}-${dataPointIndex}`;
+                const expanded = window.currentExpandedTooltip === tooltipId;
+                const limit = expanded ? items.length : 3;
+
+                let rows = "";
+                for (let i = 0; i < limit && i < items.length; i++) {
+                    const [name, value] = items[i].split(":");
+                    rows += `<tr>
+                                                                                                                <td style='padding:4px;'>${i + 1}. ${name?.trim() || ""}</td>
+                                                                                                                <td style='padding:4px; font-weight:600; text-align:right;'>${value?.trim() || ""}</td>
+                                                                                                    </tr>`;
+                }
+
+                const label = expanded ? "Lihat lebih sedikit" : "Lihat lebih banyak";
+                const button = hasMore
+                    ? `<button id='${tooltipId}-btn' class="w-full text-blue-600 mt-4 text-center border-none p-2 text-sm cursor-pointer">${label}</button>`
+                    : "";
+
+                // Hapus tooltip lama
+                const existing = document.getElementById("floating-tooltip");
+                if (existing) existing.remove();
+
+                // Buat elemen tooltip
+                const tooltip = document.createElement("div");
+                tooltip.id = "floating-tooltip";
+                tooltip.style.position = "fixed"; // gunakan fixed agar stabil di viewport
+                tooltip.style.pointerEvents = "auto";
+                tooltip.style.zIndex = 999999;
+                tooltip.style.background = "#fff";
+                tooltip.style.border = "1px solid #ddd";
+                tooltip.style.borderRadius = "8px";
+                tooltip.style.boxShadow = "0 2px 10px rgba(0,0,0,0.15)";
+                tooltip.style.padding = "8px";
+                tooltip.style.fontSize = "12px";
+                tooltip.style.minWidth = "200px";
+
+                tooltip.innerHTML = `
+                                                                                                            <div style='font-weight:600;margin-bottom:4px;border-bottom:1px solid #ddd;padding-bottom:4px;'>
+                                                                                                              Pencapaian Poin Sales - ${data.x}
+                                                                                                            </div>
+                                                                                                            <div style='margin-bottom:6px;'>Total: <b>${data.y}</b></div>
+                                                                                                            <table><tbody>${rows}</tbody></table>
+                                                                                                            ${button}
+                                                                                                          `;
+
+                // Posisi tooltip (menyesuaikan agar tidak keluar layar)
+                const offsetX = 20, offsetY = 15;
+                let left = pos.x + offsetX;
+                let top = pos.y + offsetY;
+                const tooltipWidth = 220;
+                const tooltipHeight = 200;
+                if (left + tooltipWidth > window.innerWidth) left = window.innerWidth - tooltipWidth - 10;
+                if (top + tooltipHeight > window.innerHeight) top = window.innerHeight - tooltipHeight - 10;
+
+                tooltip.style.left = left + "px";
+                tooltip.style.top = top + "px";
+
+                tooltip.addEventListener("click", (e) => e.stopPropagation());
+                document.body.appendChild(tooltip);
+
+                // Tombol "lebih banyak"
+                const btn = document.getElementById(`${tooltipId}-btn`);
+                if (btn) {
+                    btn.onclick = (ev) => {
+                        ev.stopPropagation();
+                        window.currentExpandedTooltip = expanded ? null : tooltipId;
+                        showCustomTooltip(data, seriesIndex, dataPointIndex, pos);
+                    };
+                }
+
+                // Tutup tooltip saat klik di luar
+                const handleOutsideClick = (e) => {
+                    if (!tooltip.contains(e.target)) {
+                        tooltip.remove();
+                        window.removeEventListener("click", handleOutsideClick);
+                    }
+                };
+
+                // Delay agar event click bar tidak ikut dianggap “klik di luar”
+                setTimeout(() => {
+                    window.addEventListener("click", handleOutsideClick);
+                }, 100);
+            }
 
             if (document.getElementById("column-chart") && typeof ApexCharts !== 'undefined') {
                 const chart = new ApexCharts(document.getElementById("column-chart"), columnOptions);

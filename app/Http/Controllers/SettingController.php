@@ -12,18 +12,7 @@ class SettingController extends Controller
      */
     public function index(Request $request)
     {
-        $bulan = $request->get('bulan', now()->month);
-        $tahun = $request->get('tahun', now()->year);
-
-        $targetAgency = Target::where("target_type", "agency")
-            ->get();
-
-        $targetProdigi = Target::where("target_type", "prodigi")
-            ->where("bulan", $bulan)
-            ->where("tahun", $tahun)
-            ->get();
-
-        return view('setting.index', compact('targetAgency', 'targetProdigi', 'bulan', 'tahun'));
+        return view('settings.index');
     }
 
     /**

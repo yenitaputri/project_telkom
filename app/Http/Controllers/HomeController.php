@@ -40,6 +40,17 @@ class HomeController extends Controller
         $astinet = Astinet::all();
 
         // // Data agency dengan filter tanggal
+        $targetAgency = DB::table('targets')
+            ->where('target_type', 'agency')
+            ->whereBetween('tahun', [$startDate->year, $endDate->year])
+            ->when($startDate->month != $endDate->month, function ($q) use ($startDate, $endDate) {
+                $q->whereBetween('bulan', [$startDate->month, $endDate->month]);
+            })
+            ->get()
+            ->keyBy(function ($item) {
+                return $item->target_ref.'-'.$item->tahun.'-'.$item->bulan;
+            });
+
         $agencies = DB::table('sales')
             ->join('pelanggan', 'pelanggan.kode_sales', '=', 'sales.kode_sales')
             ->select(
@@ -53,6 +64,16 @@ class HomeController extends Controller
             ->orderByDesc('achievement')
             ->get();
 
+        $agencies = $agencies->map(function ($item) use ($targetAgency, $startDate) {
+            $key = $item->agency.'-'.$startDate->year.'-'.$startDate->month;
+            $item->total_target = $targetAgency[$key]->target_value ?? 0;
+            $item->achievement = $item->total_target > 0
+                ? round(($item->total_realisasi / $item->total_target) * 100, 2)
+                : 0;
+            return $item;
+        });
+
+
         $rankedAgencies = $agencies->map(function ($item, $index) {
             $item->rank = $index + 1;
             return $item;
@@ -62,7 +83,7 @@ class HomeController extends Controller
 
         // // Data untuk chart
         $chartData = $this->getChartData($startDate, $endDate);
-        // return dd($chartData['bar_achievement']);
+        // return dd($chartData);
 
         return view('home.index', compact(
             'sales',
@@ -116,71 +137,123 @@ class HomeController extends Controller
     private function getChartData($startDate, $endDate)
     {
         try {
-            $start = $startDate->format('Y-m-d');
-            $end = $endDate->format('Y-m-d');
+            $start = $startDate->copy()->startOfMonth();
+            $end = $endDate->copy()->endOfMonth();
 
-            \Log::info("Querying chart data from {$start} to {$end}");
-
-            // Ambil data dengan field tanggal tertentu
-            $monthlyData = $this->fetchMonthlyData($start, $end, 'tanggal_ps');
-
-            \Log::info('Monthly Data Count:', ['count' => $monthlyData->count()]);
-            \Log::info('Sample Monthly Data:', $monthlyData->take(3)->toArray());
-
-            // Kelompokkan data per bulan
-            $groupedData = $monthlyData->groupBy(fn ($item) => sprintf('%d-%02d', $item->year, $item->month));
-
-            $columnData = $groupedData->map(function ($monthData) {
-                $firstItem = $monthData->first();
-                $monthName = Carbon::create()->month($firstItem->month)->format('M');
-                $total = $monthData->sum('total_per_sales');
-
-                $details = $monthData->map(fn ($salesData) =>
-                    "{$salesData->nama_sales}: {$salesData->total_per_sales}"
-                )->implode(', ');
-
-                return [
-                    'x' => $monthName,
-                    'y' => $total,
-                    'detail' => $details,
-                    'year' => $firstItem->year,
-                    'month' => $firstItem->month,
-                ];
-            })->values();
-
-            // Jika kosong, fallback ke sample data
-            if ($columnData->isEmpty()) {
-                \Log::info('No data found, using sample data');
-                $columnData = collect([[
-                    'x' => Carbon::now()->format('M y'),
-                    'y' => 0,
-                    'detail' => '',
-                    'year' => Carbon::now()->year,
-                    'month' => Carbon::now()->month,
-                ]]);
-            }
+            // 🔹 Ambil data untuk masing-masing chart
+            $columnData = $this->getColumnChartData($start, $end);
+            $barData = $this->getProdigiBarData($start, $end);
 
             return [
                 'column_data' => $columnData,
-                'bar_achievement' => [25, 10, 25, 35],
-                'bar_target' => [50, 100, 50, 40],
+                'bar_realisasi' => $barData['realisasi'],
+                'bar_target' => $barData['target'],
             ];
         } catch (\Exception $e) {
             \Log::error('Error in getChartData: '.$e->getMessage());
 
             return [
-                'column_data' => [[
-                    'x' => Carbon::now()->format('M'),
-                    'y' => 0,
-                    'detail' => '',
-                    'year' => Carbon::now()->year,
-                    'month' => Carbon::now()->month,
-                ]],
-                'bar_achievement' => [25, 100, 25, 35],
-                'bar_target' => [50, 40, 50, 40],
+                'column_data' => $columnData,
+                'bar_realisasi' => [0, 0, 0, 0],
+                'bar_target' => [0, 0, 0, 0],
             ];
         }
     }
+
+    private function getColumnChartData($start, $end)
+    {
+        // Ambil data dengan field tanggal tertentu
+        $monthlyData = $this->fetchMonthlyData($start->format('Y-m-d'), $end->format('Y-m-d'), 'tanggal_ps');
+
+        // Kelompokkan data per bulan (YYYY-MM)
+        $groupedData = $monthlyData->groupBy(fn ($item) => sprintf('%d-%02d', $item->year, $item->month));
+
+        $columnData = $groupedData->map(function ($monthData) {
+            $firstItem = $monthData->first();
+            $monthName = Carbon::create()->month($firstItem->month)->format('M');
+            $total = $monthData->sum('total_per_sales');
+
+            $details = $monthData->map(fn ($salesData) =>
+                "{$salesData->nama_sales}: {$salesData->total_per_sales}"
+            )->implode(', ');
+
+            return [
+                'x' => $monthName,
+                'y' => $total,
+                'detail' => $details,
+                'year' => $firstItem->year,
+                'month' => $firstItem->month,
+            ];
+        })->values();
+
+        // Jika kosong, fallback ke sample data
+        if ($columnData->isEmpty()) {
+            $columnData = collect([[
+                'x' => Carbon::now()->format('M y'),
+                'y' => 0,
+                'detail' => '',
+                'year' => Carbon::now()->year,
+                'month' => Carbon::now()->month,
+            ]]);
+        }
+
+        return $columnData;
+    }
+
+    private function getProdigiBarData($start, $end)
+    {
+        $products = ['NETMONK', 'OCA', 'Antarez', 'Pijar Sekolah'];
+
+        // 🔹 Ambil data realisasi per paket
+        $prodigiData = DB::table('prodigi')
+            ->select(
+                'paket',
+                DB::raw('COALESCE(COUNT(*), 0) AS total_realisasi'),
+            )
+            ->whereBetween('tanggal_ps', [$start, $end])
+            ->whereIn('paket', $products)
+            ->groupBy('paket')
+            ->get()
+            ->keyBy('paket');
+
+        // 🔹 Ambil target prodigi per bulan dalam range
+        $targetProdigi = DB::table('targets')
+            ->where('target_type', 'prodigi')
+            ->where(function ($q) use ($start, $end) {
+                // Jika start & end berbeda tahun
+                if ($start->year != $end->year) {
+                    $q->where(function ($q2) use ($start) {
+                        $q2->where('tahun', $start->year)->where('bulan', '>=', $start->month);
+                    });
+                    $q->orWhere(function ($q2) use ($end) {
+                        $q2->where('tahun', $end->year)->where('bulan', '<=', $end->month);
+                    });
+                } else {
+                    // Sama tahun
+                    $q->where('tahun', $start->year)
+                        ->whereBetween('bulan', [$start->month, $end->month]);
+                }
+            })
+            ->get();
+
+        $target = [];
+        $realisasi = [];
+
+        foreach ($products as $p) {
+            // 🔹 Jumlahkan target semua bulan untuk produk ini
+            $t = $targetProdigi->where('target_ref', $p)->sum('target_value');
+            $r = $prodigiData->get($p) ? (int) $prodigiData->get($p)->total_realisasi : 0;
+
+            $target[] = $t;
+            $realisasi[] = $r;
+        }
+
+        return [
+            'target' => $target,
+            'realisasi' => $realisasi,
+        ];
+    }
+
 
     /**
      * Helper untuk ambil data bulanan

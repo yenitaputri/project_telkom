@@ -63,7 +63,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('astinet', AstinetController::class);
 
     Route::resource('target', TargetController::class);
-    // Route::get('/target', [SettingController::class, 'index'])->name('setting.index');
+    Route::get('/settings', [SettingController::class, 'index'])->name('setting.index');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

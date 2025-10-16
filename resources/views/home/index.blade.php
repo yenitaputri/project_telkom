@@ -22,9 +22,9 @@
                             </div> --}}
                             <input id="datepicker-range-start" name="start" type="date"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg 
-                                                                                                                                                            focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 
-                                                                                                                                                            dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 
-                                                                                                                                                            dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                                                                                                                                                                                    focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 
+                                                                                                                                                                                                    dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 
+                                                                                                                                                                                                    dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                 value="{{ request('start', \Carbon\Carbon::now()->startOfMonth()->format('Y-m-d')) }}">
                         </div>
 
@@ -41,9 +41,9 @@
                             </div> --}}
                             <input id="datepicker-range-end" name="end" type="date"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg 
-                                                                                                                                                            focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 
-                                                                                                                                                            dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 
-                                                                                                                                                            dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                                                                                                                                                                                    focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 
+                                                                                                                                                                                                    dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 
+                                                                                                                                                                                                    dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                 value="{{ request('end', \Carbon\Carbon::now()->endOfMonth()->format('Y-m-d')) }}">
                         </div>
                     </div>
@@ -221,7 +221,8 @@
                 <div class="flex justify-between pb-4 mb-4 border-b border-gray-200 dark:border-gray-700">
                     <div class="flex items-center">
                         <div>
-                            <h5 class="leading-none text-xl font-bold text-gray-900 dark:text-white pb-1">Total PS Bulanan
+                            <h5 class="leading-none text-xl font-bold text-gray-900 dark:text-white pb-1">
+                                Total PS Bulanan
                             </h5>
                             <p class="text-sm font-normal text-gray-500 dark:text-gray-400">
                                 {{ \Carbon\Carbon::parse($startDate)->format('M d') }} -
@@ -230,7 +231,11 @@
                         </div>
                     </div>
                 </div>
-                <div id="column-chart"></div>
+
+                <!-- 🔹 Tambahkan wrapper scroll -->
+                <div class="overflow-x-auto">
+                    <div id="column-chart" class="min-w-[800px]"></div>
+                </div>
             </div>
 
             <!-- Performance Telda Banyuwangi -->
@@ -253,6 +258,7 @@
                 </div>
             </div>
         </div>
+
 
         <div class="w-full">
             <div class="mb-4 bg-blue-600 p-4 rounded-xl font-bold text-white text-center">Data Detail Per Sales</div>
@@ -283,22 +289,22 @@
                                     {{ $sale->pelanggans_count }}
                                 </td>
                                 <td class="px-2 py-2 text-left align-middle">
-                                    {{ $sale->pelanggans->where('produk', 'Indibiz')->count() }}
+                                    {{ $sale->pelanggans->where('jenis_layanan', 'INDIBIZ')->count() }}
                                 </td>
                                 <td class="px-2 py-2 text-left align-middle">
-                                    {{ $sale->pelanggans->where('produk', 'WMS')->count() }}
+                                    {{ $sale->pelanggans->where('paket', 'WMS')->count() }}
                                 </td>
                                 <td class="px-2 py-2 text-left align-middle">
-                                    {{ $sale->pelanggans->where('produk', 'Netmonk')->count() }}
+                                    {{ $sale->pelanggans->where('paket', 'NETMONK')->count() }}
                                 </td>
                                 <td class="px-2 py-2 text-left align-middle">
-                                    {{ $sale->pelanggans->where('produk', 'OCA')->count() }}
+                                    {{ $sale->pelanggans->where('paket', 'OCA')->count() }}
                                 </td>
                                 <td class="px-2 py-2 text-left align-middle">
-                                    {{ $sale->pelanggans->where('produk', 'Antarez')->count() }}
+                                    {{ $sale->pelanggans->where('paket', 'Antarez')->count() }}
                                 </td>
                                 <td class="px-2 py-2 text-left align-middle">
-                                    {{ $sale->pelanggans->where('produk', 'Pijar Sekolah')->count() }}
+                                    {{ $sale->pelanggans->where('paket', 'Pijar Sekolah')->count() }}
                                 </td>
                                 <td class="px-2 py-2 text-left align-middle">
                                     @php
@@ -323,6 +329,24 @@
 
     @push('scripts')
         <script>
+            // Ambil data dari controller (contoh)
+            const columnData = @json($chartData['column_data'] ?? []);
+
+            // Hitung jumlah bulan
+            const monthCount = columnData.length;
+
+            // Dapatkan elemen chart
+            const chartEl = document.getElementById('column-chart');
+
+            // Jika bulan > 6, beri lebar dinamis agar bisa scroll
+            if (monthCount > 6) {
+                chartEl.style.minWidth = `${monthCount * 120}px`;
+            } else {
+                // Jika hanya sedikit bulan, biarkan mengikuti container (tidak scroll)
+                chartEl.style.minWidth = '100%';
+            }
+
+
             // Reset Button
             document.getElementById('reset-btn').addEventListener('click', function () {
                 const startInput = document.getElementById('datepicker-range-start');
@@ -385,26 +409,26 @@
                         items.forEach((item, idx) => {
                             const [name, value] = item.split(":").map((s) => s.trim());
                             rows += `
-                                                                                                                                                                                                                                                                                <tr>
-                                                                                                                                                                                                                                                                                  <td style="padding:4px;">${idx + 1}.  ${name}</td>
-                                                                                                                                                                                                                                                                                  <td style="padding:4px; font-weight:600; text-align:right;">${value}</td>
-                                                                                                                                                                                                                                                                                </tr>
-                                                                                                                                                                                                                                                                              `;
+                                                                                                                                                                                                                                                                                                                                                                <tr>
+                                                                                                                                                                                                                                                                                                                                                                  <td style="padding:4px;">${idx + 1}.  ${name}</td>
+                                                                                                                                                                                                                                                                                                                                                                  <td style="padding:4px; font-weight:600; text-align:right;">${value}</td>
+                                                                                                                                                                                                                                                                                                                                                                </tr>
+                                                                                                                                                                                                                                                                                                                                                              `;
                         });
 
                         return `
-                                                                                                                                                                                                                                                                              <div style="padding:8px; font-size:12px; min-width:200px;">
-                                                                                                                                                                                                                                                                                <div style="font-weight:600; margin-bottom:4px; border-bottom:1px solid #ddd; padding-bottom:4px;">
-                                                                                                                                                                                                                                                                                  Pencapaian Poin Sales - ${data.x}
-                                                                                                                                                                                                                                                                                </div>
-                                                                                                                                                                                                                                                                                <div style="margin-bottom:6px;">Total: <b>${data.y}</b></div>
-                                                                                                                                                                                                                                                                                <table>
-                                                                                                                                                                                                                                                                                  <tbody>
-                                                                                                                                                                                                                                                                                    ${rows}
-                                                                                                                                                                                                                                                                                  </tbody>
-                                                                                                                                                                                                                                                                                </table>
-                                                                                                                                                                                                                                                                              </div>
-                                                                                                                                                                                                                                                                            `;
+                                                                                                                                                                                                                                                                                                                                                              <div style="padding:8px; font-size:12px; min-width:200px;">
+                                                                                                                                                                                                                                                                                                                                                                <div style="font-weight:600; margin-bottom:4px; border-bottom:1px solid #ddd; padding-bottom:4px;">
+                                                                                                                                                                                                                                                                                                                                                                  Pencapaian Poin Sales - ${data.x}
+                                                                                                                                                                                                                                                                                                                                                                </div>
+                                                                                                                                                                                                                                                                                                                                                                <div style="margin-bottom:6px;">Total: <b>${data.y}</b></div>
+                                                                                                                                                                                                                                                                                                                                                                <table>
+                                                                                                                                                                                                                                                                                                                                                                  <tbody>
+                                                                                                                                                                                                                                                                                                                                                                    ${rows}
+                                                                                                                                                                                                                                                                                                                                                                  </tbody>
+                                                                                                                                                                                                                                                                                                                                                                </table>
+                                                                                                                                                                                                                                                                                                                                                              </div>
+                                                                                                                                                                                                                                                                                                                                                            `;
                     },
                 },
                 states: {
@@ -446,11 +470,11 @@
             }
 
             // Bar Chart Configuration
-            const achievements = @json($chartData['bar_achievement']);;
+            const realisasi = @json($chartData['bar_realisasi']);;
             const targets = @json($chartData['bar_target']);
             const categories = ["Netmonk", "Oca", "Antarez", "Pijar Sekolah"];
 
-            const percentages = achievements.map(
+            const percentages = realisasi.map(
                 (p, i) => ((p / targets[i]) * 100).toFixed(1) + "%"
             );
 
@@ -459,7 +483,7 @@
                     {
                         name: "Achievement",
                         color: "#1A56DB",
-                        data: achievements,
+                        data: realisasi,
                     },
                     {
                         name: "Target",

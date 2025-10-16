@@ -3,6 +3,7 @@
 @section('title', 'Data Target')
 
 @section('content')
+    <h2 class="text-3xl font-bold text-gray-800 mb-6">Settings</h2>
     <div x-data="{ openAgencyModal: false, openProdigiModal: false }"
         class="bg-white rounded-lg shadow-md p-6 min-h-[calc(100vh-160px)] flex flex-col">
 
@@ -10,10 +11,11 @@
         <div class="flex justify-between items-center">
             <h2 class="text-2xl font-bold text-gray-700">Daftar Target</h2>
             {{-- Filter Bulan & Tahun --}}
-            <form method="GET" action="{{ route('target.index') }}" class="flex flex-wrap items-end gap-3 mt-4 mb-6">
+            <form method="GET" action="{{ route('target.index') }}" class="flex flex-wrap items-end gap-3">
                 <div>
                     <label class="block text-gray-700 font-semibold mb-1">Bulan</label>
                     <select name="bulan" class="border-gray-300 rounded-md">
+                        <option value="" {{ $bulan == '' ? 'selected' : '' }}>Semua Bulan</option>
                         @for ($i = 1; $i <= 12; $i++)
                             <option value="{{ $i }}" {{ $i == $bulan ? 'selected' : '' }}>
                                 {{ \Carbon\Carbon::create()->month($i)->translatedFormat('F') }}
@@ -21,6 +23,7 @@
                         @endfor
                     </select>
                 </div>
+
                 <div>
                     <label class="block text-gray-700 font-semibold mb-1">Tahun</label>
                     <input type="number" name="tahun" value="{{ $tahun }}" min="2020" max="2100"
@@ -64,8 +67,14 @@
                         <div class="flex space-x-2">
                             <div class="w-1/2">
                                 <label class="block text-gray-700 font-semibold mb-1">Bulan</label>
-                                <input type="number" name="bulan" min="1" max="12" placeholder="1-12" required
-                                    class="w-full border-gray-300 rounded-md">
+                                <select name="bulan" required class="w-full border-gray-300 rounded-md">
+                                    @for ($i = 1; $i <= 12; $i++)
+                                        <option value="{{ $i }}" {{ $i == now()->month ? 'selected' : '' }}>
+                                            {{ \Carbon\Carbon::create()->month($i)->translatedFormat('F') }}
+                                        </option>
+                                    @endfor
+                                </select>
+
                             </div>
                             <div class="w-1/2">
                                 <label class="block text-gray-700 font-semibold mb-1">Tahun</label>
@@ -116,8 +125,13 @@
                         <div class="flex space-x-2">
                             <div class="w-1/2">
                                 <label class="block text-gray-700 font-semibold mb-1">Bulan</label>
-                                <input type="number" name="bulan" min="1" max="12" placeholder="1-12" required
-                                    class="w-full border-gray-300 rounded-md">
+                                <select name="bulan" required class="w-full border-gray-300 rounded-md">
+                                    @for ($i = 1; $i <= 12; $i++)
+                                        <option value="{{ $i }}" {{ $i == now()->month ? 'selected' : '' }}>
+                                            {{ \Carbon\Carbon::create()->month($i)->translatedFormat('F') }}
+                                        </option>
+                                    @endfor
+                                </select>
                             </div>
                             <div class="w-1/2">
                                 <label class="block text-gray-700 font-semibold mb-1">Tahun</label>
@@ -174,7 +188,9 @@
                     @forelse ($targetAgency as $item)
                         <tr class="border-b border-gray-200 hover:bg-gray-50">
                             <td class="py-3 px-6">{{ $loop->iteration }}</td>
-                            <td class="py-3 px-6">{{ $item->bulan }}</td>
+                            <td class="py-3 px-6">
+                                {{ \Carbon\Carbon::create()->month($item->bulan)->translatedFormat('F') }}
+                            </td>
                             <td class="py-3 px-6">{{ $item->tahun }}</td>
                             <td class="py-3 px-6">{{ $item->target_ref }}</td>
                             <td class="py-3 px-6">{{ $item->target_value }}</td>
@@ -228,7 +244,10 @@
                     @forelse ($targetProdigi as $item)
                         <tr class="border-b border-gray-200 hover:bg-gray-50">
                             <td class="py-3 px-6">{{ $loop->iteration }}</td>
-                            <td class="py-3 px-6">{{ $item->bulan }}</td>
+                            <td class="py-3 px-6">
+                                {{ \Carbon\Carbon::create()->month($item->bulan)->translatedFormat('F') }}
+                            </td>
+
                             <td class="py-3 px-6">{{ $item->tahun }}</td>
                             <td class="py-3 px-6">{{ $item->target_ref }}</td>
                             <td class="py-3 px-6">{{ $item->target_value }}</td>

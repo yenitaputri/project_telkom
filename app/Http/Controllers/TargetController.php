@@ -12,24 +12,28 @@ class TargetController extends Controller
      */
     public function index(Request $request)
     {
-        $bulan = $request->get('bulan'); // bisa null
+        $bulan = $request->get('bulan'); // bisa null atau ''
         $tahun = $request->get('tahun'); // bisa null
         $perPage = 10; // jumlah data per halaman, bisa disesuaikan
 
         // Target Agency
         $targetAgency = Target::where('target_type', 'agency');
-        if ($bulan)
+        if (! empty($bulan)) {
             $targetAgency->where('bulan', $bulan);
-        if ($tahun)
+        }
+        if (! empty($tahun)) {
             $targetAgency->where('tahun', $tahun);
+        }
         $targetAgency = $targetAgency->paginate($perPage)->withQueryString();
 
         // Target Prodigi
         $targetProdigi = Target::where('target_type', 'prodigi');
-        if ($bulan)
+        if (! empty($bulan)) {
             $targetProdigi->where('bulan', $bulan);
-        if ($tahun)
+        }
+        if (! empty($tahun)) {
             $targetProdigi->where('tahun', $tahun);
+        }
         $targetProdigi = $targetProdigi->paginate($perPage)->withQueryString();
 
         return view('target.index', compact('targetAgency', 'targetProdigi', 'bulan', 'tahun'));

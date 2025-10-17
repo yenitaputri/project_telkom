@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Target;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class TargetController extends Controller
 {
@@ -12,40 +13,31 @@ class TargetController extends Controller
      */
     public function index(Request $request)
     {
-        $bulan = $request->get('bulan'); // bisa null atau ''
-        $tahun = $request->get('tahun'); // bisa null
-        $perPage = 10; // jumlah data per halaman, bisa disesuaikan
+        $bulan = $request->get('bulan');
+        $tahun = $request->get('tahun');
+        $perPage = 10;
 
-        // Target Agency
-        $targetAgency = Target::where('target_type', 'agency');
-        if (! empty($bulan)) {
-            $targetAgency->where('bulan', $bulan);
-        }
-        if (! empty($tahun)) {
-            $targetAgency->where('tahun', $tahun);
-        }
-        $targetAgency = $targetAgency->paginate($perPage)->withQueryString();
+        // Base query reusable
+        $query = fn ($type) => Target::where('target_type', $type)
+            ->when(! empty($bulan), fn ($q) => $q->where('bulan', $bulan))
+            ->when(! empty($tahun), fn ($q) => $q->where('tahun', $tahun));
 
-        // Target Prodigi
-        $targetProdigi = Target::where('target_type', 'prodigi');
-        if (! empty($bulan)) {
-            $targetProdigi->where('bulan', $bulan);
-        }
-        if (! empty($tahun)) {
-            $targetProdigi->where('tahun', $tahun);
-        }
-        $targetProdigi = $targetProdigi->paginate($perPage)->withQueryString();
+        // Target per type
+        $targetAgency = $query('agency')->paginate($perPage)->withQueryString();
+        $targetProdigi = $query('prodigi')->paginate($perPage)->withQueryString();
+        $targetSales = Target::where('target_type', 'sales')
+            ->when(! empty($tahun), fn ($q) => $q->where('tahun', $tahun))
+            ->paginate($perPage)
+            ->withQueryString();
 
-        return view('target.index', compact('targetAgency', 'targetProdigi', 'bulan', 'tahun'));
+        return view('target.index', compact('targetAgency', 'targetProdigi', 'targetSales', 'bulan', 'tahun'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function show(Target $target)
     {
-        // Optional: bisa pakai modal di index, jadi tidak perlu halaman create terpisah
+        // Opsional
     }
+
 
     /**
      * Store a newly created resource in storage.
@@ -53,39 +45,52 @@ class TargetController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'target_type' => 'required|in:agency,prodigi',
-            'target_ref' => 'required|string|max:255',
-            'bulan' => 'required|integer|min:1|max:12',
+            'target_type' => 'required|in:agency,prodigi,sales',
+            'target_ref' => [
+                'required', 'string', 'max:255',
+                function ($attribute, $value, $fail) use ($request) {
+                    if ($request->target_type === 'sales') {
+                        $exists = Target::where('target_type', 'sales')
+                            ->where('target_ref', $value)
+                            ->where('tahun', $request->tahun)
+                            ->exists();
+                        if ($exists) {
+                            $fail('Target tahunan untuk sales ini sudah ada pada tahun tersebut.');
+                        }
+                    }
+                },
+            ],
+            'bulan' => [
+                // bulan hanya wajib kalau bukan sales
+                function ($attribute, $value, $fail) use ($request) {
+                    if ($request->target_type !== 'sales' && empty($value)) {
+                        $fail('Kolom bulan wajib diisi untuk target agency/prodigi.');
+                    }
+                },
+                'nullable', 'integer', 'min:1', 'max:12',
+            ],
             'tahun' => 'required|integer|min:2020|max:2100',
             'target_value' => 'required|numeric|min:0',
         ]);
 
-        // Simpan ke database
-        Target::create($request->only([
-            'target_type', 'target_ref', 'bulan', 'tahun', 'target_value'
-        ]));
+        // Simpan data
+        Target::create($request->only(['target_type', 'target_ref', 'bulan', 'tahun', 'target_value']));
 
-        // Redirect kembali ke halaman index dengan query string bulan & tahun agar filter tetap
-        return redirect()->route('target.index', [
-            'bulan' => $request->bulan,
-            'tahun' => $request->tahun,
-        ])->with('success', 'Target berhasil ditambahkan!');
-    }
+        // Tentukan redirect berdasarkan tipe target
+        $routeName = match ($request->target_type) {
+            'agency' => 'target.index',
+            'prodigi' => 'target.index',
+            'sales' => 'setting.sales',
+        };
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Target $target)
-    {
-        // Opsional
-    }
+        // Parameter redirect
+        $params = ['tahun' => $request->tahun];
+        if ($request->target_type !== 'sales') {
+            $params['bulan'] = $request->bulan;
+        }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Target $target)
-    {
-        // Opsional: jika ingin edit
+        return redirect()->route($routeName, $params)
+            ->with('success', 'Target berhasil ditambahkan!');
     }
 
     /**
@@ -94,21 +99,51 @@ class TargetController extends Controller
     public function update(Request $request, Target $target)
     {
         $request->validate([
-            'target_type' => 'required|in:agency,prodigi',
-            'target_ref' => 'required|string|max:255',
-            'bulan' => 'required|integer|min:1|max:12',
+            'target_type' => 'required|in:agency,prodigi,sales',
+            'target_ref' => [
+                'required', 'string', 'max:255',
+                function ($attribute, $value, $fail) use ($request, $target) {
+                    if ($request->target_type === 'sales') {
+                        $exists = Target::where('target_type', 'sales')
+                            ->where('target_ref', $value)
+                            ->where('tahun', $request->tahun)
+                            ->where('id', '!=', $target->id)
+                            ->exists();
+                        if ($exists) {
+                            $fail('Target tahunan untuk sales ini sudah ada pada tahun tersebut.');
+                        }
+                    }
+                },
+            ],
+            'bulan' => [
+                function ($attribute, $value, $fail) use ($request) {
+                    if ($request->target_type !== 'sales' && empty($value)) {
+                        $fail('Kolom bulan wajib diisi untuk target agency/prodigi.');
+                    }
+                },
+                'nullable', 'integer', 'min:1', 'max:12',
+            ],
             'tahun' => 'required|integer|min:2020|max:2100',
             'target_value' => 'required|numeric|min:0',
         ]);
 
-        $target->update($request->only([
-            'target_type', 'target_ref', 'bulan', 'tahun', 'target_value'
-        ]));
+        $target->update($request->only(['target_type', 'target_ref', 'bulan', 'tahun', 'target_value']));
 
-        return redirect()->route('target.index', [
-            'bulan' => $request->bulan,
-            'tahun' => $request->tahun,
-        ])->with('success', 'Target berhasil diperbarui!');
+        // Tentukan redirect berdasarkan tipe target
+        $routeName = match ($request->target_type) {
+            'agency' => 'target.index',
+            'prodigi' => 'target.index',
+            'sales' => 'setting.sales',
+        };
+
+        // Parameter redirect
+        $params = ['tahun' => $request->tahun];
+        if ($request->target_type !== 'sales') {
+            $params['bulan'] = $request->bulan;
+        }
+
+        return redirect()->route($routeName, $params)
+            ->with('success', 'Target berhasil diperbarui!');
     }
 
     /**

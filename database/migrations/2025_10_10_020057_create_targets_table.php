@@ -13,12 +13,14 @@ return new class extends Migration
     {
         Schema::create('targets', function (Blueprint $table) {
             $table->id();
-            $table->enum('target_type', ['agency', 'prodigi']);
-            $table->integer("bulan");
+            $table->enum('target_type', ['agency', 'prodigi', 'sales']);
+            $table->integer("bulan")->nullable();
             $table->integer("tahun");
             $table->string('target_ref');
             $table->integer("target_value");
             $table->timestamps();
+
+            $table->unique(['target_type', 'target_ref', 'tahun', 'bulan']);
         });
     }
 

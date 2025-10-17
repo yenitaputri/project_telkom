@@ -64,6 +64,8 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('target', TargetController::class);
     Route::get('/settings', [SettingController::class, 'index'])->name('setting.index');
+    Route::get('/setting/sales', [SettingController::class, 'salesIndex'])->name('setting.sales');
+
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

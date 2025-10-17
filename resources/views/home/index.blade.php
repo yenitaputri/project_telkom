@@ -22,9 +22,9 @@
                             </div> --}}
                             <input id="datepicker-range-start" name="start" type="date"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg 
-                                                                                                                                                                                                                                                                                                                                                        focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 
-                                                                                                                                                                                                                                                                                                                                                        dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 
-                                                                                                                                                                                                                                                                                                                                                        dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                                                                                                                                                                                                                                                                                                                                                                    focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 
+                                                                                                                                                                                                                                                                                                                                                                                    dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 
+                                                                                                                                                                                                                                                                                                                                                                                    dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                 value="{{ request('start', \Carbon\Carbon::now()->startOfMonth()->format('Y-m-d')) }}">
                         </div>
 
@@ -41,9 +41,9 @@
                             </div> --}}
                             <input id="datepicker-range-end" name="end" type="date"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg 
-                                                                                                                                                                                                                                                                                                                                                        focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 
-                                                                                                                                                                                                                                                                                                                                                        dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 
-                                                                                                                                                                                                                                                                                                                                                        dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                                                                                                                                                                                                                                                                                                                                                                    focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 
+                                                                                                                                                                                                                                                                                                                                                                                    dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 
+                                                                                                                                                                                                                                                                                                                                                                                    dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                 value="{{ request('end', \Carbon\Carbon::now()->endOfMonth()->format('Y-m-d')) }}">
                         </div>
                     </div>
@@ -85,10 +85,10 @@
                     </svg>
                 </div>
                 <div class="flex flex-col items-center justify-center">
-                    <h2 class="text-3xl font-bold">{{ $sales->count() }}</h2>
+                    <h2 class="text-3xl font-bold">{{ $salesWithTarget->count() }}</h2>
                     <p>Total Sales Assistant</p>
                     <p class="text-sm text-gray-500 mt-1">
-                        {{ $sales->sum('pelanggans_count') }} Pelanggan
+                        {{ $salesWithTarget->sum('pelanggans_count') }} Pelanggan
                     </p>
                 </div>
             </div>
@@ -148,7 +148,7 @@
                             </tr>
                         </thead>
                         <tbody class="text-gray-600">
-                            @forelse ($sales->sortByDesc('pelanggans_count') as $index => $sale)
+                            @forelse ($salesWithTarget->sortByDesc('pelanggans_count') as $index => $sale)
                                 <tr class="border-t hover:bg-gray-100 transition">
                                     <td class="px-2 py-2 text-left align-middle">{{ $loop->iteration }}</td>
                                     <td class="px-2 py-2 text-left align-middle">
@@ -261,7 +261,10 @@
 
 
         <div class="w-full">
-            <div class="mb-4 bg-blue-600 p-4 rounded-xl font-bold text-white text-center">Data Detail Per Sales</div>
+            <div class="mb-4 bg-blue-600 p-4 rounded-xl font-bold text-white text-center">
+                Data Detail Per Sales
+            </div>
+
             <div class="overflow-x-auto rounded-xl">
                 <table class="min-w-full table-auto bg-white border border-gray-200 rounded text-sm">
                     <thead class="bg-blue-100 text-gray-700">
@@ -277,14 +280,16 @@
                             <th class="border px-2 py-2 font-bold text-left align-middle">Antarez</th>
                             <th class="border px-2 py-2 font-bold text-left align-middle">Pijar Sekolah</th>
                             <th class="border px-2 py-2 font-bold text-left align-middle">Presentase</th>
+                            {{-- <th class="border px-2 py-2 font-bold text-left align-middle">Pencapaian</th> --}}
                         </tr>
                     </thead>
                     <tbody class="text-gray-600">
-                        @forelse($sales as $sale)
+                        @forelse($salesWithTarget as $sale)
                             <tr class="border-t hover:bg-gray-100 transition">
                                 <td class="px-2 py-2 text-left align-middle">{{ $sale->nama_sales }}</td>
                                 <td class="px-2 py-2 text-left align-middle">{{ $sale->kode_sales }}</td>
                                 <td class="px-2 py-2 text-left align-middle">{{ $sale->agency ?? '-' }}</td>
+
                                 <td class="px-2 py-2 text-left align-middle">
                                     {{ $sale->pelanggans_count }}
                                 </td>
@@ -306,17 +311,19 @@
                                 <td class="px-2 py-2 text-left align-middle">
                                     {{ $sale->pelanggans->where('paket', 'Pijar Sekolah')->count() }}
                                 </td>
-                                <td class="px-2 py-2 text-left align-middle">
-                                    @php
-                                        $target = 10; // Target default
-                                        $ach = $target > 0 ? round(($sale->pelanggans_count / $target) * 100, 1) : 0;
-                                    @endphp
-                                    {{ $ach }}%
+
+                                {{-- Tambahan kolom target & pencapaian --}}
+                                <td class="px-2 py-2 text-left align-middle font-semibold text-blue-700">
+                                    {{ $sale->total_target }} %
                                 </td>
+                                {{-- <td
+                                    class="px-2 py-2 text-left align-middle font-semibold {{ $sale->achievement >= 100 ? 'text-green-600' : 'text-orange-500' }}">
+                                    {{ $sale->achievement }}%
+                                </td> --}}
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="11" class="py-3 px-6 text-center text-gray-500">
+                                <td colspan="12" class="py-3 px-6 text-center text-gray-500">
                                     Tidak ada data
                                 </td>
                             </tr>
@@ -325,6 +332,7 @@
                 </table>
             </div>
         </div>
+
     </div>
 
     @push('scripts')
@@ -435,9 +443,9 @@
                 for (let i = 0; i < limit && i < items.length; i++) {
                     const [name, value] = items[i].split(":");
                     rows += `<tr>
-                                                                                                                <td style='padding:4px;'>${i + 1}. ${name?.trim() || ""}</td>
-                                                                                                                <td style='padding:4px; font-weight:600; text-align:right;'>${value?.trim() || ""}</td>
-                                                                                                    </tr>`;
+                                                                                                                                                                        <td style='padding:4px;'>${i + 1}. ${name?.trim() || ""}</td>
+                                                                                                                                                                        <td style='padding:4px; font-weight:600; text-align:right;'>${value?.trim() || ""}</td>
+                                                                                                                                                            </tr>`;
                 }
 
                 const label = expanded ? "Lihat lebih sedikit" : "Lihat lebih banyak";
@@ -464,13 +472,13 @@
                 tooltip.style.minWidth = "200px";
 
                 tooltip.innerHTML = `
-                                                                                                            <div style='font-weight:600;margin-bottom:4px;border-bottom:1px solid #ddd;padding-bottom:4px;'>
-                                                                                                              Pencapaian Poin Sales - ${data.x}
-                                                                                                            </div>
-                                                                                                            <div style='margin-bottom:6px;'>Total: <b>${data.y}</b></div>
-                                                                                                            <table><tbody>${rows}</tbody></table>
-                                                                                                            ${button}
-                                                                                                          `;
+                                                                                                                                                                    <div style='font-weight:600;margin-bottom:4px;border-bottom:1px solid #ddd;padding-bottom:4px;'>
+                                                                                                                                                                      Pencapaian Poin Sales - ${data.x}
+                                                                                                                                                                    </div>
+                                                                                                                                                                    <div style='margin-bottom:6px;'>Total: <b>${data.y}</b></div>
+                                                                                                                                                                    <table><tbody>${rows}</tbody></table>
+                                                                                                                                                                    ${button}
+                                                                                                                                                                  `;
 
                 // Posisi tooltip (menyesuaikan agar tidak keluar layar)
                 const offsetX = 20, offsetY = 15;

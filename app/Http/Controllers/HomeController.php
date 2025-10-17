@@ -13,7 +13,6 @@ class HomeController extends Controller
 {
     public function index(Request $request)
     {
-        // Validasi dan format tanggal
         try {
             $startDate = $request->get('start')
                 ? Carbon::parse($request->get('start'))->startOfDay()
@@ -23,11 +22,11 @@ class HomeController extends Controller
                 ? Carbon::parse($request->get('end'))->endOfDay()
                 : Carbon::now()->endOfMonth();
         } catch (\Exception $e) {
-            // Jika parsing gagal, gunakan default
             $startDate = Carbon::now()->startOfMonth();
             $endDate = Carbon::now()->endOfMonth();
         }
 
+        // Ambil data sales beserta total pelanggan (realisasi)
         $sales = Sales::withCount([
             'pelanggans as pelanggans_count' => fn ($q) =>
                 $q->whereBetween('tanggal_ps', [$startDate, $endDate])
@@ -39,7 +38,7 @@ class HomeController extends Controller
         // Total Astinet
         $astinet = Astinet::all();
 
-        // // Data agency dengan filter tanggal
+        // === Target Agency Bulanan ===
         $targetAgency = DB::table('targets')
             ->where('target_type', 'agency')
             ->whereBetween('tahun', [$startDate->year, $endDate->year])
@@ -47,21 +46,19 @@ class HomeController extends Controller
                 $q->whereBetween('bulan', [$startDate->month, $endDate->month]);
             })
             ->get()
-            ->keyBy(function ($item) {
-                return $item->target_ref.'-'.$item->tahun.'-'.$item->bulan;
-            });
+            ->keyBy(fn ($item) => $item->target_ref.'-'.$item->tahun.'-'.$item->bulan);
 
+        // === Agency Achievement ===
         $agencies = DB::table('sales')
             ->join('pelanggan', 'pelanggan.kode_sales', '=', 'sales.kode_sales')
             ->select(
                 'sales.agency',
-                DB::raw('NULL as total_target'),
                 DB::raw('COUNT(pelanggan.kode_sales) as total_realisasi'),
-                DB::raw('ROUND(COUNT(pelanggan.kode_sales) * 100.0 / 
-                (SELECT COUNT(*) FROM pelanggan), 2) as achievement'),
+                DB::raw('NULL as total_target'),
+                DB::raw('0 as achievement'),
             )
+            ->whereBetween('pelanggan.tanggal_ps', [$startDate, $endDate])
             ->groupBy('sales.agency')
-            ->orderByDesc('achievement')
             ->get();
 
         $agencies = $agencies->map(function ($item) use ($targetAgency, $startDate) {
@@ -73,20 +70,33 @@ class HomeController extends Controller
             return $item;
         });
 
-
-        $rankedAgencies = $agencies->map(function ($item, $index) {
+        $rankedAgencies = $agencies->values()->map(function ($item, $index) {
             $item->rank = $index + 1;
             return $item;
         });
 
+        // === Target Sales Tahunan ===
+        $targetSales = DB::table('targets')
+            ->where('target_type', 'sales')
+            ->where('tahun', $startDate->year)
+            ->get()
+            ->keyBy(fn ($item) => $item->target_ref.'-'.$item->tahun);
 
+        // === Sales Achievement ===
+        $salesWithTarget = $sales->map(function ($item) use ($targetSales, $startDate) {
+            $key = $item->kode_sales.'-'.$startDate->year;
+            $item->total_target = $targetSales[$key]->target_value ?? 0;
+            $item->achievement = $item->total_target > 0
+                ? round(($item->pelanggans_count / $item->total_target) * 100, 2)
+                : 0;
+            return $item;
+        });
 
-        // // Data untuk chart
+        // === Chart Data ===
         $chartData = $this->getChartData($startDate, $endDate);
-        // return dd($chartData);
 
         return view('home.index', compact(
-            'sales',
+            'salesWithTarget',
             'pelanggan',
             'astinet',
             'rankedAgencies',

@@ -106,11 +106,16 @@
                                 class="w-full border-gray-300 rounded-md border px-3 py-2" required>
                         </div>
 
-                        <div>
-                            <label class="block text-gray-700 font-semibold mb-1">Nama Target</label>
-                            <input type="text" name="target_ref" x-model="editSalesData.target_ref" required
-                                class="w-full border-gray-300 rounded-md border px-3 py-2">
-                        </div>
+                        <select name="target_ref" x-model="editSalesData.target_ref" required
+                            class="w-full border-gray-300 rounded-md border px-3 py-2">
+                            <option value="">-- Pilih Sales --</option>
+                            @foreach ($sales as $sale)
+                                <option value="{{ $sale->kode_sales }}">
+                                    {{ $sale->kode_sales }} — {{ $sale->nama_sales }}
+                                </option>
+                            @endforeach
+                        </select>
+
 
                         <div>
                             <label class="block text-gray-700 font-semibold mb-1">Nilai Target</label>
@@ -151,7 +156,7 @@
                     <tr class="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">
                         <th class="py-3 px-6 text-left">No.</th>
                         <th class="py-3 px-6 text-left">Tahun</th>
-                        <th class="py-3 px-6 text-left">Nama Target</th>
+                        <th class="py-3 px-6 text-left">Kode Sales</th>
                         <th class="py-3 px-6 text-left">Nilai Target</th>
                         <th class="py-3 px-6 text-center">Aksi</th>
                     </tr>
@@ -162,16 +167,17 @@
                             <td class="py-3 px-6">{{ $loop->iteration }}</td>
                             <td class="py-3 px-6">{{ $item->tahun }}</td>
                             <td class="py-3 px-6">{{ $item->target_ref }}</td>
-                            <td class="py-3 px-6">{{ number_format($item->target_value, 0, ',', '.') }}</td>
+                            <td class="py-3 px-6">{{ $item->target_value}}</td>
                             <td class="py-3 px-6 flex justify-center gap-2">
-                                <button @click="
-                                                                                                                    openEditSalesModal = true;
-                                                                                                                    editSalesData = {
-                                                                                                                        id: '{{ $item->id }}',
-                                                                                                                        tahun: '{{ $item->tahun }}',
-                                                                                                                        target_ref: '{{ $item->target_ref }}',
-                                                                                                                        target_value: '{{ $item->target_value }}'
-                                                                                                                    };"
+                                <button
+                                    @click="
+                                                                                                                                                                    openEditSalesModal = true;
+                                                                                                                                                                    editSalesData = {
+                                                                                                                                                                        id: '{{ $item->id }}',
+                                                                                                                                                                        tahun: '{{ $item->tahun }}',
+                                                                                                                                                                        target_ref: '{{ $item->target_ref }}',
+                                                                                                                                                                        target_value: '{{ $item->target_value }}'
+                                                                                                                                                                    };"
                                     class="bg-yellow-400 hover:bg-yellow-500 text-white font-bold py-1 px-3 rounded text-xs">
                                     Edit
                                 </button>

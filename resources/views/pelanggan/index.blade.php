@@ -4,13 +4,13 @@
 
 @section('content')
     <div x-data="{
-                                                openTambahModal: {{ $errors->any() ? 'true' : 'false' }},
-                                                openPreviewModal: false,
-                                                previewData() {
-                                                    // Lakukan validasi atau tampilkan modal preview
-                                                    this.openPreviewModal = true;
-                                                }
-                                                }"
+                                                                        openTambahModal: {{ $errors->any() ? 'true' : 'false' }},
+                                                                        openPreviewModal: false,
+                                                                        previewData() {
+                                                                            // Lakukan validasi atau tampilkan modal preview
+                                                                            this.openPreviewModal = true;
+                                                                        }
+                                                                        }"
         class="bg-white rounded-lg shadow-md p-6 min-h-[calc(100vh-160px)] flex flex-col">
         {{-- Tombol Tambah Data dan filter tanggal --}}
         <div class="flex justify-end mb-4 space-x-4 items-center">
@@ -140,6 +140,7 @@
                         <th class="py-3 px-6 text-left">Datel</th>
                         <th class="py-3 px-6 text-left">STO</th>
                         <th class="py-3 px-6 text-left">Nama</th>
+                        <th class="py-3 px-6 text-left">Sales</th>
                         <th class="py-3 px-6 text-center">Aksi</th>
                     </tr>
                 </thead>
@@ -154,6 +155,7 @@
                             <td class="py-3 px-6 text-left">{{ $item['datel'] }}</td>
                             <td class="py-3 px-6 text-left">{{ $item['sto'] }}</td>
                             <td class="py-3 px-6 text-left font-semibold">{{ $item['nama'] }}</td>
+                            <td class="py-3 px-6 text-left font-semibold">{{ $item->sales->nama_sales ?? '' }}</td>
                             <td class="py-3 px-6 text-center">
                                 <div class="flex item-center justify-center space-x-2">
                                     <a href="{{ route('pelanggan.show', ['id' => $item['id'], 'page' => request('page', 1)]) }}"

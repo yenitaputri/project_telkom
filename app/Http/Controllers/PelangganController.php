@@ -15,22 +15,27 @@ class PelangganController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Pelanggan::orderBy('id', 'asc');
+        $query = Pelanggan::with('sales');
 
         // Filter pencarian untuk semua kolom
         if ($request->filled('q')) {
             $keyword = $request->q;
 
             // Ambil semua kolom dari tabel pelanggan
-            $columns = Schema::getColumnListing('pelanggan');
+            $columns = \Schema::getColumnListing('pelanggan');
 
             $query->where(function ($q) use ($columns, $keyword) {
                 foreach ($columns as $column) {
                     $q->orWhere($column, 'like', "%{$keyword}%");
                 }
+
+                $q->orWhereHas('sales', function ($q2) use ($keyword) {
+                    $q2->where('nama_sales', 'like', "%{$keyword}%");
+                });
             });
         }
 
+        // Filter berdasarkan tanggal
         if ($request->filled('start') && $request->filled('end')) {
             $startDate = Carbon::parse($request->start)->format('Y-m-d');
             $endDate = Carbon::parse($request->end)->format('Y-m-d');

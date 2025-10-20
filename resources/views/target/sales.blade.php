@@ -67,7 +67,7 @@
                         </div>
 
                         <div>
-                            <label class="block text-gray-700 font-semibold mb-1">Nilai Target</label>
+                            <label class="block text-gray-700 font-semibold mb-1">Presentase Target</label>
                             <input type="number" name="target_value" step="0.01" min="0" required
                                 class="w-full border-gray-300 rounded-md border px-3 py-2">
                         </div>
@@ -118,7 +118,7 @@
 
 
                         <div>
-                            <label class="block text-gray-700 font-semibold mb-1">Nilai Target</label>
+                            <label class="block text-gray-700 font-semibold mb-1">Presentase Target</label>
                             <input type="number" name="target_value" x-model="editSalesData.target_value" min="0" max="120"
                                 class="w-full border-gray-300 rounded-md border px-3 py-2" required>
                         </div>
@@ -157,7 +157,7 @@
                         <th class="py-3 px-6 text-left">No.</th>
                         <th class="py-3 px-6 text-left">Tahun</th>
                         <th class="py-3 px-6 text-left">Kode Sales</th>
-                        <th class="py-3 px-6 text-left">Nilai Target</th>
+                        <th class="py-3 px-6 text-left">Presentase Target</th>
                         <th class="py-3 px-6 text-center">Aksi</th>
                     </tr>
                 </thead>
@@ -171,13 +171,13 @@
                             <td class="py-3 px-6 flex justify-center gap-2">
                                 <button
                                     @click="
-                                                                                                                                                                    openEditSalesModal = true;
-                                                                                                                                                                    editSalesData = {
-                                                                                                                                                                        id: '{{ $item->id }}',
-                                                                                                                                                                        tahun: '{{ $item->tahun }}',
-                                                                                                                                                                        target_ref: '{{ $item->target_ref }}',
-                                                                                                                                                                        target_value: '{{ $item->target_value }}'
-                                                                                                                                                                    };"
+                                                                                                                                                                                    openEditSalesModal = true;
+                                                                                                                                                                                    editSalesData = {
+                                                                                                                                                                                        id: '{{ $item->id }}',
+                                                                                                                                                                                        tahun: '{{ $item->tahun }}',
+                                                                                                                                                                                        target_ref: '{{ $item->target_ref }}',
+                                                                                                                                                                                        target_value: '{{ $item->target_value }}'
+                                                                                                                                                                                    };"
                                     class="bg-yellow-400 hover:bg-yellow-500 text-white font-bold py-1 px-3 rounded text-xs">
                                     Edit
                                 </button>

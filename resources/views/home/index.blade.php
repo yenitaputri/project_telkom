@@ -22,9 +22,9 @@
                             </div> --}}
                             <input id="datepicker-range-start" name="start" type="date"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg 
-                                                                                                                                                                                                                                                                                                                                                                                    focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 
-                                                                                                                                                                                                                                                                                                                                                                                    dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 
-                                                                                                                                                                                                                                                                                                                                                                                    dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                 value="{{ request('start', \Carbon\Carbon::now()->startOfMonth()->format('Y-m-d')) }}">
                         </div>
 
@@ -41,9 +41,9 @@
                             </div> --}}
                             <input id="datepicker-range-end" name="end" type="date"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg 
-                                                                                                                                                                                                                                                                                                                                                                                    focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 
-                                                                                                                                                                                                                                                                                                                                                                                    dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 
-                                                                                                                                                                                                                                                                                                                                                                                    dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                 value="{{ request('end', \Carbon\Carbon::now()->endOfMonth()->format('Y-m-d')) }}">
                         </div>
                     </div>
@@ -125,7 +125,7 @@
                     </svg>
                 </div>
                 <div class="flex flex-col items-center justify-center">
-                    <h2 class="text-3xl font-bold">{{ $astinet->count() }}</h2>
+                    <h2 class="text-3xl font-bold">{{ $astinet }}</h2>
                     <p>Total Astinet</p>
                 </div>
             </div>
@@ -180,9 +180,10 @@
                 </div>
             </div>
 
-            <!-- Racing Sales Agency -->
-            <div class="w-1/2 flex flex-col gap-4">
+            <!-- Ranking Sales Agency -->
+            <div class="w-1/2 flex flex-col gap-4" x-data="{ showAllAgency: false }">
                 <div class="bg-blue-600 p-4 rounded-xl text-white">Ranking Sales Agency</div>
+
                 <div class="overflow-x-auto rounded-xl">
                     <table class="min-w-full table-auto bg-white border border-gray-200 rounded text-sm">
                         <thead class="bg-blue-100 text-gray-700">
@@ -194,9 +195,11 @@
                                 <th class="border px-2 py-2 font-bold text-left align-middle">Rank</th>
                             </tr>
                         </thead>
+
                         <tbody class="text-gray-600">
-                            @forelse ($rankedAgencies as $agency)
-                                <tr>
+                            @forelse ($rankedAgencies as $index => $agency)
+                                <tr x-show="{{ $loop->iteration }} <= 3 || showAllAgency" x-cloak
+                                    class="border-t hover:bg-gray-100 transition">
                                     <td class="border px-2 py-2">{{ $agency->agency }}</td>
                                     <td class="border px-2 py-2">{{ number_format($agency->total_target) }}</td>
                                     <td class="border px-2 py-2">{{ number_format($agency->total_realisasi) }}</td>
@@ -205,19 +208,30 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="5" class="border px-2 py-2 text-center text-gray-500">Tidak ada data agency
-                                        aktif.</td>
+                                    <td colspan="5" class="border px-2 py-2 text-center text-gray-500">
+                                        Tidak ada data agency aktif.
+                                    </td>
                                 </tr>
                             @endforelse
                         </tbody>
                     </table>
                 </div>
+
+                {{-- Tombol Baca Selengkapnya --}}
+                @if ($rankedAgencies->count() > 3)
+                    <div class="text-center mt-2">
+                        <button x-on:click="showAllAgency = !showAllAgency"
+                            class="text-blue-600 hover:text-blue-800 font-medium text-sm transition">
+                            <span x-text="showAllAgency ? 'Tampilkan Lebih Sedikit' : 'Baca Selengkapnya'"></span>
+                        </button>
+                    </div>
+                @endif
             </div>
         </div>
 
-        <div class="w-full flex gap-10 justify-between">
+        <div class="w-full grid grid-cols-1 sm:grid-cols-2 gap-10 ">
             <!-- Total PS Bulanan -->
-            <div class="w-1/2 flex flex-col gap-4 shadow-md p-4 border-2 rounded-lg">
+            <div class="flex flex-col gap-4 shadow-md p-4 border-2 rounded-lg">
                 <div class="flex justify-between pb-4 mb-4 border-b border-gray-200 dark:border-gray-700">
                     <div class="flex items-center">
                         <div>
@@ -233,13 +247,13 @@
                 </div>
 
                 <!-- 🔹 Tambahkan wrapper scroll -->
-                <div class="overflow-x-scroll">
-                    <div id="column-chart" class="min-w-[800px]"></div>
+                <div class="overflow-x-auto">
+                    <div id="column-chart" class="max-w-full"></div>
                 </div>
             </div>
 
             <!-- Performance Telda Banyuwangi -->
-            <div class="w-1/2 flex flex-col gap-4 shadow-md p-4 border-2 rounded-lg">
+            <div class="flex flex-col gap-4 shadow-md p-4 border-2 rounded-lg">
                 <div class="max-w-sm w-full bg-white rounded-lg shadow-sm dark:bg-gray-800">
                     <div class="flex justify-between pb-4 mb-4 border-b border-gray-200 dark:border-gray-700">
                         <div class="flex items-center">
@@ -263,6 +277,10 @@
         <div class="w-full">
             <div class="mb-4 bg-blue-600 p-4 rounded-xl font-bold text-white text-center">
                 Data Detail Per Sales
+                <p class="text-sm font-normal text-white opacity-80">
+                    {{ \Carbon\Carbon::parse($startDate)->format('M d Y') }} -
+                    {{ \Carbon\Carbon::parse($endDate)->format('M d Y') }}
+                </p>
             </div>
 
             <div class="overflow-x-auto rounded-xl">
@@ -443,9 +461,9 @@
                 for (let i = 0; i < limit && i < items.length; i++) {
                     const [name, value] = items[i].split(":");
                     rows += `<tr>
-                                                                                                                                                                        <td style='padding:4px;'>${i + 1}. ${name?.trim() || ""}</td>
-                                                                                                                                                                        <td style='padding:4px; font-weight:600; text-align:right;'>${value?.trim() || ""}</td>
-                                                                                                                                                            </tr>`;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                            <td style='padding:4px;'>${i + 1}. ${name?.trim() || ""}</td>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                            <td style='padding:4px; font-weight:600; text-align:right;'>${value?.trim() || ""}</td>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                </tr>`;
                 }
 
                 const label = expanded ? "Lihat lebih sedikit" : "Lihat lebih banyak";
@@ -472,13 +490,13 @@
                 tooltip.style.minWidth = "200px";
 
                 tooltip.innerHTML = `
-                                                                                                                                                                    <div style='font-weight:600;margin-bottom:4px;border-bottom:1px solid #ddd;padding-bottom:4px;'>
-                                                                                                                                                                      Pencapaian Poin Sales - ${data.x}
-                                                                                                                                                                    </div>
-                                                                                                                                                                    <div style='margin-bottom:6px;'>Total: <b>${data.y}</b></div>
-                                                                                                                                                                    <table><tbody>${rows}</tbody></table>
-                                                                                                                                                                    ${button}
-                                                                                                                                                                  `;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                        <div style='font-weight:600;margin-bottom:4px;border-bottom:1px solid #ddd;padding-bottom:4px;'>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                          Pencapaian Poin Sales - ${data.x}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                        </div>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                        <div style='margin-bottom:6px;'>Total: <b>${data.y}</b></div>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                        <table><tbody>${rows}</tbody></table>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                        ${button}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                      `;
 
                 // Posisi tooltip (menyesuaikan agar tidak keluar layar)
                 const offsetX = 20, offsetY = 15;

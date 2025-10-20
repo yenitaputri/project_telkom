@@ -17,7 +17,7 @@ class PelangganImport implements ToModel, WithHeadingRow
      */
     public function model(array $row)
     {
-        $tanggal = $this->convertDate($row['order_date']);
+        $tanggal = $this->convertDate($row['tanggal_manja']);
         $kecepatan = $this->extractMbps($row['package_name']);
         $kodeSales = $this->extractKodeSales($row['device_id']);
 

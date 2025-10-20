@@ -36,7 +36,7 @@ class HomeController extends Controller
         $pelanggan = Pelanggan::whereBetween('tanggal_ps', [$startDate, $endDate])->get();
 
         // Total Astinet
-        $astinet = Astinet::all();
+        $astinet = Astinet::sum('bandwidth');
 
         // === Target Agency Bulanan ===
         $targetAgency = DB::table('targets')

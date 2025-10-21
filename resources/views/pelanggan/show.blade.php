@@ -78,23 +78,23 @@
                 </tr>
                 <tr>
                     <th class="py-2 px-4 font-semibold border-b">Cek Netmonk</th>
-                    <td class="py-2 px-4 border-b"></td>
+                    <td class="py-2 px-4 border-b">{{ $pelanggan->cek_netmonk }}</td>
                 </tr>
                 <tr>
                     <th class="py-2 px-4 font-semibold border-b">Cek Pijar Mahir</th>
-                    <td class="py-2 px-4 border-b"></td>
+                    <td class="py-2 px-4 border-b">{{ $pelanggan->cek_pijar_mahir }}</td>
                 </tr>
                 <tr>
                     <th class="py-2 px-4 font-semibold border-b">Cek Eazy Cam</th>
-                    <td class="py-2 px-4 border-b"></td>
+                    <td class="py-2 px-4 border-b">{{ $pelanggan->cek_eazy_cam }}</td>
                 </tr>
                 <tr>
                     <th class="py-2 px-4 font-semibold border-b">Cek Oca</th>
-                    <td class="py-2 px-4 border-b"></td>
+                    <td class="py-2 px-4 border-b">{{ $pelanggan->cek_oca }}</td>
                 </tr>
                 <tr>
                     <th class="py-2 px-4 font-semibold border-b">Cek Pijar Sekolah</th>
-                    <td class="py-2 px-4 border-b"></td>
+                    <td class="py-2 px-4 border-b">{{ $pelanggan->cek_pijar_sekolah }}</td>
                 </tr>
                 <tr>
                     <th class="py-2 px-4 font-semibold border-b">Kode Sales</th>

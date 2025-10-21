@@ -15,7 +15,7 @@ class PelangganController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Pelanggan::with('sales');
+        $query = Pelanggan::with('sales', 'prodigi');
 
         // Filter pencarian untuk semua kolom
         if ($request->filled('q')) {
@@ -75,7 +75,7 @@ class PelangganController extends Controller
         $page = $request->input('page', 1);
 
         // Data statis untuk preview detail pelanggan
-        $data = Pelanggan::with('sales')->findOrFail($id);
+        $data = Pelanggan::with('sales', 'prodigi')->findOrFail($id);
 
         return view('pelanggan.show', ['pelanggan' => $data, 'page' => $page]);
     }

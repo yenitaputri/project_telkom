@@ -4,25 +4,19 @@ namespace App\Http\Controllers;
 
 use App\Models\Target;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class TargetController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index(Request $request)
     {
         $bulan = $request->get('bulan');
         $tahun = $request->get('tahun');
         $perPage = 10;
 
-        // Base query reusable
         $query = fn ($type) => Target::where('target_type', $type)
             ->when(! empty($bulan), fn ($q) => $q->where('bulan', $bulan))
             ->when(! empty($tahun), fn ($q) => $q->where('tahun', $tahun));
 
-        // Target per type
         $targetAgency = $query('agency')->paginate($perPage)->withQueryString();
         $targetProdigi = $query('prodigi')->paginate($perPage)->withQueryString();
         $targetSales = Target::where('target_type', 'sales')
@@ -33,15 +27,6 @@ class TargetController extends Controller
         return view('target.index', compact('targetAgency', 'targetProdigi', 'targetSales', 'bulan', 'tahun'));
     }
 
-    public function show(Target $target)
-    {
-        // Opsional
-    }
-
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $request->validate([
@@ -61,7 +46,6 @@ class TargetController extends Controller
                 },
             ],
             'bulan' => [
-                // bulan hanya wajib kalau bukan sales
                 function ($attribute, $value, $fail) use ($request) {
                     if ($request->target_type !== 'sales' && empty($value)) {
                         $fail('Kolom bulan wajib diisi untuk target agency/prodigi.');
@@ -73,17 +57,25 @@ class TargetController extends Controller
             'target_value' => 'required|numeric|min:0',
         ]);
 
-        // Simpan data
-        Target::create($request->only(['target_type', 'target_ref', 'bulan', 'tahun', 'target_value']));
+        // 🔤 Ubah ke Capitalize Case hanya jika tipe 'prodigi'
+        $targetRef = $request->target_ref;
+        if ($request->target_type === 'prodigi') {
+            $targetRef = ucwords(strtolower($targetRef));
+        }
 
-        // Tentukan redirect berdasarkan tipe target
+        Target::create([
+            'target_type' => $request->target_type,
+            'target_ref' => $targetRef,
+            'bulan' => $request->bulan,
+            'tahun' => $request->tahun,
+            'target_value' => $request->target_value,
+        ]);
+
         $routeName = match ($request->target_type) {
-            'agency' => 'target.index',
-            'prodigi' => 'target.index',
+            'agency', 'prodigi' => 'target.index',
             'sales' => 'setting.sales',
         };
 
-        // Parameter redirect
         $params = ['tahun' => $request->tahun];
         if ($request->target_type !== 'sales') {
             $params['bulan'] = $request->bulan;
@@ -93,9 +85,6 @@ class TargetController extends Controller
             ->with('success', 'Target berhasil ditambahkan!');
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, Target $target)
     {
         $request->validate([
@@ -127,16 +116,25 @@ class TargetController extends Controller
             'target_value' => 'required|numeric|min:0',
         ]);
 
-        $target->update($request->only(['target_type', 'target_ref', 'bulan', 'tahun', 'target_value']));
+        // 🔤 Ubah ke Capitalize Case hanya jika tipe 'prodigi'
+        $targetRef = $request->target_ref;
+        if ($request->target_type === 'prodigi') {
+            $targetRef = ucwords(strtolower($targetRef));
+        }
 
-        // Tentukan redirect berdasarkan tipe target
+        $target->update([
+            'target_type' => $request->target_type,
+            'target_ref' => $targetRef,
+            'bulan' => $request->bulan,
+            'tahun' => $request->tahun,
+            'target_value' => $request->target_value,
+        ]);
+
         $routeName = match ($request->target_type) {
-            'agency' => 'target.index',
-            'prodigi' => 'target.index',
+            'agency', 'prodigi' => 'target.index',
             'sales' => 'setting.sales',
         };
 
-        // Parameter redirect
         $params = ['tahun' => $request->tahun];
         if ($request->target_type !== 'sales') {
             $params['bulan'] = $request->bulan;
@@ -146,13 +144,9 @@ class TargetController extends Controller
             ->with('success', 'Target berhasil diperbarui!');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Target $target)
     {
         $target->delete();
-
         return redirect()->back()->with('success', 'Target berhasil dihapus!');
     }
 }

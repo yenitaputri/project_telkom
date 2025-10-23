@@ -82,7 +82,7 @@ class AstinetController extends Controller
         $request->validate([
             'kode_order' => 'required|unique:astinet,kode_order,'.$astinet->id,
             'sid' => 'nullable|string',
-            'bandwidth' => 'required|string',
+            'bandwidth' => 'required|numeric',
             'nama_pelanggan' => 'required|string',
             'nama_sales' => 'required|string',
             'tanggal_complete' => 'nullable|date',

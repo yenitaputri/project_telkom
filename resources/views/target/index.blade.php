@@ -83,7 +83,7 @@
 
                         <div>
                             <label class="block text-gray-700 font-semibold mb-1">Nilai Target</label>
-                            <input type="number" name="target_value" step="0.01" min="0"
+                            <input type="number" name="target_value" step="1" min="0"
                                 class="w-full border-gray-300 rounded-md border px-3 py-2" required>
                         </div>
                     </div>
@@ -140,7 +140,7 @@
 
                         <div>
                             <label class="block text-gray-700 font-semibold mb-1">Nilai Target</label>
-                            <input type="number" name="target_value" step="0.01" min="0"
+                            <input type="number" name="target_value" step="1" min="0"
                                 class="w-full border-gray-300 rounded-md border px-3 py-2" required>
                         </div>
                     </div>
@@ -199,8 +199,8 @@
 
                         <div>
                             <label class="block text-gray-700 font-semibold mb-1">Nilai Target</label>
-                            <input type="number" name="target_value" x-model="editAgencyData.target_value" step="0.01"
-                                min="0" class="w-full border-gray-300 rounded-md border px-3 py-2" required>
+                            <input type="number" name="target_value" x-model="editAgencyData.target_value" step="1" min="0"
+                                class="w-full border-gray-300 rounded-md border px-3 py-2" required>
                         </div>
                     </div>
 
@@ -258,8 +258,8 @@
 
                         <div>
                             <label class="block text-gray-700 font-semibold mb-1">Nilai Target</label>
-                            <input type="number" name="target_value" x-model="editProdigiData.target_value" step="0.01"
-                                min="0" class="w-full border-gray-300 rounded-md border px-3 py-2" required>
+                            <input type="number" name="target_value" x-model="editProdigiData.target_value" step="1" min="0"
+                                class="w-full border-gray-300 rounded-md border px-3 py-2" required>
                         </div>
                     </div>
 
@@ -312,17 +312,18 @@
                             <td class="py-3 px-6">{{ $item->target_value }}</td>
                             <td class="py-3 px-6 flex justify-center gap-2">
                                 {{-- Tombol Edit --}}
-                                <button @click="
-                                                                                                    openEditAgencyModal = true;
-                                                                                                    editAgencyData = {
-                                                                                                        id: '{{ $item->id }}',
-                                                                                                        bulan: '{{ $item->bulan }}',
-                                                                                                        tahun: '{{ $item->tahun }}',
-                                                                                                        target_ref: '{{ $item->target_ref }}',
-                                                                                                        target_value: '{{ $item->target_value }}',
-                                                                                                        target_type: 'agency'
-                                                                                                    };
-                                                                                                "
+                                <button
+                                    @click="
+                                                                                                                                    openEditAgencyModal = true;
+                                                                                                                                    editAgencyData = {
+                                                                                                                                        id: '{{ $item->id }}',
+                                                                                                                                        bulan: '{{ $item->bulan }}',
+                                                                                                                                        tahun: '{{ $item->tahun }}',
+                                                                                                                                        target_ref: '{{ $item->target_ref }}',
+                                                                                                                                        target_value: '{{ $item->target_value }}',
+                                                                                                                                        target_type: 'agency'
+                                                                                                                                    };
+                                                                                                                                "
                                     class="bg-yellow-400 hover:bg-yellow-500 text-white font-bold py-1 px-3 rounded text-xs">
                                     Edit
                                 </button>
@@ -386,17 +387,18 @@
                             <td class="py-3 px-6">{{ $item->target_value }}</td>
                             <td class="py-3 px-6 flex justify-center gap-2">
                                 {{-- Tombol Edit --}}
-                                <button @click="
-                                                                                                    openEditProdigiModal = true;
-                                                                                                    editProdigiData = {
-                                                                                                        id: '{{ $item->id }}',
-                                                                                                        bulan: '{{ $item->bulan }}',
-                                                                                                        tahun: '{{ $item->tahun }}',
-                                                                                                        target_ref: '{{ $item->target_ref }}',
-                                                                                                        target_value: '{{ $item->target_value }}',
-                                                                                                        target_type: 'prodigi'
-                                                                                                    };
-                                                                                                "
+                                <button
+                                    @click="
+                                                                                                                                    openEditProdigiModal = true;
+                                                                                                                                    editProdigiData = {
+                                                                                                                                        id: '{{ $item->id }}',
+                                                                                                                                        bulan: '{{ $item->bulan }}',
+                                                                                                                                        tahun: '{{ $item->tahun }}',
+                                                                                                                                        target_ref: '{{ $item->target_ref }}',
+                                                                                                                                        target_value: '{{ $item->target_value }}',
+                                                                                                                                        target_type: 'prodigi'
+                                                                                                                                    };
+                                                                                                                                "
                                     class="bg-yellow-400 hover:bg-yellow-500 text-white font-bold py-1 px-3 rounded text-xs">
                                     Edit
                                 </button>

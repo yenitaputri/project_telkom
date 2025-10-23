@@ -6,6 +6,7 @@ use App\Http\Requests\Pelanggan\ImportPelangganRequest;
 use App\Http\Requests\Pelanggan\UpdatePelangganRequest;
 use App\Imports\PelangganImport;
 use App\Models\Pelanggan;
+use App\Models\Sales;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
@@ -82,11 +83,12 @@ class PelangganController extends Controller
 
     public function edit($id, Request $request)
     {
-        $page = $request->input('page', 1);
+        $page = $request->get('page', 1);
 
-        // Data statis untuk halaman edit
-        $data = Pelanggan::findOrFail($id);
-        return view('pelanggan.edit', ['pelanggan' => $data, 'page' => $page]);
+        $pelanggan = Pelanggan::with('sales')->findOrFail($id); // tambahkan relasi
+        $sales = Sales::all();
+
+        return view('pelanggan.edit', compact('pelanggan', 'sales', 'page'));
     }
 
     public function update(UpdatePelangganRequest $request, $id)

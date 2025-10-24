@@ -51,15 +51,33 @@ class HomeController extends Controller
         // === Agency Achievement ===
         $agencies = DB::table('sales')
             ->join('pelanggan', 'pelanggan.kode_sales', '=', 'sales.kode_sales')
+            ->leftJoin('targets', function ($join) use ($startDate, $endDate) {
+                $join->on('targets.target_ref', '=', 'sales.agency')
+                    ->where('targets.target_type', '=', 'agency')
+                    ->where(function ($q) use ($startDate, $endDate) {
+                        $q->where('targets.tahun', '>', $startDate->year)
+                            ->where('targets.tahun', '<', $endDate->year)
+                            ->orWhere(function ($sub) use ($startDate, $endDate) {
+                                $sub->where('targets.tahun', '=', $startDate->year)
+                                    ->where('targets.bulan', '>=', $startDate->month);
+                            })
+                            ->orWhere(function ($sub) use ($startDate, $endDate) {
+                                $sub->where('targets.tahun', '=', $endDate->year)
+                                    ->where('targets.bulan', '<=', $endDate->month);
+                            });
+                    });
+            })
             ->select(
                 'sales.agency',
-                DB::raw('COUNT(pelanggan.kode_sales) as total_realisasi'),
-                DB::raw('NULL as total_target'),
-                DB::raw('0 as achievement'),
+                DB::raw('COUNT(DISTINCT pelanggan.kode_sales) as total_realisasi'),
+                DB::raw('COALESCE(SUM(targets.target_value), 0) as total_target'),
+                DB::raw('ROUND((COUNT(DISTINCT pelanggan.kode_sales) / NULLIF(SUM(targets.target_value), 0)) * 100, 2) as achievement'),
             )
             ->whereBetween('pelanggan.tanggal_ps', [$startDate, $endDate])
             ->groupBy('sales.agency')
+            ->orderByDesc('achievement')
             ->get();
+
 
         $agencies = $agencies->map(function ($item) use ($targetAgency, $startDate) {
             $key = $item->agency.'-'.$startDate->year.'-'.$startDate->month;
@@ -70,10 +88,17 @@ class HomeController extends Controller
             return $item;
         });
 
-        $rankedAgencies = $agencies->values()->map(function ($item, $index) {
-            $item->rank = $index + 1;
-            return $item;
-        });
+        // === Ranking berdasarkan achievement tertinggi ===
+        $rankedAgencies = $agencies
+            ->sortByDesc(function ($item) {
+                // urutkan berdasarkan achievement, jika sama urutkan berdasarkan total_realisasi
+                return [$item->achievement, $item->total_realisasi];
+            })
+            ->values()
+            ->map(function ($item, $index) {
+                $item->rank = $index + 1;
+                return $item;
+            });
 
         // === Target Sales Tahunan ===
         $targetSales = DB::table('targets')
@@ -105,6 +130,7 @@ class HomeController extends Controller
             'endDate',
         ));
     }
+
 
     private function getAgencyData($startDate, $endDate)
     {
@@ -157,6 +183,7 @@ class HomeController extends Controller
 
             return [
                 'column_data' => $columnData,
+                'bar_labels' => $barData['labels'] ?? [],
                 'bar_realisasi' => $barData['realisasi'],
                 'bar_target' => $barData['target'],
             ];
@@ -165,39 +192,12 @@ class HomeController extends Controller
 
             return [
                 'column_data' => $columnData,
+                'bar_labels' => $barData['labels'] ?? [],
                 'bar_realisasi' => [0, 0, 0, 0],
                 'bar_target' => [0, 0, 0, 0],
             ];
         }
     }
-
-    // private function getColumnChartDataDummy($start, $end)
-    // {
-    //     $dates = collect([
-    //         '01-'.$start->format('m-Y'),
-    //         '05-'.$start->format('m-Y'),
-    //         '10-'.$start->format('m-Y'),
-    //         '15-'.$start->format('m-Y'),
-    //         '20-'.$start->format('m-Y'),
-    //         '25-'.$start->format('m-Y'),
-    //     ]);
-
-    //     $salesNames = ['Riza', 'Yenita', 'Andi', 'Siti', 'Budi'];
-
-    //     return $dates->map(function ($date, $i) use ($salesNames) {
-    //         // contoh total dan detail
-    //         $total = rand(10, 100);
-    //         $details = collect($salesNames)
-    //             ->map(fn ($name) => $name.': '.rand(5, 50))
-    //             ->implode(', ');
-
-    //         return [
-    //             'x' => $date,
-    //             'y' => $total,
-    //             'detail' => $details,
-    //         ];
-    //     });
-    // }
 
     private function getColumnChartData($start, $end)
     {
@@ -260,7 +260,12 @@ class HomeController extends Controller
 
     private function getProdigiBarData($start, $end)
     {
-        $products = ['NETMONK', 'OCA', 'Antarez', 'Pijar Sekolah'];
+        // 🔹 Ambil daftar produk berdasarkan target_ref yang ada di tabel targets (tipe prodigi)
+        $products = DB::table('targets')
+            ->where('target_type', 'prodigi')
+            ->distinct()
+            ->pluck('target_ref')
+            ->toArray();
 
         // 🔹 Ambil data realisasi per paket
         $prodigiData = DB::table('prodigi')
@@ -307,11 +312,11 @@ class HomeController extends Controller
         }
 
         return [
+            'labels' => $products,
             'target' => $target,
             'realisasi' => $realisasi,
         ];
     }
-
 
     /**
      * Helper untuk ambil data bulanan

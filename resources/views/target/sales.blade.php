@@ -1,17 +1,16 @@
 @extends('layouts.app')
 
-@section('title', 'Target Sales')
+@section('title', 'Target Produk Sales')
 
 @section('content')
     <h2 class="text-3xl font-bold text-gray-800 mb-6">Settings</h2>
 
     <div x-data="salesData()" class="bg-white rounded-lg shadow-md p-6 min-h-[calc(100vh-160px)] flex flex-col">
-
         {{-- Header --}}
         <div class="flex justify-between items-center">
-            <h2 class="text-2xl font-bold text-gray-700">🎯 Target Sales Tahunan</h2>
+            <h2 class="text-2xl font-bold text-gray-700">🎯 Target Produk Sales</h2>
 
-            <form method="GET" action="{{ route('setting.sales') }}" class="flex items-end gap-3">
+            <form method="GET" action="{{ route('sales-product-target.index') }}" class="flex items-end gap-3">
                 <div>
                     <label class="block text-gray-700 font-semibold mb-1">Tahun</label>
                     <input type="number" name="tahun" value="{{ $tahun ?? now()->year }}" min="2020" max="2100"
@@ -23,7 +22,7 @@
                         class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition">
                         Filter
                     </button>
-                    <a href="{{ route('setting.sales') }}"
+                    <a href="{{ route('sales-product-target.index') }}"
                         class="bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-md p-2 px-4 transition duration-200 flex items-center">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                             stroke="currentColor" class="size-6">
@@ -35,41 +34,39 @@
             </form>
         </div>
 
-        {{-- Modal Tambah Target Sales --}}
+        {{-- Modal Tambah Target Produk --}}
         <div x-show="openSalesModal"
             class="fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center z-50 p-4" x-cloak>
             <div @click.away="openSalesModal = false"
                 class="bg-white rounded-lg shadow-xl p-6 w-full max-w-md mx-auto relative">
-                <h3 class="text-xl font-bold mb-4 text-center text-indigo-600">Tambah Target Sales</h3>
+                <h3 class="text-xl font-bold mb-4 text-center text-indigo-600">Tambah Target Produk</h3>
 
-                <form action="{{ route('target.store') }}" method="POST">
+                <form action="{{ route('sales-product-target.store') }}" method="POST">
                     @csrf
-                    <input type="hidden" name="target_type" value="sales">
-
                     <div class="space-y-3">
+                        <div>
+                            <label class="block text-gray-700 font-semibold mb-1">Nama Produk</label>
+                            <input type="text" name="product" required placeholder="Nama Produk"
+                                class="w-full border-gray-300 rounded-md border px-3 py-2">
+                        </div>
+
                         <div>
                             <label class="block text-gray-700 font-semibold mb-1">Tahun</label>
                             <input type="number" name="tahun" value="{{ now()->year }}" min="2020" max="2100" required
                                 class="w-full border-gray-300 rounded-md border px-3 py-2">
                         </div>
 
-
-                        <div>
-                            <label class="block text-gray-700 font-semibold mb-1">Sales</label>
-                            <select name="target_ref" required class="w-full border-gray-300 rounded-md border px-3 py-2">
-                                <option value="">-- Pilih Sales --</option>
-                                @foreach ($sales as $sale)
-                                    <option value="{{ $sale->kode_sales }}">
-                                        {{ $sale->kode_sales }} — {{ $sale->nama_sales }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <div>
-                            <label class="block text-gray-700 font-semibold mb-1">Presentase Target</label>
-                            <input type="number" name="target_value" step="1" min="0" required max="120"
-                                class="w-full border-gray-300 rounded-md border px-3 py-2">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-gray-700 font-semibold mb-1">ACH (%)</label>
+                                <input type="number" name="ach" value="0" min="0" max="120"
+                                    class="w-full border-gray-300 rounded-md border px-3 py-2">
+                            </div>
+                            <div>
+                                <label class="block text-gray-700 font-semibold mb-1">SK (%)</label>
+                                <input type="number" name="sk" value="0" min="0"
+                                    class="w-full border-gray-300 rounded-md border px-3 py-2">
+                            </div>
                         </div>
                     </div>
 
@@ -87,40 +84,41 @@
             </div>
         </div>
 
-        {{-- Modal Edit Target Sales --}}
+        {{-- Modal Edit Target Produk --}}
         <div x-show="openEditSalesModal"
             class="fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center z-50 p-4" x-cloak>
             <div @click.away="openEditSalesModal = false"
                 class="bg-white rounded-lg shadow-xl p-6 w-full max-w-md mx-auto relative">
-                <h3 class="text-xl font-bold mb-4 text-center text-yellow-600">Edit Target Sales</h3>
+                <h3 class="text-xl font-bold mb-4 text-center text-yellow-600">Edit Target Produk</h3>
 
-                <form :action="`/target/${editSalesData.id}`" method="POST">
+                <form :action="`/sales-product-targets/${editSalesData.id}`" method="POST">
                     @csrf
                     @method('PUT')
-                    <input type="hidden" name="target_type" value="sales">
 
                     <div class="space-y-3">
                         <div>
-                            <label class="block text-gray-700 font-semibold mb-1">Tahun</label>
-                            <input type="number" name="tahun" x-model="editSalesData.tahun" min="2020" max="2100"
-                                class="w-full border-gray-300 rounded-md border px-3 py-2" required>
+                            <label class="block text-gray-700 font-semibold mb-1">Nama Produk</label>
+                            <input type="text" name="product" x-model="editSalesData.product" required
+                                class="w-full border-gray-300 rounded-md border px-3 py-2">
                         </div>
 
-                        <select name="target_ref" x-model="editSalesData.target_ref" required
-                            class="w-full border-gray-300 rounded-md border px-3 py-2">
-                            <option value="">-- Pilih Sales --</option>
-                            @foreach ($sales as $sale)
-                                <option value="{{ $sale->kode_sales }}">
-                                    {{ $sale->kode_sales }} — {{ $sale->nama_sales }}
-                                </option>
-                            @endforeach
-                        </select>
-
-
                         <div>
-                            <label class="block text-gray-700 font-semibold mb-1">Presentase Target</label>
-                            <input type="number" name="target_value" x-model="editSalesData.target_value" min="0" max="120"
-                                class="w-full border-gray-300 rounded-md border px-3 py-2" required>
+                            <label class="block text-gray-700 font-semibold mb-1">Tahun</label>
+                            <input type="number" name="tahun" x-model="editSalesData.tahun" min="2020" max="2100" required
+                                class="w-full border-gray-300 rounded-md border px-3 py-2">
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-gray-700 font-semibold mb-1">ACH (%)</label>
+                                <input type="number" name="ach" x-model="editSalesData.ach" min="0" max="120"
+                                    class="w-full border-gray-300 rounded-md border px-3 py-2">
+                            </div>
+                            <div>
+                                <label class="block text-gray-700 font-semibold mb-1">SK (%)</label>
+                                <input type="number" name="sk" x-model="editSalesData.sk" min="0"
+                                    class="w-full border-gray-300 rounded-md border px-3 py-2">
+                            </div>
                         </div>
                     </div>
 
@@ -138,16 +136,16 @@
             </div>
         </div>
 
-        {{-- Tabel Target Sales --}}
+        {{-- Tabel Target Produk --}}
         <div class="overflow-x-auto mt-8">
             <div class="my-4 flex justify-between">
-                <h3 class="text-lg font-semibold mb-2 text-gray-700">📅 Daftar Target Sales</h3>
+                <h3 class="text-lg font-semibold mb-2 text-gray-700">📦 Daftar Target Produk</h3>
                 <button @click="openSalesModal = true"
                     class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg flex items-center transition-colors duration-200">
                     <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                     </svg>
-                    Tambah Target Sales
+                    Tambah Target
                 </button>
             </div>
 
@@ -155,34 +153,37 @@
                 <thead>
                     <tr class="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">
                         <th class="py-3 px-6 text-left">No.</th>
+                        <th class="py-3 px-6 text-left">Produk</th>
                         <th class="py-3 px-6 text-left">Tahun</th>
-                        <th class="py-3 px-6 text-left">Kode Sales</th>
-                        <th class="py-3 px-6 text-left">Presentase Target</th>
+                        <th class="py-3 px-6 text-left">ACH (%)</th>
+                        <th class="py-3 px-6 text-left">SK (%)</th>
                         <th class="py-3 px-6 text-center">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="text-gray-600 text-sm font-light">
-                    @forelse ($targetSales as $item)
+                    @forelse ($targets as $item)
                         <tr class="border-b border-gray-200 hover:bg-gray-50">
                             <td class="py-3 px-6">{{ $loop->iteration }}</td>
+                            <td class="py-3 px-6">{{ $item->product }}</td>
                             <td class="py-3 px-6">{{ $item->tahun }}</td>
-                            <td class="py-3 px-6">{{ $item->target_ref }}</td>
-                            <td class="py-3 px-6">{{ $item->target_value}}</td>
+                            <td class="py-3 px-6">{{ $item->ach }}</td>
+                            <td class="py-3 px-6">{{ $item->sk }}</td>
                             <td class="py-3 px-6 flex justify-center gap-2">
-                                <button
-                                    @click="
-                                                                                                                                                                                                    openEditSalesModal = true;
-                                                                                                                                                                                                    editSalesData = {
-                                                                                                                                                                                                        id: '{{ $item->id }}',
-                                                                                                                                                                                                        tahun: '{{ $item->tahun }}',
-                                                                                                                                                                                                        target_ref: '{{ $item->target_ref }}',
-                                                                                                                                                                                                        target_value: '{{ $item->target_value }}'
-                                                                                                                                                                                                    };"
+                                <button @click="
+                                                                                        openEditSalesModal = true;
+                                                                                        editSalesData = {
+                                                                                            id: '{{ $item->id }}',
+                                                                                            product: '{{ $item->product }}',
+                                                                                            tahun: '{{ $item->tahun }}',
+                                                                                            ach: '{{ $item->ach }}',
+                                                                                            sk: '{{ $item->sk }}'
+                                                                                        };
+                                                                                    "
                                     class="bg-yellow-400 hover:bg-yellow-500 text-white font-bold py-1 px-3 rounded text-xs">
                                     Edit
                                 </button>
 
-                                <form action="{{ route('target.destroy', $item->id) }}" method="POST"
+                                <form action="{{ route('sales-product-target.destroy', $item->id) }}" method="POST"
                                     class="delete-target-form">
                                     @csrf
                                     @method('DELETE')
@@ -195,8 +196,8 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="py-3 px-6 text-center text-gray-500">
-                                Tidak ada data target sales
+                            <td colspan="6" class="py-3 px-6 text-center text-gray-500">
+                                Tidak ada data target produk
                             </td>
                         </tr>
                     @endforelse
@@ -214,9 +215,10 @@
                 openEditSalesModal: false,
                 editSalesData: {
                     id: '',
+                    product: '',
                     tahun: '',
-                    target_ref: '',
-                    target_value: ''
+                    ach: '',
+                    sk: ''
                 }
             }
         }
@@ -226,8 +228,8 @@
                 btn.addEventListener('click', function () {
                     const form = btn.closest('form');
                     Swal.fire({
-                        title: 'Hapus Target Sales?',
-                        text: "Data target akan dihapus permanen!",
+                        title: 'Hapus Target Produk?',
+                        text: "Data akan dihapus permanen!",
                         icon: 'warning',
                         showCancelButton: true,
                         confirmButtonColor: '#d33',

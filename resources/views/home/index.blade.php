@@ -15,9 +15,9 @@
                         <div class="relative">
                             <input id="datepicker-range-start" name="start" type="date"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                 value="{{ request('start', \Carbon\Carbon::now()->startOfMonth()->format('Y-m-d')) }}">
                         </div>
 
@@ -27,9 +27,9 @@
                         <div class="relative">
                             <input id="datepicker-range-end" name="end" type="date"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                 value="{{ request('end', \Carbon\Carbon::now()->endOfMonth()->format('Y-m-d')) }}">
                         </div>
                     </div>
@@ -294,7 +294,6 @@
                             <th class="border px-2 py-2 font-bold text-left align-middle">Antarez</th>
                             <th class="border px-2 py-2 font-bold text-left align-middle">Pijar Sekolah</th>
                             <th class="border px-2 py-2 font-bold text-left align-middle">Presentase</th>
-                            {{-- <th class="border px-2 py-2 font-bold text-left align-middle">Pencapaian</th> --}}
                         </tr>
                     </thead>
                     <tbody class="text-gray-600">
@@ -307,33 +306,36 @@
                                 <td class="px-2 py-2 text-left align-middle">
                                     {{ $sale->pelanggans_count }}
                                 </td>
+
+                                {{-- Gunakan lowercase comparison agar tidak case-sensitive --}}
                                 <td class="px-2 py-2 text-left align-middle">
-                                    {{ $sale->pelanggans->where('jenis_layanan', 'INDIBIZ')->count() }}
-                                </td>
-                                <td class="px-2 py-2 text-left align-middle">
-                                    {{ $sale->pelanggans->where('paket', 'WMS')->count() }}
-                                </td>
-                                <td class="px-2 py-2 text-left align-middle">
-                                    {{ $sale->pelanggans->where('paket', 'Netmonk')->count() }}
-                                </td>
-                                <td class="px-2 py-2 text-left align-middle">
-                                    {{ $sale->pelanggans->where('paket', 'OCA')->count() }}
-                                </td>
-                                <td class="px-2 py-2 text-left align-middle">
-                                    {{ $sale->pelanggans->where('paket', 'Antarez')->count() }}
-                                </td>
-                                <td class="px-2 py-2 text-left align-middle">
-                                    {{ $sale->pelanggans->where('paket', 'Pijar Sekolah')->count() }}
+                                    {{ $sale->pelanggans->filter(fn ($p) => strtolower($p->jenis_layanan ?? '') === 'indibiz')->count() }}
                                 </td>
 
-                                {{-- Tambahan kolom target & pencapaian --}}
-                                <td class="px-2 py-2 text-left align-middle font-semibold text-blue-700">
-                                    {{ $sale->total_target }} %
+                                <td class="px-2 py-2 text-left align-middle">
+                                    {{ $sale->pelanggans->filter(fn ($p) => str_contains(strtolower(optional($p->prodigi)->paket ?? ''), 'wms'))->count() }}
                                 </td>
-                                {{-- <td
-                                    class="px-2 py-2 text-left align-middle font-semibold {{ $sale->achievement >= 100 ? 'text-green-600' : 'text-orange-500' }}">
-                                    {{ $sale->achievement }}%
-                                </td> --}}
+
+                                <td class="px-2 py-2 text-left align-middle">
+                                    {{ $sale->pelanggans->where('cek_netmonk', 1)->count() }}
+                                </td>
+
+                                <td class="px-2 py-2 text-left align-middle">
+                                    {{ $sale->pelanggans->where('cek_oca', 1)->count() }}
+                                </td>
+
+                                <td class="px-2 py-2 text-left align-middle">
+                                    {{ $sale->pelanggans->filter(fn ($p) => str_contains(strtolower(optional($p->prodigi)->paket ?? ''), 'antarez'))->count() }}
+                                </td>
+
+                                <td class="px-2 py-2 text-left align-middle">
+                                    {{ $sale->pelanggans->where('cek_pijar_sekolah', 1)->count() }}
+                                </td>
+
+                                {{-- Kolom total target --}}
+                                <td class="px-2 py-2 text-left align-middle font-semibold text-blue-700">
+                                    {{ $sale->total_target ?? 0 }} %
+                                </td>
                             </tr>
                         @empty
                             <tr>
@@ -457,9 +459,9 @@
                 for (let i = 0; i < limit && i < items.length; i++) {
                     const [name, value] = items[i].split(":");
                     rows += `<tr>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <td style='padding:4px;'>${i + 1}. ${name?.trim() || ""}</td>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <td style='padding:4px; font-weight:600; text-align:right;'>${value?.trim() || ""}</td>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        </tr>`;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <td style='padding:4px;'>${i + 1}. ${name?.trim() || ""}</td>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <td style='padding:4px; font-weight:600; text-align:right;'>${value?.trim() || ""}</td>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        </tr>`;
                 }
 
                 const label = expanded ? "Lihat lebih sedikit" : "Lihat lebih banyak";
@@ -486,13 +488,13 @@
                 tooltip.style.minWidth = "200px";
 
                 tooltip.innerHTML = `
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <div style='font-weight:600;margin-bottom:4px;border-bottom:1px solid #ddd;padding-bottom:4px;'>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  Pencapaian Poin Sales - ${data.x}
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                </div>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <div style='margin-bottom:6px;'>Total: <b>${data.y}</b></div>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <table><tbody>${rows}</tbody></table>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                ${button}
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              `;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <div style='font-weight:600;margin-bottom:4px;border-bottom:1px solid #ddd;padding-bottom:4px;'>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  Pencapaian Poin Sales - ${data.x}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                </div>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <div style='margin-bottom:6px;'>Total: <b>${data.y}</b></div>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <table><tbody>${rows}</tbody></table>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                ${button}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              `;
 
                 // Posisi tooltip (menyesuaikan agar tidak keluar layar)
                 const offsetX = 20, offsetY = 15;

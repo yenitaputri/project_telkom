@@ -1,9 +1,9 @@
 <?php
 
+use App\Http\Controllers\SalesProductTargetController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\TargetController;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\SalesController;
 use App\Http\Controllers\PelangganController;
@@ -61,6 +61,9 @@ Route::middleware('auth')->group(function () {
 
     // Detail Astinet
     Route::resource('astinet', AstinetController::class);
+
+    // ✅ Sales Product Target
+    Route::resource('sales-product-target', SalesProductTargetController::class);
 
     Route::resource('target', TargetController::class);
     Route::get('/settings', [SettingController::class, 'index'])->name('setting.index');

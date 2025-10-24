@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Sales;
+use App\Models\SalesProductTarget;
 use App\Models\Target;
 use Illuminate\Http\Request;
 
@@ -19,17 +20,18 @@ class SettingController extends Controller
     public function salesIndex(Request $request)
     {
         $sales = Sales::all();
-        $tahun = $request->input('tahun', now()->year);
-        $bulan = $request->input('bulan', ''); // <-- pastikan selalu tersedia (boleh kosong)
 
-        $targetSales = Target::where('target_type', 'sales')
-            ->when(! empty($tahun), fn ($q) => $q->where('tahun', $tahun))
+        // Ambil tahun dari input, default ke tahun sekarang
+        $tahun = $request->input('tahun', now()->year);
+
+        // Ambil semua data target produk per sales untuk tahun tersebut
+        $targets = SalesProductTarget::when($tahun, fn ($q) => $q->where('tahun', $tahun))
             ->orderBy('tahun', 'desc')
             ->get();
 
-        return view('target.sales', compact('targetSales', 'tahun', 'bulan', 'sales'));
+        // Dikirim ke view target/sales.blade.php (atau sesuai view-mu)
+        return view('target.sales', compact('targets', 'tahun', 'sales'));
     }
-
 
 
     /**

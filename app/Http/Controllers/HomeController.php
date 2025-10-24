@@ -54,29 +54,22 @@ class HomeController extends Controller
             ->leftJoin('targets', function ($join) use ($startDate, $endDate) {
                 $join->on('targets.target_ref', '=', 'sales.agency')
                     ->where('targets.target_type', '=', 'agency')
-                    ->where(function ($q) use ($startDate, $endDate) {
-                        $q->where('targets.tahun', '>', $startDate->year)
-                            ->where('targets.tahun', '<', $endDate->year)
-                            ->orWhere(function ($sub) use ($startDate, $endDate) {
-                                $sub->where('targets.tahun', '=', $startDate->year)
-                                    ->where('targets.bulan', '>=', $startDate->month);
-                            })
-                            ->orWhere(function ($sub) use ($startDate, $endDate) {
-                                $sub->where('targets.tahun', '=', $endDate->year)
-                                    ->where('targets.bulan', '<=', $endDate->month);
-                            });
-                    });
+                    ->whereBetween(DB::raw("CONCAT(targets.tahun, LPAD(targets.bulan, 2, '0'))"), [
+                        $startDate->format('Ym'),
+                        $endDate->format('Ym')
+                    ]);
             })
             ->select(
                 'sales.agency',
-                DB::raw('COUNT(DISTINCT pelanggan.kode_sales) as total_realisasi'),
+                DB::raw('COUNT(pelanggan.id) as total_realisasi'),
                 DB::raw('COALESCE(SUM(targets.target_value), 0) as total_target'),
-                DB::raw('ROUND((COUNT(DISTINCT pelanggan.kode_sales) / NULLIF(SUM(targets.target_value), 0)) * 100, 2) as achievement'),
+                DB::raw('ROUND((COUNT(pelanggan.id) / NULLIF(SUM(targets.target_value), 0)) * 100, 2) as achievement'),
             )
             ->whereBetween('pelanggan.tanggal_ps', [$startDate, $endDate])
             ->groupBy('sales.agency')
             ->orderByDesc('achievement')
             ->get();
+
 
 
         $agencies = $agencies->map(function ($item) use ($targetAgency, $startDate) {

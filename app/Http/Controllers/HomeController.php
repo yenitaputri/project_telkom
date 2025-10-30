@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Astinet;
+use App\Models\SalesProductTarget;
 use Illuminate\Http\Request;
 use App\Models\Sales;
 use App\Models\Pelanggan;
@@ -94,58 +95,74 @@ class HomeController extends Controller
                 return $item;
             });
 
-        // === Target Sales Tahunan ===
-        $targetSales = DB::table('targets')
-            ->where('target_type', 'sales')
-            ->where('tahun', $startDate->year)
+        // Ambil target per product untuk tahun ini
+        $targets = SalesProductTarget::where('tahun', $startDate->year)
             ->get()
-            ->keyBy(fn ($item) => $item->target_ref.'-'.$item->tahun);
+            ->keyBy(fn ($t) => strtolower($t->product));
 
-        // Ambil semua target sales product tahunan
-        $targets = DB::table('sales_product_targets')
-            ->where('tahun', $startDate->year)
-            ->get();
+        // Ambil semua sales dengan pelanggan dan prodigi
+        $sales = Sales::with(['pelanggans.prodigi'])->get();
 
-        // === Sales Achievement berdasarkan Sales Product Target ====
-        $salesWithTarget = $sales->map(function ($salesItem) use ($targets, $startDate, $endDate) {
+        $salesWithTarget = $sales->map(function ($sale) use ($targets, $startDate, $endDate) {
             $totalSkPercent = 0;
+            $productAch = [];
 
-            // Filter pelanggan sesuai bulan yang dipilih
-            $filteredPelanggan = $salesItem->pelanggans->filter(function ($p) use ($startDate, $endDate) {
-                if (! $p->tanggal_ps)
-                    return false;
+            // Filter pelanggan sesuai periode
+            $filteredPelanggan = $sale->pelanggans->filter(fn ($p) =>
+                $p->tanggal_ps && Carbon::parse($p->tanggal_ps)->between($startDate, $endDate)
+            );
 
-                $tanggal = \Carbon\Carbon::parse($p->tanggal_ps);
-                return $tanggal->between($startDate, $endDate);
-            });
+            // Ambil daftar produk dari target table
+            $products = $targets->keys();
 
-            foreach ($targets as $target) {
-                $product = strtolower($target->product);
-
+            foreach ($products as $product) {
+                // Hitung realisasi per produk
                 $realisasi = match ($product) {
-                    'indibiz' => $filteredPelanggan->where('jenis_layanan', 'ilike', 'indibiz')->count(),
-                    'wms' => $filteredPelanggan->filter(fn ($p) => str_contains(strtolower(optional($p->prodigi)->paket), 'wms'))->count(),
+                    'indibiz' => $filteredPelanggan->filter(fn ($p) =>
+                        str_contains(strtolower($p->jenis_layanan ?? ''), 'indibiz')
+                    )->count(),
+
+                    'wms' => $filteredPelanggan->filter(fn ($p) =>
+                        str_contains(strtolower(optional($p->prodigi)->paket ?? ''), 'wms')
+                    )->count(),
+
                     'netmonk' => $filteredPelanggan->where('cek_netmonk', 1)->count(),
+
                     'oca' => $filteredPelanggan->where('cek_oca', 1)->count(),
-                    'antarez' => $filteredPelanggan->filter(fn ($p) => str_contains(strtolower(optional($p->prodigi)->paket), 'antarez'))->count(),
-                    'pijar sekolah' => $filteredPelanggan->where('cek_pijar_sekolah', 1)->count(),
+
+                    'antarez' => $filteredPelanggan->filter(fn ($p) =>
+                        str_contains(strtolower(optional($p->prodigi)->paket ?? ''), 'antarez')
+                    )->count(),
+
+                    'pijar_sekolah' => $filteredPelanggan->where('cek_pijar_sekolah', 1)->count(),
+
                     default => 0,
                 };
 
-                $achPercent = $target->ach > 0
-                    ? min(($realisasi / $target->ach) * 100, 120)
-                    : 0;
+                // Ambil target
+                $target = $targets[$product] ?? null;
+                $ach = $target->ach ?? 0;
+                $sk = $target->sk ?? 0;
 
-                $skPercent = ($achPercent * $target->sk) / 100;
+                // Hitung ACH%
+                $achPercent = $ach > 0 ? min(($realisasi / $ach) * 100, 120) : 0;
 
+                // Hitung SK%
+                $skPercent = ($achPercent * $sk) / 100;
+
+                // Simpan hasil per produk
+                $productAch[$product] = round($skPercent, 2);
+
+                // Tambahkan ke total SK%
                 $totalSkPercent += $skPercent;
             }
 
-            $salesItem->total_target = $totalSkPercent;
-            return $salesItem;
-        });
+            // Simpan ke objek sale
+            $sale->productAch = $productAch;
+            $sale->total_target = round($totalSkPercent, 2);
 
-        return dd($salesWithTarget);
+            return $sale;
+        });
 
         // === Chart Data ===
         $chartData = $this->getChartData($startDate, $endDate);

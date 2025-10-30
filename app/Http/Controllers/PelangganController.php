@@ -78,6 +78,8 @@ class PelangganController extends Controller
         // Data statis untuk preview detail pelanggan
         $data = Pelanggan::with('sales', 'prodigi')->findOrFail($id);
 
+        // return dd($data);
+
         return view('pelanggan.show', ['pelanggan' => $data, 'page' => $page]);
     }
 

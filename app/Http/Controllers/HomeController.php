@@ -72,8 +72,6 @@ class HomeController extends Controller
             ->orderByDesc('achievement')
             ->get();
 
-
-
         $agencies = $agencies->map(function ($item) use ($targetAgency, $startDate) {
             $key = $item->agency.'-'.$startDate->year.'-'.$startDate->month;
             $item->total_target = $targetAgency[$key]->target_value ?? 0;

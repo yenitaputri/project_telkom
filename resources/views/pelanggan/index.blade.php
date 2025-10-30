@@ -4,13 +4,13 @@
 
 @section('content')
     <div x-data="{
-                                                                        openTambahModal: {{ $errors->any() ? 'true' : 'false' }},
-                                                                        openPreviewModal: false,
-                                                                        previewData() {
-                                                                            // Lakukan validasi atau tampilkan modal preview
-                                                                            this.openPreviewModal = true;
-                                                                        }
-                                                                        }"
+                                                                                        openTambahModal: {{ $errors->any() ? 'true' : 'false' }},
+                                                                                        openPreviewModal: false,
+                                                                                        previewData() {
+                                                                                            // Lakukan validasi atau tampilkan modal preview
+                                                                                            this.openPreviewModal = true;
+                                                                                        }
+                                                                                        }"
         class="bg-white rounded-lg shadow-md p-6 min-h-[calc(100vh-160px)] flex flex-col">
         {{-- Tombol Tambah Data dan filter tanggal --}}
         <div class="flex justify-end mb-4 space-x-4 items-center">
@@ -145,9 +145,9 @@
                     </tr>
                 </thead>
                 <tbody class="text-gray-600 text-sm font-light">
-                    @forelse ($pelanggan as $item)
+                    @forelse ($pelanggan as $index => $item)
                         <tr class="border-b border-gray-200 hover:bg-gray-50">
-                            <td class="py-3 px-6 text-left whitespace-nowrap">{{ $item['id'] }}.</td>
+                            <td class="py-3 px-6 text-left whitespace-nowrap">{{ $pelanggan->firstItem() + $index }}.</td>
                             <td class="py-3 px-6 text-left">{{ $item['no_internet'] }}</td>
                             <td class="py-3 px-6 text-left">{{ $item['no_digital'] }}</td>
                             <td class="py-3 px-6 text-left"> {{ \Carbon\Carbon::parse($item['tanggal_ps'])->format('m/d/Y')}}

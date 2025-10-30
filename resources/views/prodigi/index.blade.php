@@ -137,9 +137,9 @@
                     </tr>
                 </thead>
                 <tbody class="text-gray-600 text-sm font-light">
-                    @forelse($prodigi as $item)
+                    @forelse($prodigi as $index => $item)
                         <tr class="border-b border-gray-200 hover:bg-gray-50">
-                            <td class="py-3 px-6 text-left whitespace-nowrap">{{ $item->id }}.</td>
+                            <td class="py-3 px-6 text-left whitespace-nowrap">{{ $prodigi->firstItem() + $index }}.</td>
                             <td class="py-3 px-6 text-left">{{ $item->nd }}</td>
                             <td class="py-3 px-6 text-left">{{ $item->order_id }}</td>
                             <td class="py-3 px-6 text-left">

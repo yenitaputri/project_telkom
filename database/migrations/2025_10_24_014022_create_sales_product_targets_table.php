@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('product');
             $table->integer('tahun');
+            $table->integer('target')->default(0);
             $table->integer('ach')->default(0);
             $table->integer('sk')->default(0);
             $table->timestamps();

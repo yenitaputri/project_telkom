@@ -56,6 +56,12 @@
                                 class="w-full border-gray-300 rounded-md border px-3 py-2">
                         </div>
 
+                        <div>
+                            <label class="block text-gray-700 font-semibold mb-1">Target</label>
+                            <input type="number" name="target" value="0" min="0" required
+                                class="w-full border-gray-300 rounded-md border px-3 py-2">
+                        </div>
+
                         <div class="grid grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-gray-700 font-semibold mb-1">ACH (%)</label>
@@ -108,6 +114,12 @@
                                 class="w-full border-gray-300 rounded-md border px-3 py-2">
                         </div>
 
+                        <div>
+                            <label class="block text-gray-700 font-semibold mb-1">Target</label>
+                            <input type="number" name="target" x-model="editSalesData.target" min="0" required
+                                class="w-full border-gray-300 rounded-md border px-3 py-2">
+                        </div>
+
                         <div class="grid grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-gray-700 font-semibold mb-1">ACH (%)</label>
@@ -155,6 +167,7 @@
                         <th class="py-3 px-6 text-left">No.</th>
                         <th class="py-3 px-6 text-left">Produk</th>
                         <th class="py-3 px-6 text-left">Tahun</th>
+                        <th class="py-3 px-6 text-left">Target</th>
                         <th class="py-3 px-6 text-left">ACH (%)</th>
                         <th class="py-3 px-6 text-left">SK (%)</th>
                         <th class="py-3 px-6 text-center">Aksi</th>
@@ -166,19 +179,21 @@
                             <td class="py-3 px-6">{{ $loop->iteration }}</td>
                             <td class="py-3 px-6">{{ $item->product }}</td>
                             <td class="py-3 px-6">{{ $item->tahun }}</td>
+                            <td class="py-3 px-6">{{ $item->target }}</td>
                             <td class="py-3 px-6">{{ $item->ach }}</td>
                             <td class="py-3 px-6">{{ $item->sk }}</td>
                             <td class="py-3 px-6 flex justify-center gap-2">
-                                <button @click="
-                                                                                        openEditSalesModal = true;
-                                                                                        editSalesData = {
-                                                                                            id: '{{ $item->id }}',
-                                                                                            product: '{{ $item->product }}',
-                                                                                            tahun: '{{ $item->tahun }}',
-                                                                                            ach: '{{ $item->ach }}',
-                                                                                            sk: '{{ $item->sk }}'
-                                                                                        };
-                                                                                    "
+                                <button
+                                    @click="
+                                                                                                                                        openEditSalesModal = true;
+                                                                                                                                        editSalesData = {
+                                                                                                                                            id: '{{ $item->id }}',
+                                                                                                                                            product: '{{ $item->product }}',
+                                                                                                                                            tahun: '{{ $item->tahun }}',
+                                                                                                                                            ach: '{{ $item->ach }}',
+                                                                                                                                            sk: '{{ $item->sk }}'
+                                                                                                                                        };
+                                                                                                                                    "
                                     class="bg-yellow-400 hover:bg-yellow-500 text-white font-bold py-1 px-3 rounded text-xs">
                                     Edit
                                 </button>
@@ -217,6 +232,7 @@
                     id: '',
                     product: '',
                     tahun: '',
+                    target: '',
                     ach: '',
                     sk: ''
                 }

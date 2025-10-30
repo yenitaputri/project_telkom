@@ -14,6 +14,7 @@ class SalesProductTarget extends Model
     protected $fillable = [
         'product',
         'tahun',
+        'target',
         'ach',
         'sk',
     ];

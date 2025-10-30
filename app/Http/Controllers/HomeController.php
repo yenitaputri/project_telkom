@@ -94,68 +94,70 @@ class HomeController extends Controller
             });
 
         // Ambil target per product untuk tahun ini
-        $targets = SalesProductTarget::where('tahun', $startDate->year)
+        $salesProductTarget = SalesProductTarget::where('tahun', $startDate->year)
             ->get()
             ->keyBy(fn ($t) => strtolower($t->product));
 
         // Ambil semua sales dengan pelanggan dan prodigi
-        $sales = Sales::with(['pelanggans.prodigi'])->get();
+        $salesProdigi = Sales::with(['pelanggans.prodigi'])->get();
 
-        $salesWithTarget = $sales->map(function ($sale) use ($targets, $startDate, $endDate) {
+        $salesWithTarget = Sales::with(['pelanggans.prodigi'])->get()->map(function ($sale) use ($salesProductTarget, $startDate, $endDate) {
             $totalSkPercent = 0;
             $productAch = [];
 
-            // Filter pelanggan sesuai periode
+            // Filter pelanggan dalam periode
             $filteredPelanggan = $sale->pelanggans->filter(fn ($p) =>
                 $p->tanggal_ps && Carbon::parse($p->tanggal_ps)->between($startDate, $endDate)
             );
 
-            // Ambil daftar produk dari target table
-            $products = $targets->keys();
+            $sale->pelanggan_count = $filteredPelanggan->count();
 
-            foreach ($products as $product) {
-                // Hitung realisasi per produk
+            foreach ($salesProductTarget as $product => $target) {
+                // Hitung realisasi
                 $realisasi = match ($product) {
                     'indibiz' => $filteredPelanggan->filter(fn ($p) =>
-                        str_contains(strtolower($p->jenis_layanan ?? ''), 'indibiz')
+                        $p->prodigi && str_contains(strtolower($p->prodigi->paket), 'indibiz')
                     )->count(),
 
                     'wms' => $filteredPelanggan->filter(fn ($p) =>
-                        str_contains(strtolower(optional($p->prodigi)->paket ?? ''), 'wms')
+                        $p->prodigi && str_contains(strtolower($p->prodigi->paket), 'wms')
                     )->count(),
 
-                    'netmonk' => $filteredPelanggan->where('cek_netmonk', 1)->count(),
-
-                    'oca' => $filteredPelanggan->where('cek_oca', 1)->count(),
-
-                    'antarez' => $filteredPelanggan->filter(fn ($p) =>
-                        str_contains(strtolower(optional($p->prodigi)->paket ?? ''), 'antarez')
+                    'netmonk' => $filteredPelanggan->filter(fn ($p) =>
+                        $p->prodigi && str_contains(strtolower($p->prodigi->paket), 'netmonk')
                     )->count(),
 
-                    'pijar_sekolah' => $filteredPelanggan->where('cek_pijar_sekolah', 1)->count(),
+                    'oca' => $filteredPelanggan->filter(fn ($p) =>
+                        $p->prodigi && str_contains(strtolower($p->prodigi->paket), 'oca')
+                    )->count(),
+
+                    'eazy' => $filteredPelanggan->filter(fn ($p) =>
+                        $p->prodigi && str_contains(strtolower($p->prodigi->paket), 'eazy')
+                    )->count(),
 
                     default => 0,
                 };
 
-                // Ambil target
-                $target = $targets[$product] ?? null;
+                // Ambil nilai ach dan sk
                 $ach = $target->ach ?? 0;
                 $sk = $target->sk ?? 0;
 
-                // Hitung ACH%
+                // Hitung ACH% dan SK%
                 $achPercent = $ach > 0 ? min(($realisasi / $ach) * 100, 120) : 0;
-
-                // Hitung SK%
                 $skPercent = ($achPercent * $sk) / 100;
 
                 // Simpan hasil per produk
-                $productAch[$product] = round($skPercent, 2);
+                $productAch[$product] = [
+                    'target' => $ach,
+                    'real' => $realisasi,
+                    'ach' => round($achPercent, 2),
+                    'sk' => round($skPercent, 2),
+                ];
 
-                // Tambahkan ke total SK%
                 $totalSkPercent += $skPercent;
             }
 
-            // Simpan ke objek sale
+            // Tambahkan ke data sales
             $sale->productAch = $productAch;
             $sale->total_target = round($totalSkPercent, 2);
 
@@ -169,6 +171,7 @@ class HomeController extends Controller
 
         return view('home.index', compact(
             'salesWithTarget',
+            'sales',
             'pelanggan',
             'astinet',
             'rankedAgencies',
@@ -307,39 +310,34 @@ class HomeController extends Controller
 
     private function getProdigiBarData($start, $end)
     {
-        // 🔹 Ambil daftar target prodigi dalam range tanggal
-        $targetProdigi = DB::table('targets')
+        // 🔹 Ambil daftar target prodigi dalam range tanggal (pakai model Target)
+        $targetProdigi = \App\Models\Target::query()
             ->where('target_type', 'prodigi')
-            ->where(function ($q) use ($start, $end) {
-                if ($start->year != $end->year) {
-                    $q->where(function ($q2) use ($start) {
-                        $q2->where('tahun', $start->year)->where('bulan', '>=', $start->month);
-                    });
-                    $q->orWhere(function ($q2) use ($end) {
-                        $q2->where('tahun', $end->year)->where('bulan', '<=', $end->month);
-                    });
-                } else {
-                    $q->where('tahun', $start->year)
-                        ->whereBetween('bulan', [$start->month, $end->month]);
-                }
+            ->when($start->year != $end->year, function ($q) use ($start, $end) {
+                $q->where(function ($q2) use ($start) {
+                    $q2->where('tahun', $start->year)->where('bulan', '>=', $start->month);
+                });
+                $q->orWhere(function ($q2) use ($end) {
+                    $q2->where('tahun', $end->year)->where('bulan', '<=', $end->month);
+                });
+            }, function ($q) use ($start, $end) {
+                $q->where('tahun', $start->year)
+                    ->whereBetween('bulan', [$start->month, $end->month]);
             })
             ->get();
 
         // 🔹 Ambil produk dari target yang ada di periode (jika tidak ada -> kosong)
         $targetProducts = $targetProdigi->pluck('target_ref')->unique()->toArray();
 
-        // 🔹 Ambil data realisasi prodigi per paket (hanya dalam range)
-        $prodigiData = DB::table('prodigi')
-            ->select(
-                'paket',
-                DB::raw('COUNT(*) AS total_realisasi'),
-            )
+        // 🔹 Ambil data realisasi prodigi per paket (pakai model Prodigi)
+        $prodigiData = \App\Models\Prodigi::query()
+            ->select('paket', \DB::raw('COUNT(*) AS total_realisasi'))
             ->whereBetween('tanggal_ps', [$start, $end])
             ->groupBy('paket')
             ->get()
             ->keyBy('paket');
 
-        // 🔹 Ambil semua produk yang muncul baik di target maupun realisasi
+        // 🔹 Gabungkan semua produk yang muncul baik di target maupun realisasi
         $allProducts = collect(array_unique(array_merge(
             $targetProducts,
             $prodigiData->keys()->toArray(),
@@ -371,6 +369,7 @@ class HomeController extends Controller
             'realisasi' => $realisasi,
         ];
     }
+
 
 
     /**

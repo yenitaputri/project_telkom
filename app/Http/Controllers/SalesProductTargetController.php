@@ -33,6 +33,7 @@ class SalesProductTargetController extends Controller
         $validated = $request->validate([
             'product' => 'required|string|max:255',
             'tahun' => 'required|integer',
+            'target' => 'required|integer|min:0',
             'ach' => 'nullable|integer|min:0',
             'sk' => 'nullable|integer|min:0',
         ]);
@@ -63,6 +64,7 @@ class SalesProductTargetController extends Controller
         $validated = $request->validate([
             'product' => 'required|string|max:255',
             'tahun' => 'required|integer',
+            'target' => 'required|integer|min:0',
             'ach' => 'nullable|integer|min:0',
             'sk' => 'nullable|integer|min:0',
         ]);

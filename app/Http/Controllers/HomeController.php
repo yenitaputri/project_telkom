@@ -326,24 +326,27 @@ class HomeController extends Controller
             })
             ->get();
 
-        // 🔹 Ambil produk dari target yang ada di periode (jika tidak ada -> kosong)
-        $targetProducts = $targetProdigi->pluck('target_ref')->unique()->toArray();
+        // 🔹 Ambil produk dari target (normalisasi ke lowercase untuk perbandingan)
+        $targetProducts = $targetProdigi->pluck('target_ref')
+            ->map(fn ($p) => strtolower(trim($p)))
+            ->unique()
+            ->toArray();
 
-        // 🔹 Ambil data realisasi prodigi per paket (pakai model Prodigi)
+        // 🔹 Ambil data realisasi prodigi per paket (pakai lower agar konsisten)
         $prodigiData = \App\Models\Prodigi::query()
-            ->select('paket', \DB::raw('COUNT(*) AS total_realisasi'))
+            ->selectRaw('LOWER(TRIM(paket)) AS paket_normalized, MIN(paket) AS paket_asli, COUNT(*) AS total_realisasi')
             ->whereBetween('tanggal_ps', [$start, $end])
-            ->groupBy('paket')
+            ->groupBy('paket_normalized')
             ->get()
-            ->keyBy('paket');
+            ->keyBy('paket_normalized');
 
-        // 🔹 Gabungkan semua produk yang muncul baik di target maupun realisasi
+        // 🔹 Gabungkan semua produk (target + realisasi)
         $allProducts = collect(array_unique(array_merge(
             $targetProducts,
             $prodigiData->keys()->toArray(),
         )))->values();
 
-        // 🔹 Jika tidak ada produk sama sekali, kembalikan data kosong
+        // 🔹 Jika tidak ada produk sama sekali
         if ($allProducts->isEmpty()) {
             return [
                 'labels' => [],
@@ -354,21 +357,30 @@ class HomeController extends Controller
 
         $target = [];
         $realisasi = [];
+        $labels = [];
 
         foreach ($allProducts as $p) {
-            $t = $targetProdigi->where('target_ref', $p)->sum('target_value');
-            $r = $prodigiData->get($p) ? (int) $prodigiData->get($p)->total_realisasi : 0;
+            // Ambil label asli dari realisasi (kalau ada), atau capitalized lowercase
+            $label = $prodigiData->get($p)->paket_asli ?? ucfirst($p);
+
+            $t = $targetProdigi
+                ->filter(fn ($item) => strtolower(trim($item->target_ref)) === $p)
+                ->sum('target_value');
+
+            $r = $prodigiData->get($p)?->total_realisasi ?? 0;
 
             $target[] = $t;
             $realisasi[] = $r;
+            $labels[] = ucfirst(strtolower(trim($label))); // hasil akhirnya "Netmonk"
         }
 
         return [
-            'labels' => $allProducts,
+            'labels' => $labels,
             'target' => $target,
             'realisasi' => $realisasi,
         ];
     }
+
 
 
 

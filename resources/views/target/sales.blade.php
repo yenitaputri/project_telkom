@@ -97,7 +97,7 @@
                 class="bg-white rounded-lg shadow-xl p-6 w-full max-w-md mx-auto relative">
                 <h3 class="text-xl font-bold mb-4 text-center text-yellow-600">Edit Target Produk</h3>
 
-                <form :action="`/sales-product-targets/${editSalesData.id}`" method="POST">
+                <form :action="'/sales-product-target/' + editSalesData.id" method="POST">
                     @csrf
                     @method('PUT')
 
@@ -148,6 +148,7 @@
             </div>
         </div>
 
+
         {{-- Tabel Target Produk --}}
         <div class="overflow-x-auto mt-8">
             <div class="my-4 flex justify-between">
@@ -185,15 +186,16 @@
                             <td class="py-3 px-6 flex justify-center gap-2">
                                 <button
                                     @click="
-                                                                                                                                        openEditSalesModal = true;
-                                                                                                                                        editSalesData = {
-                                                                                                                                            id: '{{ $item->id }}',
-                                                                                                                                            product: '{{ $item->product }}',
-                                                                                                                                            tahun: '{{ $item->tahun }}',
-                                                                                                                                            ach: '{{ $item->ach }}',
-                                                                                                                                            sk: '{{ $item->sk }}'
-                                                                                                                                        };
-                                                                                                                                    "
+                                                                                                                                                                        openEditSalesModal = true;
+                                                                                                                                                                        editSalesData = {
+                                                                                                                                                                            id: '{{ $item->id }}',
+                                                                                                                                                                            product: '{{ $item->product }}',
+                                                                                                                                                                            tahun: '{{ $item->tahun }}',
+                                                                                                                                                                            target: '{{ $item->target }}',
+                                                                                                                                                                            ach: '{{ $item->ach }}',
+                                                                                                                                                                            sk: '{{ $item->sk }}'
+                                                                                                                                                                        };
+                                                                                                                                                                    "
                                     class="bg-yellow-400 hover:bg-yellow-500 text-white font-bold py-1 px-3 rounded text-xs">
                                     Edit
                                 </button>

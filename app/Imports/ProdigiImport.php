@@ -3,10 +3,12 @@
 namespace App\Imports;
 
 use App\Models\Prodigi;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
+use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithStartRow;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
-use Illuminate\Support\Collection;
-use Maatwebsite\Excel\Concerns\ToCollection;
+use Carbon\Carbon;
 
 class ProdigiImport implements ToCollection, WithStartRow
 {
@@ -18,19 +20,19 @@ class ProdigiImport implements ToCollection, WithStartRow
     public function collection(Collection $rows)
     {
         foreach ($rows as $row) {
-            // Kolom A-J → index 0-8
-            $orderIdKiri = $row[0] ?? null; // kolom A
-            $witelKiri = $row[1] ?? null; // kolom D
-            $teldaKiri = $row[2] ?? null; // kolom E
-            $paketKiri = $row[3] ?? null; // kolom F
-            $tglPsKiri = $row[5] ?? null; // kolom G
-            $ndKiri = $row[6] ?? null; // kolom B
-            $customerKiri = $row[7] ?? null; // kolom C
-            $revKiri = $row[8] ?? null; // kolom H
-            $deviceKiri = $row[9] ?? null; // kolom I
+            // Kolom A-J → index 0-9
+            $orderIdKiri = $row[0] ?? null;
+            $witelKiri = $row[1] ?? null;
+            $teldaKiri = $row[2] ?? null;
+            $paketKiri = $row[3] ?? null;
+            $tglPsKiri = $row[5] ?? null;
+            $ndKiri = $row[6] ?? null;
+            $customerKiri = $row[7] ?? null;
+            $revKiri = $row[8] ?? null;
+            $deviceKiri = $row[9] ?? null;
 
             // Kolom L-T → index 11-19
-            $orderIdKanan = $row[11] ?? null; // kolom L
+            $orderIdKanan = $row[11] ?? null;
             $witelKanan = $row[12] ?? null;
             $teldaKanan = $row[13] ?? null;
             $paketKanan = $row[14] ?? null;
@@ -40,36 +42,35 @@ class ProdigiImport implements ToCollection, WithStartRow
             $revKanan = $row[18] ?? null;
             $deviceKanan = $row[19] ?? null;
 
-            // ============ Data blok kiri ============
-            // if (! empty($orderIdKiri)) {
-            //     $witel = strtolower(trim($witelKiri));
-            //     $telda = strtolower(trim($teldaKiri));
-
-            //     if ($witel == 'jatim timur' && $telda == 'banyuwangi') {
-            //         Prodigi::create([
-            //             'order_id' => $orderIdKiri,
-            //             'nd' => $ndKiri,
-            //             'customer_name' => $customerKiri,
-            //             'witel' => $witelKiri,
-            //             'telda' => $teldaKiri,
-            //             'paket' => $paketKiri,
-            //             'tanggal_ps' => $this->convertDate($tglPsKiri)->format('Y-m-d'),
-            //             'rev' => $revKiri,
-            //             'device' => $deviceKiri,
-            //         ]);
-            //     }
-            // }
-
             // ============ Data blok kanan ============
             if (! empty($orderIdKanan)) {
                 $witel = strtolower(trim($witelKanan));
                 $telda = strtolower(trim($teldaKanan));
 
-                if ($witel == 'jatim timur' && $telda == 'banyuwangi') {
+                // Log sebelum konversi
+                if (config('app.debug')) {
+                    Log::info('Customer: '.$customerKanan);
+                    Log::info('Tanggal sebelum konversi', [
+                        'raw' => $tglPsKanan,
+                        'type' => gettype($tglPsKanan),
+                    ]);
+                }
+
+                // Konversi tanggal
+                $converted = $this->convertDate($tglPsKanan);
+
+                // Log sesudah konversi
+                if (config('app.debug')) {
+                    Log::info('Tanggal sesudah konversi', [
+                        'converted' => $converted,
+                    ]);
+                }
+
+                if ($witel === 'jatim timur' && $telda === 'banyuwangi') {
                     Prodigi::create([
                         'nd' => $ndKanan,
                         'order_id' => $orderIdKanan,
-                        'tanggal_ps' => $this->convertDate($tglPsKanan)->format('Y-m-d'),
+                        'tanggal_ps' => $converted,
                         'telda' => $teldaKanan,
                         'customer_name' => $customerKanan,
                         'paket' => $paketKanan,
@@ -85,11 +86,31 @@ class ProdigiImport implements ToCollection, WithStartRow
     private function convertDate($value)
     {
         if (empty($value)) {
-            return now();
+            return null;
         }
+
+        // Jika numeric (serial Excel)
         if (is_numeric($value)) {
-            return Date::excelToDateTimeObject($value);
+            $dateObj = Date::excelToDateTimeObject($value);
+            return Carbon::instance($dateObj)->format('Y-d-m');
         }
-        return \Carbon\Carbon::parse($value);
+
+        // Jika string (misalnya "9/8/2025")
+        $value = trim($value);
+
+        // Coba format n/j/Y (misal 9/8/2025)
+        try {
+            return Carbon::createFromFormat('n/j/Y', $value)->format('Y-m-d');
+        } catch (\Exception $e) {
+        }
+
+        // Coba format d/m/Y (misal 09/08/2025)
+        try {
+            return Carbon::createFromFormat('d/m/Y', $value)->format('Y-m-d');
+        } catch (\Exception $e) {
+        }
+
+        // Fallback ke parser bawaan Carbon
+        return Carbon::parse($value)->format('Y-m-d');
     }
 }

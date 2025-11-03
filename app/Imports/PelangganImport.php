@@ -25,7 +25,6 @@ class PelangganImport implements ToModel, WithHeadingRow
         $agency = null;
 
         if (isset($kodeSales)) {
-            // satu query, ambil field yang diperlukan
             $sales = Sales::select('nama_sales', 'agency')
                 ->where('kode_sales', $kodeSales)
                 ->first();
@@ -36,14 +35,23 @@ class PelangganImport implements ToModel, WithHeadingRow
             }
         }
 
+        $noInternet = trim($row['ndem'], "'");
+
+        $existing = Pelanggan::where('no_internet', $noInternet)->first();
+
+        if ($existing) {
+            // Jika sudah ada, abaikan atau update datanya
+            return null;
+        }
+
         return new Pelanggan([
-            'no_internet' => trim($row['ndem'], "'"),
+            'no_internet' => $noInternet,
             'no_digital' => null,
             'tanggal_ps' => $tanggal->format('Y-m-d'),
             'kecepatan' => $kecepatan,
-            'regional' => $row['regional'] == 3 ? 5 : null, // Jika 3 maka menjadi 5, jika tidak maka null
-            'bulan' => intval($tanggal->format('m')), // Ambil bulan dari tanggal_ps
-            'tahun' => intval($tanggal->format('Y')), // Ambil bulan dari tanggal_ps
+            'regional' => $row['regional'] == 3 ? 5 : null,
+            'bulan' => intval($tanggal->format('m')),
+            'tahun' => intval($tanggal->format('Y')),
             'datel' => $row['datel'],
             'ro' => null,
             'sto' => $row['sto'],
@@ -51,20 +59,18 @@ class PelangganImport implements ToModel, WithHeadingRow
             'segmen' => $row['provider'] == 'RBS-Regional 3' ? 'REG-Regional 5' : $row['provider'],
             'kcontact' => $row['device_id'],
             'channel' => $row['channel'],
-            // 'jenis_layanan' => $row['channel'] == 'MYDIGIBIZPARTNER' ? 'OTHER' : 'INDIBIZ',
             'jenis_layanan' => 'INDIBIZ',
             'cek_netmonk' => null,
             'cek_pijar_mahir' => null,
             'cek_eazy_cam' => null,
             'cek_oca' => null,
             'cek_pijat_sekolah' => null,
-
-            // Kode Sales
             'kode_sales' => $kodeSales,
             'nama_sf' => $namaSF,
             'agency' => $agency,
         ]);
     }
+
 
     private function convertDate($value)
     {

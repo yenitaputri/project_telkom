@@ -113,7 +113,6 @@ class HomeController extends Controller
             $sale->pelanggan_count = $filteredPelanggan->count();
 
             foreach ($salesProductTarget as $product => $target) {
-                // Hitung realisasi
                 $realisasi = match ($product) {
                     'indibiz' => $filteredPelanggan->filter(fn ($p) =>
                         $p->prodigi && str_contains(strtolower($p->prodigi->paket), 'indibiz')
@@ -138,15 +137,11 @@ class HomeController extends Controller
                     default => 0,
                 };
 
-                // Ambil nilai ach dan sk
                 $ach = $target->ach ?? 0;
                 $sk = $target->sk ?? 0;
-
-                // Hitung ACH% dan SK%
                 $achPercent = $ach > 0 ? min(($realisasi / $ach) * 100, 120) : 0;
                 $skPercent = ($achPercent * $sk) / 100;
 
-                // Simpan hasil per produk
                 $productAch[$product] = [
                     'target' => $ach,
                     'real' => $realisasi,
@@ -157,12 +152,14 @@ class HomeController extends Controller
                 $totalSkPercent += $skPercent;
             }
 
-            // Tambahkan ke data sales
             $sale->productAch = $productAch;
             $sale->total_target = round($totalSkPercent, 2);
 
             return $sale;
         });
+
+
+        // return dd($salesWithTarget);
 
         // === Chart Data ===
         $chartData = $this->getChartData($startDate, $endDate);

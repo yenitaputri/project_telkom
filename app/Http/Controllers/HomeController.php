@@ -110,7 +110,34 @@ class HomeController extends Controller
                 $p->tanggal_ps && Carbon::parse($p->tanggal_ps)->between($startDate, $endDate)
             );
 
-            $sale->pelanggan_count = $filteredPelanggan->count();
+            // TAMBAHAN: Simpan nama sales dan total pelanggan
+            $sale->nama_sales; // atau field yang sesuai untuk nama sales
+            $sale->total_pelanggan = $filteredPelanggan->count();
+            $sale->pelanggan_count = $filteredPelanggan->count(); // existing
+
+            // DEBUG: Check relasi dan data prodigi - DITAMBAH INFO NAMA SALES
+            logger("=== DEBUG SALES: {$sale->name} ({$sale->kode}) ===");
+            logger("Nama Sales: {$sale->name}");
+            logger("Kode Sales: {$sale->kode}");
+            logger("Total semua pelanggan: ".$sale->pelanggans->count());
+            logger("Total filtered dalam periode: ".$filteredPelanggan->count());
+            logger("Total pelanggan untuk perhitungan: ".$sale->total_pelanggan);
+
+            // DEBUG: Tampilkan semua data prodigi untuk sales ini
+            $sale->pelanggans->each(function ($pelanggan, $index) {
+                logger("Pelanggan {$index}:");
+                logger("  - ID: ".$pelanggan->id);
+                logger("  - Nama: ".$pelanggan->nama); // pastikan field ini sesuai
+                logger("  - Tanggal PS: ".$pelanggan->tanggal_ps);
+                logger("  - Prodigi: ".($pelanggan->prodigi ? 'ADA' : 'NULL'));
+
+                if ($pelanggan->prodigi) {
+                    logger("  - Prodigi ID: ".$pelanggan->prodigi->id);
+                    logger("  - Paket: '".$pelanggan->prodigi->paket."'");
+                    logger("  - Tipe Paket: ".gettype($pelanggan->prodigi->paket));
+                    logger("  - Semua field prodigi: ".json_encode($pelanggan->prodigi->toArray()));
+                }
+            });
 
             foreach ($salesProductTarget as $product => $target) {
                 $realisasi = match ($product) {
@@ -137,20 +164,57 @@ class HomeController extends Controller
                     default => 0,
                 };
 
-                $ach = $target->ach ?? 0;
-                $sk = $target->sk ?? 0;
-                $achPercent = $ach > 0 ? min(($realisasi / $ach) * 100, 120) : 0;
-                $skPercent = ($achPercent * $sk) / 100;
+                // DEBUG: Hitung manual untuk verifikasi
+                $manualCount = 0;
+                $matchingPelanggans = [];
+
+                $filteredPelanggan->each(function ($p) use ($product, &$manualCount, &$matchingPelanggans) {
+                    if ($p->prodigi && $p->prodigi->paket) {
+                        $paketLower = strtolower($p->prodigi->paket);
+                        $productLower = strtolower($product);
+
+                        if (str_contains($paketLower, $productLower)) {
+                            $manualCount++;
+                            $matchingPelanggans[] = [
+                                'id' => $p->id,
+                                'paket' => $p->prodigi->paket
+                            ];
+                        }
+                    }
+                });
+
+                logger("PRODUCT: {$product}");
+                logger("  - Realisasi match(): {$realisasi}");
+                logger("  - Realisasi manual: {$manualCount}");
+                logger("  - Pelanggan match: ".json_encode($matchingPelanggans));
+
+                $targetValue = $target->target;
+                $achFaktor = $target->ach ?? 0;
+                $skFaktor = $target->sk ?? 0;
+
+                $achPercent = $targetValue > 0 ? ($realisasi / $targetValue) * $achFaktor : 0;
+                $skPercent = ($achPercent * $skFaktor) / 100;
 
                 $productAch[$product] = [
-                    'target' => $ach,
+                    'target' => $target,
                     'real' => $realisasi,
-                    'ach' => round($achPercent, 2),
-                    'sk' => round($skPercent, 2),
+                    'ach' => $achFaktor,
+                    'sk' => $skFaktor,
+                    'ach_result' => round($achPercent, 2),
+                    'sk_result' => round($skPercent, 2),
                 ];
 
                 $totalSkPercent += $skPercent;
             }
+
+            // TAMBAHAN: Log summary untuk sales
+            logger("=== SUMMARY SALES: {$sale->name} ===");
+            logger("Nama: {$sale->name}");
+            logger("Kode: {$sale->kode}");
+            logger("Total Pelanggan: {$sale->total_pelanggan}");
+            logger("Total SK Percent: ".round($totalSkPercent, 2));
+            logger("=== END DEBUG: {$sale->name} ===");
+
 
             $sale->productAch = $productAch;
             $sale->total_target = round($totalSkPercent, 2);
@@ -158,8 +222,7 @@ class HomeController extends Controller
             return $sale;
         });
 
-
-        // return dd($salesWithTarget);
+        // dd($salesWithTarget);
 
         // === Chart Data ===
         $chartData = $this->getChartData($startDate, $endDate);

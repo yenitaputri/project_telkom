@@ -115,30 +115,6 @@ class HomeController extends Controller
             $sale->total_pelanggan = $filteredPelanggan->count();
             $sale->pelanggan_count = $filteredPelanggan->count(); // existing
 
-            // DEBUG: Check relasi dan data prodigi - DITAMBAH INFO NAMA SALES
-            logger("=== DEBUG SALES: {$sale->name} ({$sale->kode}) ===");
-            logger("Nama Sales: {$sale->name}");
-            logger("Kode Sales: {$sale->kode}");
-            logger("Total semua pelanggan: ".$sale->pelanggans->count());
-            logger("Total filtered dalam periode: ".$filteredPelanggan->count());
-            logger("Total pelanggan untuk perhitungan: ".$sale->total_pelanggan);
-
-            // DEBUG: Tampilkan semua data prodigi untuk sales ini
-            $sale->pelanggans->each(function ($pelanggan, $index) {
-                logger("Pelanggan {$index}:");
-                logger("  - ID: ".$pelanggan->id);
-                logger("  - Nama: ".$pelanggan->nama); // pastikan field ini sesuai
-                logger("  - Tanggal PS: ".$pelanggan->tanggal_ps);
-                logger("  - Prodigi: ".($pelanggan->prodigi ? 'ADA' : 'NULL'));
-
-                if ($pelanggan->prodigi) {
-                    logger("  - Prodigi ID: ".$pelanggan->prodigi->id);
-                    logger("  - Paket: '".$pelanggan->prodigi->paket."'");
-                    logger("  - Tipe Paket: ".gettype($pelanggan->prodigi->paket));
-                    logger("  - Semua field prodigi: ".json_encode($pelanggan->prodigi->toArray()));
-                }
-            });
-
             foreach ($salesProductTarget as $product => $target) {
                 $realisasi = match ($product) {
                     'indibiz' => $filteredPelanggan->filter(fn ($p) =>
@@ -183,11 +159,6 @@ class HomeController extends Controller
                     }
                 });
 
-                logger("PRODUCT: {$product}");
-                logger("  - Realisasi match(): {$realisasi}");
-                logger("  - Realisasi manual: {$manualCount}");
-                logger("  - Pelanggan match: ".json_encode($matchingPelanggans));
-
                 $targetValue = $target->target;
                 $achFaktor = $target->ach ?? 0;
                 $skFaktor = $target->sk ?? 0;
@@ -207,22 +178,12 @@ class HomeController extends Controller
                 $totalSkPercent += $skPercent;
             }
 
-            // TAMBAHAN: Log summary untuk sales
-            logger("=== SUMMARY SALES: {$sale->name} ===");
-            logger("Nama: {$sale->name}");
-            logger("Kode: {$sale->kode}");
-            logger("Total Pelanggan: {$sale->total_pelanggan}");
-            logger("Total SK Percent: ".round($totalSkPercent, 2));
-            logger("=== END DEBUG: {$sale->name} ===");
-
 
             $sale->productAch = $productAch;
             $sale->total_target = round($totalSkPercent, 2);
 
             return $sale;
         });
-
-        // dd($salesWithTarget);
 
         // === Chart Data ===
         $chartData = $this->getChartData($startDate, $endDate);

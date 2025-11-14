@@ -71,7 +71,8 @@ class AstinetController extends Controller
      */
     public function edit(Astinet $astinet)
     {
-        return view('astinet.edit', compact('astinet'));
+        $sales = Sales::all();
+        return view('astinet.edit', compact('astinet', 'sales'));
     }
 
     /**

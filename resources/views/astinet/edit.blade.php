@@ -52,12 +52,25 @@
             @enderror
         </div>
 
-        {{-- Nama Sales --}}
+    {{-- Sales --}}
         <div class="mb-4">
-            <label for="nama_sales" class="block text-gray-700 font-medium mb-1">Nama Sales</label>
-            <input type="text" name="nama_sales" id="nama_sales" value="{{ old('nama_sales', $astinet->nama_sales) }}"
-                class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-            @error('nama_sales')
+            <label class="block text-gray-700 font-semibold mb-1">Sales</label>
+            <select
+                name="kode_sales"
+                class="w-full border @error('kode_sales') border-red-500 @else border-gray-300 @enderror
+                    rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+                <option value="">-- Pilih Sales --</option>
+                @foreach ($sales as $sale)
+                    <option
+                        value="{{ $sale->kode_sales }}"
+                        {{ old('kode_sales', $astinet->nama_sales ?? '') == $sale->kode_sales ? 'selected' : '' }}
+                    >
+                        {{ $sale->kode_sales }} — {{ $sale->nama_sales }}
+                    </option>
+                @endforeach
+            </select>
+            @error('kode_sales')
                 <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
             @enderror
         </div>
@@ -65,8 +78,15 @@
         {{-- Tanggal Complete --}}
         <div class="mb-4">
             <label for="tanggal_complete" class="block text-gray-700 font-medium mb-1">Tanggal Complete</label>
-            <input type="date" name="tanggal_complete" id="tanggal_complete" value="{{ old('tanggal_complete', $astinet->tanggal_complete) }}"
-                class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+           <input
+                type="date"
+                name="tanggal_complete"
+                id="tanggal_complete"
+                value="{{ old('tanggal_complete', \Carbon\Carbon::parse(trim($astinet->tanggal_complete))->format('Y-m-d')) }}"
+                class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+
+
             @error('tanggal_complete')
                 <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
             @enderror

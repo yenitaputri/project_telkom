@@ -19,4 +19,9 @@ class Astinet extends Model
         'nama_sales',
         'tanggal_complete',
     ];
+
+    public function sales()
+    {
+        return $this->belongsTo(Sales::class, 'nama_sales', 'kode_sales');
+    }
 }

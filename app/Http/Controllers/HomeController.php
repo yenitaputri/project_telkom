@@ -117,9 +117,7 @@ class HomeController extends Controller
 
             foreach ($salesProductTarget as $product => $target) {
                 $realisasi = match ($product) {
-                    'indibiz' => $filteredPelanggan->filter(fn ($p) =>
-                        $p->prodigi && str_contains(strtolower($p->prodigi->paket), 'indibiz')
-                    )->count(),
+                    'indibiz' => $filteredPelanggan->count(),
 
                     'wms' => $filteredPelanggan->filter(fn ($p) =>
                         $p->prodigi && str_contains(strtolower($p->prodigi->paket), 'wms')

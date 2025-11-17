@@ -157,21 +157,24 @@ class HomeController extends Controller
                     }
                 });
 
-                $targetValue = $target->target;
-                $achFaktor = $target->ach ?? 0;
+                $targetValue = $target->target ?? 0;
                 $skFaktor = $target->sk ?? 0;
-
-                $achPercent = $targetValue > 0 ? ($realisasi / $targetValue) * $achFaktor : 0;
+                
+                // Hitung ACH% maksimal 120%
+                $achPercent = $targetValue > 0 ? min(($realisasi / $targetValue) * 100, 120) : 0;
+                
+                // Hitung SK% sesuai bobot
                 $skPercent = ($achPercent * $skFaktor) / 100;
-
+                
                 $productAch[$product] = [
                     'target' => $target,
                     'real' => $realisasi,
-                    'ach' => $achFaktor,
+                    'ach' => round($achPercent, 2), // pake achPercent yang sudah dihitung
                     'sk' => $skFaktor,
                     'ach_result' => round($achPercent, 2),
                     'sk_result' => round($skPercent, 2),
                 ];
+                
 
                 $totalSkPercent += $skPercent;
             }

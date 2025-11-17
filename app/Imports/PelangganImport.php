@@ -59,7 +59,7 @@ class PelangganImport implements ToModel, WithHeadingRow
             'segmen' => $row['provider'] == 'RBS-Regional 3' ? 'REG-Regional 5' : $row['provider'],
             'kcontact' => $row['device_id'],
             'channel' => $row['channel'],
-            'jenis_layanan' => 'INDIBIZ',
+            'jenis_layanan' => $row['group_paket'] == 'WMS' ? 'WMS' : 'INDIBIZ',
             'cek_netmonk' => null,
             'cek_pijar_mahir' => null,
             'cek_eazy_cam' => null,

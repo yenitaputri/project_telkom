@@ -117,11 +117,9 @@ class HomeController extends Controller
 
             foreach ($salesProductTarget as $product => $target) {
                 $realisasi = match ($product) {
-                    'indibiz' => $filteredPelanggan->count(),
+                    'indibiz' => $filteredPelanggan->filter(fn ($p) => strtolower($p->jenis_layanan) === 'indibiz')->count(),
 
-                    'wms' => $filteredPelanggan->filter(fn ($p) =>
-                        $p->prodigi && str_contains(strtolower($p->prodigi->paket), 'wms')
-                    )->count(),
+                    'wms' => $filteredPelanggan->filter(fn ($p) => strtolower($p->jenis_layanan) === 'wms')->count(),
 
                     'netmonk' => $filteredPelanggan->filter(fn ($p) =>
                         $p->prodigi && str_contains(strtolower($p->prodigi->paket), 'netmonk')
@@ -159,13 +157,13 @@ class HomeController extends Controller
 
                 $targetValue = $target->target ?? 0;
                 $skFaktor = $target->sk ?? 0;
-                
+
                 // Hitung ACH% maksimal 120%
                 $achPercent = $targetValue > 0 ? min(($realisasi / $targetValue) * 100, 120) : 0;
-                
+
                 // Hitung SK% sesuai bobot
                 $skPercent = ($achPercent * $skFaktor) / 100;
-                
+
                 $productAch[$product] = [
                     'target' => $target,
                     'real' => $realisasi,
@@ -174,7 +172,7 @@ class HomeController extends Controller
                     'ach_result' => round($achPercent, 2),
                     'sk_result' => round($skPercent, 2),
                 ];
-                
+
 
                 $totalSkPercent += $skPercent;
             }

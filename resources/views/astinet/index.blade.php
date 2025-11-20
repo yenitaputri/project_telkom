@@ -64,7 +64,7 @@
                                 <td class="px-2 py-2 text-left align-middle">{{ $astinet->sid }}</td>
                                 <td class="px-2 py-2 text-left align-middle">{{ $astinet->bandwidth }}</td>
                                 <td class="px-2 py-2 text-left align-middle">{{ $astinet->nama_pelanggan }}</td>
-                                <td class="px-2 py-2 text-left align-middle">{{ $astinet->sales->nama_sales }}</td>
+                                <td class="px-2 py-2 text-left align-middle">{{ $astinet->sales->nama_sales ?? '' }}</td>
                                 <td class="px-2 py-2 text-left align-middle">
                                     {{ \Carbon\Carbon::parse($astinet->tanggal_complete)->format('d-m-Y') }}
                                 </td>

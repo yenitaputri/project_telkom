@@ -291,7 +291,7 @@
                             <th class="border px-2 py-2 font-bold text-left align-middle">WMS</th>
                             <th class="border px-2 py-2 font-bold text-left align-middle">Netmonk</th>
                             <th class="border px-2 py-2 font-bold text-left align-middle">OCA</th>
-                            <th class="border px-2 py-2 font-bold text-left align-middle">Easy</th>
+                            <th class="border px-2 py-2 font-bold text-left align-middle">Eazy</th>
                             <th class="border px-2 py-2 font-bold text-left align-middle">Pijar Sekolah</th>
                             <th class="border px-2 py-2 font-bold text-left align-middle">Presentase</th>
                         </tr>
@@ -318,7 +318,7 @@
                                     {{ $sale->productAch['oca']['sk_result'] ?? 0 }} %
                                 </td>
                                 <td class="px-2 py-2 text-left align-middle">
-                                    {{ $sale->productAch['easy']['sk_result'] ?? 0 }} %
+                                    {{ $sale->productAch['eazy']['sk_result'] ?? 0 }} %
                                 </td>
                                 <td class="px-2 py-2 text-left align-middle">
                                     {{ $sale->productAch['pijar_sekolah']['sk_result'] ?? 0 }} %
